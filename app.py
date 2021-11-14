@@ -36,7 +36,7 @@ def take_books_data():
 
         edition_authors = edition.authors
         edition_authors = ", ".join(" ".join([author.author_name, str(author.author_middle_name or ''), author.author_surname]) for author in edition_authors)
-        num_of_available = EditionInf.query.filter_by(edition_id=edition.edition_id).all()[0]
+        num_of_available = EditionCount.query.filter_by(edition_id=edition.edition_id).all()[0]
         book_data_output = {
             "edition_id": edition.edition_id,
             "book_title": edition.book_title,
