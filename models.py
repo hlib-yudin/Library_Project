@@ -36,7 +36,7 @@ class EditionInf(db.Model):
 
     genres = relationship('Genre', secondary='edition_genre')
     authors = relationship('Author', secondary='edition_author')
-    edition_count = relationship('EditionCount', uselist=False)
+    #edition_count = relationship('EditionCount', uselist=False)
 
 
 class EditionCount(EditionInf):
