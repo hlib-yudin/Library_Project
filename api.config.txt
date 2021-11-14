@@ -1,4 +1,4 @@
-реєстрація
+registration
 {
 "user_login":"",
 "user_password":"",
@@ -7,41 +7,42 @@
 "middle_name":"",
 "role_name":"",
 }
-вхід
-відправка
+enter
+post
 {
 "user_login":"",
 "user_password":"",
 }
-прийнято
+get
 {
 "entrence": "true", 
 "role_name": "",
 "user_id": "",
 }
-відхиено
+fail response for get
 {
 "entrence": "false", 
 }
-пошук
-запит
+search
+post
 {
 "input":"text of input"
 }
-блок книг
-{
+get books
+{"books": [{
 "book_title":"",
 "author":"",
 "genre":"",
 "book_id":"",
 "description":"?",
+}, ...]
 }
-бронювання книги
+reservation of book
 {
 "user_id":"",
 "book_id":"",
 }
-Додавання книги
+add book
 {
 "author_name":"",
 "author_surname":"",
@@ -51,11 +52,11 @@
 "edition_id":"",
 "description":"?",
 }
-видалення книги
+delete book
 {
 "edition_id":"",
 }
-повернення книги
+return book
 {
 "edition_id":"",
 }
