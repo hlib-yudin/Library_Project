@@ -20,7 +20,7 @@ def hello_world():
 
 @app.route('/')
 def index():
-    take_books_data()
+    a = take_books_data()
     print(check_availability(['5-325-00380-1']))
     #print(sign_up("7", "7777", "Гліб", "Юдін", None, "reader"))
     print(db.session.query(t_user_role).filter_by(role_id = 2).all())
