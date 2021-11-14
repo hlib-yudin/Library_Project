@@ -86,28 +86,6 @@ def check_availability(editions_id):
     else:
         return check_list
 
-    # print(check_availability(['5-325-00380-1', '5-325-00380-11-copy']))
-
-    # for edition in editions:
-    #     edition_genres = edition.genres
-    #     edition_genres = ", ".join(genre.genre for genre in edition_genres)
-    #
-    #     edition_authors = edition.authors
-    #     edition_authors = ", ".join(" ".join([author.author_name, str(author.author_middle_name or ''), author.author_surname]) for author in edition_authors)
-    #
-    #     book_data_output = {
-    #         "edition_id": edition.edition_id,
-    #         "book_title": edition.book_title,
-    #         "authors": edition_authors,
-    #         "genres": edition_genres,
-    #         "year": edition.edition_year
-    #     }
-    #     book_data_list.append(book_data_output)
-    #     print(book_data_output)
-
-
-
-
 
 def sign_up(login, password, first_name, last_name, middle_name, role_name):
     # Проводить реєстрацію користувача з даними полями.
