@@ -1,0 +1,61 @@
+реєстрація
+{
+"user_login":"",
+"user_password":"",
+"user_name":"",
+"surname":"",
+"middle_name":"",
+"role_name":"",
+}
+вхід
+відправка
+{
+"user_login":"",
+"user_password":"",
+}
+прийнято
+{
+"entrence": "true", 
+"role_name": "",
+"user_id": "",
+}
+відхиено
+{
+"entrence": "false", 
+}
+пошук
+запит
+{
+"input":"text of input"
+}
+блок книг
+{
+"book_title":"",
+"author":"",
+"genre":"",
+"book_id":"",
+"description":"?",
+}
+бронювання книги
+{
+"user_id":"",
+"book_id":"",
+}
+Додавання книги
+{
+"author_name":"",
+"author_surname":"",
+"author_middle_name":"",
+"book_title":"",
+"genre":"",
+"edition_id":"",
+"description":"?",
+}
+видалення книги
+{
+"edition_id":"",
+}
+повернення книги
+{
+"edition_id":"",
+}
