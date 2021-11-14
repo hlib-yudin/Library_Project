@@ -26,6 +26,10 @@ class Author(db.Model):
 
     editions = relationship('EditionInf', secondary='edition_author')
 
+    def __repr__(self):
+        return "<Author (author_id='%s'; author_name='%s'; author_surname='%s'; author_middle_name='%s')>" % (
+            self.author_id, self.author_name, self.author_surname, self.author_middle_name)
+
 
 class EditionInf(db.Model):
     __tablename__ = 'edition_inf'
@@ -37,6 +41,10 @@ class EditionInf(db.Model):
     genres = relationship('Genre', secondary='edition_genre')
     authors = relationship('Author', secondary='edition_author')
     #edition_count = relationship('EditionCount', uselist=False)
+
+    def __repr__(self):
+        return "<EditionInf (edition_id='%s'; book_title='%s'; edition_year='%d')>" % (
+            self.edition_id, self.book_title, self.edition_year)
 
 
 class EditionCount(EditionInf):
@@ -101,6 +109,12 @@ class UserInf(db.Model):
 
     role = relationship("Role", secondary='user_role', uselist=False)
     status = relationship("Status", secondary='user_status', uselist=False)
+
+    def __repr__(self):
+        return "<UserInf (user_login='%s'; user_password='%s'; user_name='%s'; surname='%s'; middle_name='%s'; user_id='%d')>" % (
+            self.user_id, self.user_password, self.user_name, self.surname, self.middle_name, self.user_id)
+
+    
 
 
 class Book(db.Model):

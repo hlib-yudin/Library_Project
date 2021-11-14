@@ -1,11 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, render_template, url_for, request, redirect, json
+from flask import Flask, render_template, url_for, request, redirect, json, session as flask_session
 from config import Config
 
 
 app = Flask(__name__)
 # app.config.from_object(Config)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/postgres"
+app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 #SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
 db = SQLAlchemy(app)
@@ -24,6 +25,8 @@ def index():
     print(check_availability(['5-325-00380-1']))
     #print(sign_up("7", "7777", "Гліб", "Юдін", None, "reader"))
     print(db.session.query(t_user_role).filter_by(role_id = 2).all())
+    print(log_in("6", "7776"))
+    print(log_in("6", "6666"))
     return 'ok'
 
 
@@ -116,7 +119,24 @@ def sign_up(login, password, first_name, last_name, middle_name, role_name):
         # зберегти зміни -- TODO, після того, як перевірено правильність роботи цієї функції
         print(added_user)
         db.session.commit()
-        return "ok"
+        return "sign_up -- ok"
+
+
+def log_in(login, password):
+    # Проводить авторизацію користувача з вказаними зашифрованими логіном і паролем.
+    users = UserInf.query.filter_by(user_login = login, user_password = password).all()
+    if len(users) == 0:
+        # TODO: замінити текст на json
+        return "Неправильний логін чи пароль"
+    else:
+        # зберегти інформацію про користувача в сесію
+        user = users[0]
+        flask_session['id'] = user.user_id
+        flask_session['name'] = user.user_name
+        flask_session['role'] = user.role.role_name
+        print(user, user.role.role_name)
+        return "log_in - ok"
+
 
 
 
