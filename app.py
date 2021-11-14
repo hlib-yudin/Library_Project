@@ -43,8 +43,7 @@ def take_books_data():
             "authors": edition_authors,
             "genres": edition_genres,
             "year": edition.edition_year,
-            #"number_of_available": num_of_available.number_of_available
-            "number_of_available": num_of_available.edition_count.number_of_available
+            "number_of_available": num_of_available.number_of_available
         }
         book_data_list.append(book_data_output)
         print(book_data_output)
