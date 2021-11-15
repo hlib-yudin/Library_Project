@@ -5,7 +5,11 @@ registration
 "user_name":"",
 "surname":"",
 "middle_name":"",
-"role_name":"",
+"role_name":"", ?
+}
+response
+{
+    "response":"додати причину, якщо вона є",
 }
 enter
 post
