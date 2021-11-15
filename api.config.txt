@@ -58,5 +58,7 @@ delete book
 }
 return book
 {
+"order_id":"",
 "edition_id":"",
+"user_id":""
 }
