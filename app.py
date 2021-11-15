@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, url_for, request, redirect, json, session as flask_session
 from config import Config
-
+from datetime import date
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
