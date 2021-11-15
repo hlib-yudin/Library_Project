@@ -31,15 +31,22 @@
 
           <div class="row" id = "blocks">
           </div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination" id = 'pages'>
+            </ul>
+          </nav>
         </div>
       </div>
 
 <script>
-  const addBook = async () => {
+  const getBooks = async () => {
     const row = document.getElementById('blocks');
+    const pagination = document.getElementById('pages');
+
     /*
     json
     {
+      pagination: 2,
       books:  [
         {
     "book_title":"",
@@ -53,6 +60,13 @@
     await fetch('', )//вставте необхідну урлу для перевірки респонсу метод гет
 	.then(response => {
     var data = response.json();
+
+    let i = data.pagination;
+    while(i > 0){
+      pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination(${i})">${i}</a></li>`);
+      i-=1;
+    }
+
     data.books.forEach((book,index) => {
       row.insertAdjacentHTML('afterend',`
   <div class="col-md-4">
@@ -94,7 +108,24 @@ const getInfo = (event) =>{
     sessionStorage.setItem('input',input);
   };
 */
-  addBook();
+
+const getPagination = async (index) => {
+  const json = {
+    "pageIndex":index,
+  };
+
+  try {
+		await fetch('', {//вставте необхідну урлу
+			method: 'post',
+			body: JSON.stringify(json)}
+			);
+	}
+	catch(error){
+		alert('Failed sending');
+		return;
+	}
+};
+  getBooks();
 </script>
 </body>
 </html>
