@@ -3,9 +3,9 @@ from flask import Flask, render_template, url_for, request, redirect, json, sess
 from config import Config
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 #SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
@@ -19,6 +19,85 @@ from models import *
 def hello_world():
     return 'Hello World!'"""
 
+
+# змініть цей URL, будь ласка
+@app.route("/books/return/id", methods = ('POST',))
+def return_books():
+    # Функція для повернення книг (ще не зроблена)
+    print(request.form.getlist("book_ids"))
+    return 'ok'
+
+
+
+@app.route("/books/return", methods = ('GET',))
+def page_for_returning_books():
+    # Рендерить сторінку для підтвердження повернення книги.
+    json_orders = {}
+
+    # якщо в поле вводу ввели логін користувача -- знайти і відобразити всі його замовлення
+    if request.args.get("login_query"): # and request.method == 'GET'
+        # TODO: exceptions
+        login_query = request.args["login_query"]
+        users = UserInf.query.filter_by(user_login=login_query).all()
+        if len(users) != 1:
+            # TODO: що повертає при помилці?
+            return "user not found"
+        user = users[0]
+        orders = Order.query.filter_by(user_id=user.user_id, is_canceled=False).all()
+        # TODO: що повертає при відсутності замовлень?
+        if len(orders) == 0:
+            return "no orders"
+
+        # складаємо json з інформацією про замовлення
+        json_orders = {"orders": []}
+        for order in orders:
+            books = OrderBook.query.filter_by(order_id=order.order_id).all()
+            books = [book.book for book in books if book.return_date == None]
+            new_json = {
+                "order_id": order.order_id,
+                "order_issue_date": order.issue_date,
+                "order_in_time": True, # TODO: обчислити, чи минув термін здачі замовлення, чи ні
+                "books": []
+            }
+            for book in books:
+                edition = book.edition
+                new_json_2 = {
+                    "book_id": book.book_id,
+                    "edition_name": edition.book_title,
+                    "edition_authors": [author.author_surname + " " +  author.author_name + " " + 
+                        (author.author_middle_name if author.author_middle_name else "")
+                        for author in edition.authors],
+                    "edition_year": edition.edition_year
+                }
+                new_json["books"].append(new_json_2)
+
+            json_orders["orders"].append(new_json)
+
+
+    # відобразити html-сторінку
+    """json_orders = {
+        "orders": [{
+            "order_id": "1",
+            "order_issue_date": "20-08-20",
+            "order_in_time": True,
+            "books": [{
+                "book_id": "333-888-000",
+                "edition_name": "Harry Potter",
+                "edition_authors": ["JK", "Rowling"],
+                "edition_year": 2007,
+            },
+            {
+                "book_id": "333-888-001",
+                "edition_name": "Harry Potter 2",
+                "edition_authors": ["J.K. Rowling"],
+                "edition_year": 2008,
+            }]
+                
+        }]
+    }"""
+    return render_template('returnBooks.html', json = json_orders)
+
+
 @app.route('/')
 def index():
     a = take_books_data()
@@ -27,7 +106,8 @@ def index():
     print(db.session.query(t_user_role).filter_by(role_id = 2).all())
     print(log_in("6", "7776"))
     print(log_in("6", "6666"))
-    return 'ok'
+    return redirect(url_for("page_for_returning_books"))
+    #return 'ok'
 
 
 def take_books_data():
