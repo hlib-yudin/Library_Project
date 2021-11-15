@@ -51,7 +51,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="cart_buttons"> <button type="button" class="button cart_button_clear">Continue Shopping</button> <button type="button" class="button cart_button_checkout">Add to Cart</button> </div>
+                    <div class="cart_buttons"> <button type="button" onclick = "createReservation()" class="button cart_button_checkout">Забронювати</button> </div>
                 </div>
             </div>
         </div>
@@ -59,10 +59,10 @@
 </div>
 
 <script>
-const getOrders = () => {
+const getOrders = async () => {
     let basket = sessionStorage.getItem('basket');
     if(!basket){
-        await fetch('', )//вставте необхідну урлу для перевірки респонсу метод гет
+        await fetch('')//вставте необхідну урлу для перевірки респонсу метод гет
 	    .then(response => {
             basket = response.json();
 
@@ -83,6 +83,25 @@ const getOrders = () => {
     title.insertAdjacentHTML("beforeend", `Basket<small> (${data.blocks.length} item in your basket) </small>`);
 };
 
+const createReservation = async () => {
+    if(sessionStorage.getItem('basket')){
+    try {
+		await fetch('', {//вставте необхідну урлу
+			method: 'post',
+			body: sessionStorage.getItem('basket')}
+			);
+	}
+	catch(error){
+		alert('Failed sending');
+		return;
+	}
+
+    return;
+    }
+
+    alert("зробіть замовлення");
+};
+
 const deleteItem = (index) => {
     const data = JSON.parse(sessionStorage.getItem('basket'));
     data.blocks.splice(index,1);
@@ -101,7 +120,7 @@ const getColumns = () =>({
     buttonColumn: document.getElementById("button"),
 
 });
-getOrders();
+//async getOrders();
 </script>
 </body>
 </html>
