@@ -29,13 +29,19 @@ post
 "input":"text of input"
 }
 get books
-{"books": [{
+{
+pagination: 2, //кількість сторінок
+"books": [{
 "book_title":"",
 "author":"",
 "genre":"",
 "book_id":"",
 "description":"?",
 }, ...]
+}
+pagination
+{
+    "pageIndex": 
 }
 reservation of book
 {

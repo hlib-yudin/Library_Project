@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basket</title>
+    <link rel="stylesheet" href="../Styles/shopping.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid"> <a class="navbar-brand" href="../index.html">Book Catalog</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+                 <li class="nav-item"> <a class="nav-link" aria-current="page" href="../index.html">Home</a> </li>
+                <li class="nav-item"> <a class="nav-link " href="./catalog.html">Catalog</a> </li>
+                <li class="nav-item"> <a class="nav-link" aria-current="page" href="./addBook.html">Add Book</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="./removeBook.html">Remove Book</a> </li>
+                <li class="nav-item"> <a class="nav-link active" aria-current="page" href="./basket.html">Basket</a> </li>
+            </ul>
+        </div>
+    </div>
+    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="./signup.html" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
+
+</nav>
+    <div class="cart_section">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-1">
+                <div class="cart_container">
+                    <div class="cart_title" id = title></div>
+                    <div class="cart_items">
+                        <ul class="cart_list">
+                            <li class="cart_item clearfix">
+                                <div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
+                                    <div class="cart_item_name cart_info_col" id = "name">
+                                        <div class="cart_item_title">Назва книги</div>
+                                        <div class="cart_item_text">1984</div>
+                                    </div>
+                                     <div class="cart_item_name cart_info_col"  id = "author">
+                                        <div class="cart_item_title">Автор</div>
+                                        <div class="cart_item_text">George Orwell</div>
+                                    </div>
+                                    <div class="cart_item_name cart_info_col" id = "button">
+                                        <div class="cart_item_title">Видалити</div>
+                                        <div type="button" id= "button" class="cart_item_text btn-dark">Видалити</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cart_buttons"> <button type="button" onclick = "createReservation()" class="button cart_button_checkout">Забронювати</button> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const getOrders = async () => {
+    let basket = sessionStorage.getItem('basket');
+    if(!basket){
+        await fetch('')//вставте необхідну урлу для перевірки респонсу метод гет
+	    .then(response => {
+            basket = response.json();
+
+            sessionStorage.setItem('basket',JSON.stringify(basket));
+
+            }).catch((error) => {
+            alert('error');
+        });
+    }
+    const {boookNameColumn,  bookAuthorColumn, buttonColumn} = getColumns();
+
+    basket.blocks.forEach((block, index) => {
+        boookNameColumn.insertAdjacentHTML('beforeend', `<div class="cart_item_text">${block.name}</div>`);
+        bookAuthorColumn.insertAdjacentHTML('beforeend', `<div class="cart_item_text">${block.author}</div>`);
+        buttonColumn.insertAdjacentHTML('beforeend', `<div type="button" onclick = "deleteItem(${index})" id = "${'button' + index}}" class="cart_item_text btn-dark">Видалити</button>`);
+        });
+    const title = document.getElementById("title");
+    title.insertAdjacentHTML("beforeend", `Basket<small> (${data.blocks.length} item in your basket) </small>`);
+};
+
+const createReservation = async () => {
+    if(sessionStorage.getItem('basket')){
+    try {
+		await fetch('', {//вставте необхідну урлу
+			method: 'post',
+			body: sessionStorage.getItem('basket')}
+			);
+	}
+	catch(error){
+		alert('Failed sending');
+		return;
+	}
+
+    return;
+    }
+
+    alert("зробіть замовлення");
+};
+
+const deleteItem = (index) => {
+    const data = JSON.parse(sessionStorage.getItem('basket'));
+    data.blocks.splice(index,1);
+    sessionStorage.setItem('basket',JSON.stringify(data));
+    
+    const {boookNameColumn,  bookAuthorColumn, buttonColumn} = getColumns();
+
+    boookNameColumn.children[index+1].remove()
+    bookAuthorColumn.children[index+1].remove()
+    buttonColumn.children[index+1].remove()
+    };
+
+const getColumns = () =>({
+    boookNameColumn: document.getElementById("name"),
+    bookAuthorColumn: document.getElementById("author"),
+    buttonColumn: document.getElementById("button"),
+
+});
+//async getOrders();
+</script>
+</body>
+</html>
