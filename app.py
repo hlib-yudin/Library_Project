@@ -24,14 +24,15 @@ def hello_world():
 @app.route('/')
 def index():
 
-    return redirect(url_for("page_for_returning_books"))
-    return 'ok'
+    #return redirect(url_for("page_for_returning_books"))
+    return redirect(url_for("issue_order"))
 
-# змініть цей URL, будь ласка
-@app.route("/books/return/submit", methods=('POST',))
+
+
+@app.route("/books/return/submit", methods = ('POST',))
 def return_books():
-    # # Функція для повернення книг (ще не зроблена)
-    # print(request.form.getlist("book_ids"))
+    # Функція для повернення книг (ще не зроблена)
+    #print(request.form.getlist("book_ids"))
     arrived_json = request.data.decode('utf-8')
     # data -- готовий список словників, з яким можна працювати
     data = json.loads(arrived_json)
@@ -58,7 +59,70 @@ def return_books():
     # db.session.commit()
     return 'ok'
 
-@app.route("/books/return", methods=('GET', 'POST'))
+
+
+@app.route('/order/issue')
+def issue_order():
+    # Функція для підтвердження видачі замовлення.
+    # Приймає json: {"user_login": ...,    "order_id": ... }
+    # TODO: нормально протестувати цю функцію!!!!!
+
+    #arrived_json = json.loads(request.data.decode('utf-8'))
+    arrived_json = {"user_login": '3', "order_id": 1}
+    print(arrived_json)
+    arrived_login = arrived_json["user_login"]
+    arrived_order_id = arrived_json["order_id"]
+
+    # 1) валідація 
+    # чи є такий логін?
+    users = UserInf.query.filter_by(user_login = arrived_login).all()
+    if len(users) == 0:
+        return "no users with given login"
+
+    # чи є таке замовлення?
+    user = users[0]
+    orders = Order.query.filter_by(order_id = arrived_order_id).all()
+    if len(orders) == 0:
+        return "no orders with given id"
+
+    # чи має даний юзер дане замовлення?
+    order = orders[0]
+    if order.user.user_id != user.user_id:
+        return "given person didn't make given order"
+
+    # чи скасоване замовлення?
+    if order.is_canceled:
+        return "order was canceled"
+
+    # чи замовлення вже видане?
+    if order.issue_date:
+        return "order was already issued"
+
+    # чи є читач боржником?
+    if user.status.status_name == "debtor":
+        # якщо боржник -- скасувати замовлення
+        order.is_canceled = True
+        #db.session.commit()
+        return "person is debtor -- order was cancelled" 
+
+    # якщо читач є боржником, але в базі даних про це ще немає інформації
+    if is_debtor(user.user_id):
+        order.is_canceled = True
+        user.status = Status.query.filter_by(status_name = "debtor").first()
+        #db.session.commit()
+        return "person is debtor -- order was cancelled" 
+
+
+    # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
+    order.issue_date = date.today().strftime('%Y-%m-%d')
+    print(order.issue_date)
+    #db.session.commit()
+    return "order was successfully issued"
+
+
+
+
+@app.route("/books/return", methods = ('GET', 'POST'))
 def page_for_returning_books():
     # Рендерить сторінку для підтвердження повернення книги.
     json_orders = {}
@@ -125,6 +189,8 @@ def page_for_returning_books():
         }]
     }"""
     return render_template('returnBooks.html', json=json_orders)
+
+
 
 def return_of_book(dict_list):
     # user_status = UserInf.query.filter_by(user_id=user_id).first().status
