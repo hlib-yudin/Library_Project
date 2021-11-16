@@ -14,11 +14,6 @@
     <div class="container-fluid"> <a class="navbar-brand" href="../index.html">Book Catalog</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
-                <li class="nav-item"> <a class="nav-link" aria-current="page" href="../index.html">Home</a> </li>
-                <li class="nav-item"> <a class="nav-link active" href="./catalog.html">Catalog</a> </li>
-                <li class="nav-item"> <a class="nav-link" aria-current="page" href="./addBook.html">Add Book</a> </li>
-                <li class="nav-item"> <a class="nav-link" href="./removeBook.html">Remove Book</a> </li>
-                <li class="nav-item"> <a class="nav-link" aria-current="page" href="./basket.html">Basket</a> </li>
             </ul>
             <form class="d-flex"> <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search"> <button class="btn btn-outline-success" onclick="addSearchToStorage()">Search</button> </form>
         </div>
@@ -37,7 +32,7 @@
           </nav>
         </div>
       </div>
-
+ <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
   const getBooks = async () => {
     const row = document.getElementById('blocks');
@@ -57,7 +52,8 @@
     ]
     }
     */
-    await fetch('', )//вставте необхідну урлу для перевірки респонсу метод гет
+   alert("{{url_for('take_books_data')}}");
+    await fetch("{{url_for('take_books_data')}}", {method: 'get'})//вставте необхідну урлу для перевірки респонсу метод гет
 	.then(response => {
     var data = response.json();
 
@@ -89,7 +85,7 @@
     });
 	})
 	.catch((error) => {
-		alert('Failed sending');
+		alert('Failed sending',error);
 		return;
 	});
   };

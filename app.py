@@ -7,6 +7,7 @@ import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
@@ -20,14 +21,44 @@ from models import *
 def hello_world():
     return 'Hello World!'"""
 
-
+# html routing
 @app.route('/')
 def index():
 
     #return redirect(url_for("page_for_returning_books"))
     return redirect(url_for("issue_order"))
 
+@app.route("/books/catalogue")
+def catalogue():
+    return render_template('catalog.html')
 
+@app.route("/books/basket", methods = ["GET"])
+def basket():
+    return render_template('basket.html')
+
+@app.route("/books/signin")
+def sigin():
+    return render_template('signin.html')
+
+@app.route("/books/signup")
+def sigup():
+    return render_template('signup.html')
+
+@app.route("/books/addBook")
+def addBook():
+    return render_template('addBook.html')
+
+@app.route("/books/removeBook")
+def removeBook():
+    return render_template('removeBook.html')
+
+@app.route("/scripts/navbarCreation")
+def navbarCretionScript():
+    return render_template('navbarCreation.js')
+
+@app.route("/navbar/css")
+def navbarcss():
+    return render_template('sign.css')
 
 @app.route("/books/return/submit", methods = ('POST',))
 def return_books():
@@ -295,6 +326,8 @@ def is_debtor(user_id):
     return is_debtor_flag
 
 
+
+@app.route("/catalogue/return", methods = ["GET"])
 def take_books_data():
     book_data_list = []
     editions = EditionInf.query.all()
@@ -316,7 +349,7 @@ def take_books_data():
             "number_of_available": num_of_available.number_of_available
         }
         book_data_list.append(book_data_output)
-        print(book_data_output)
+       # print(book_data_output)
     return book_data_list
 
 

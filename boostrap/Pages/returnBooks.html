@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
-<link rel="stylesheet" href="../Styles/sign.css">
+<link rel="stylesheet" href="{{url_for('navbarcss')}}">
     <title>Return book</title>
 </head>
 <body>
@@ -16,15 +16,11 @@
     <div class="container-fluid"> <a class="navbar-brand" href="../index.html">Book Catalog</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
-                <li class="nav-item"> <a class="nav-link" aria-current="page" href="../index.html">Home</a> </li>
-                <li class="nav-item"> <a class="nav-link " href="./catalog.html">Catalog</a> </li>
-                <li class="nav-item"> <a class="nav-link active" aria-current="page" href="./addBook.html">Add Book</a> </li>
-                <li class="nav-item"> <a class="nav-link " href="./removeBook.html">Remove Book</a> </li>
-                <li class="nav-item"> <a class="nav-link " aria-current="page" href="./basket.html">Basket</a> </li>
+                
             </ul>
         </div>
     </div>
-    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="./signup.html" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
+    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('sigup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
 
 </nav>
 
@@ -68,9 +64,9 @@
     </form>
 {% endif %}
 </div>
-
-
+<script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
+    /*
     const submitReturning = async () => {
  
         const form = document.forms.submit_returning;
@@ -80,7 +76,7 @@
             json.push({'order_id': parseInt(key),
                     'book_id': value,
                     'user_id': {{json['user_id']}} });           }); // {{json['user_id']}}
-
+            
         
    
         try {
@@ -113,7 +109,7 @@
             return;
         });
     }*/
-}
+//}
     
 </script>
 
