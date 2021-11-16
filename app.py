@@ -47,8 +47,8 @@ def return_books():
     old_user_status = get_user_status(user_id)
     res = return_of_book(data)
     db.session.commit()
-    is_dep = is_deptor(user_id)
-    if old_user_status == 'debtor' and not is_deptor(user_id):
+    is_dep = is_debtor(user_id)
+    if old_user_status == 'debtor' and not is_debtor(user_id):
         change_user_status(user_id, 'normal')
     if old_user_status != 'debtor' and all_books_returned(user_id):
         grant_privileges(user_id)
