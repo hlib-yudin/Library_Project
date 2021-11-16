@@ -2,6 +2,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, url_for, request, redirect, json, session as flask_session
 from config import Config
 from datetime import date
+import json
+
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
@@ -21,15 +23,20 @@ def hello_world():
 
 
 # змініть цей URL, будь ласка
-@app.route("/books/return/id", methods = ('POST',))
+@app.route("/books/return/submit", methods = ('POST',))
 def return_books():
     # Функція для повернення книг (ще не зроблена)
     print(request.form.getlist("book_ids"))
+    arrived_json = request.data.decode('utf-8')
+    # data -- готовий список словників, з яким можна працювати
+    data = json.loads(arrived_json)
+    s = json.dumps(data, indent=4, sort_keys=True)
+    print(s)
     return 'ok'
 
 
 
-@app.route("/books/return", methods = ('GET',))
+@app.route("/books/return", methods = ('GET', 'POST'))
 def page_for_returning_books():
     # Рендерить сторінку для підтвердження повернення книги.
     json_orders = {}
@@ -49,7 +56,7 @@ def page_for_returning_books():
             return "no orders"
 
         # складаємо json з інформацією про замовлення
-        json_orders = {"orders": []}
+        json_orders = {"user_id": user.user_id, "orders": []}
         for order in orders:
             books = OrderBook.query.filter_by(order_id=order.order_id).all()
             books = [book.book for book in books if book.return_date == None]
@@ -76,6 +83,7 @@ def page_for_returning_books():
 
     # відобразити html-сторінку
     """json_orders = {
+        "user_id": "",
         "orders": [{
             "order_id": "1",
             "order_issue_date": "20-08-20",
@@ -100,12 +108,12 @@ def page_for_returning_books():
 
 @app.route('/')
 def index():
-    a = take_books_data()
-    print(check_availability(['5-325-00380-1']))
+    #a = take_books_data()
+    #print(check_availability(['5-325-00380-1']))
     #print(sign_up("7", "7777", "Гліб", "Юдін", None, "reader"))
-    print(db.session.query(t_user_role).filter_by(role_id = 2).all())
-    print(log_in("6", "7776"))
-    print(log_in("6", "6666"))
+    #print(db.session.query(t_user_role).filter_by(role_id = 2).all())
+    #print(log_in("6", "7776"))
+    #print(log_in("6", "6666"))
     return redirect(url_for("page_for_returning_books"))
     #return 'ok'
 

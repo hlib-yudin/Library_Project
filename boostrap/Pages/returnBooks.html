@@ -46,25 +46,77 @@
 
 
 <div class="list_of_orders">
+{% if json %}
+<form name="submit_returning" method="post"> <!--action="/books/return/id"> --> <!--change action URL-->
     {% for order in json['orders'] %}
     <div class="order">
+        
         <h2>Замовлення № {{order.order_id}}</h2>
         <h4>{{order.order_issue_date}}</h4>
-        <form method="post" action="/books/return/id"> <!--change action URL-->
+        
         {% for book in order.books %}
             <div class="book_row">
                 <div>{{book.edition_name}}</div>
                 <div>{{", ".join(book.edition_authors)}}</div>
                 <div>{{book.edition_year}}</div>
-                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="book_ids" value="{{book.book_id}}">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" name={{order.order_id}} value={{book.book_id}}>
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-
+        <!--TODO: pass parameters into submitReturning to distinguish between forms!!!-->
     </div>
     {% endfor %}
+    <button type="submit" class="btn btn-primary" onclick="submitReturning()">Submit</button>
+    </form>
+{% endif %}
 </div>
+
+
+<script>
+    const submitReturning = async () => {
+ 
+        const form = document.forms.submit_returning;
+        let json = [];
+        formData = new FormData(form);
+        formData.forEach(function(value, key){
+            json.push({'order_id': parseInt(key),
+                    'book_id': value,
+                    'user_id': {{json['user_id']}} });           }); // {{json['user_id']}}
+
+        
+   
+        try {
+            await fetch('{{url_for("return_books")}}', {//вставте необхідну урлу
+                method: 'post',
+                body: JSON.stringify(json)}
+                );
+        }
+        catch(error){
+            alert('Failed sending oh no');
+        }
+
+        
+        location.replace('/');
+
+        /*await fetch('/books/return/id', )//вставте необхідну урлу для перевірки респонсу метод гет
+        .then(response => {
+            const parsedResponse = response.json().response
+            if(!parsedResponse.length){
+                alert('реєстрація пройшла успішно');
+
+                return;
+            }else {
+                alert(parsedResponse);
+                return;
+            }
+        })
+        .catch((error) => {
+            alert('Failed sending');
+            return;
+        });
+    }*/
+}
+    
+</script>
 
 <!--
     <div class="signup-form">
