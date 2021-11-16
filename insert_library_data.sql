@@ -33,9 +33,10 @@ insert into genre (genre) values ('Поезія');
 
 
 /* Add book 1: Математичний аналіз том 1*/                                               
-insert into author (author_surname, author_name, author_middle_name) values ('Дороговцев', 'Анатолій', 'Якович');  
+insert into author (author_surname, author_name, author_middle_name) values ('Дороговцев', 'Анатолій', 'Якович');
 
 insert into edition_inf (edition_id, book_title, edition_year) values ('5-325-00380-1', 'Математичний аналіз том 1', 1993);
+
 
 insert into edition_author (edition_id, author_id) values ('5-325-00380-1', 1);
 
@@ -282,8 +283,6 @@ INSERT INTO User_status (user_id, status_id)
            (5, 1),
            (6, 3);
 
-
-
 ------------------------------------------------------------
 --Create Orders
 ------------------------------------------------------------
@@ -300,7 +299,7 @@ insert into order_book (book_id, order_id)
 values ('20000001', 1);
 UPDATE Edition_count SET number_of_available = number_of_available - 1 WHERE edition_id = '5-325-00380-2';
 
-
+---------------------------
 insert into orders (user_id, booking_date, issue_date, is_canceled)
 values (3, to_date('26-08-2020', 'DD-MM-YYYY'), 
 		to_date('28-08-2020', 'DD-MM-YYYY'), false);
@@ -311,5 +310,34 @@ UPDATE Edition_count SET number_of_available = number_of_available - 1 WHERE edi
 
 insert into order_book (book_id, order_id, return_date)
 values ('40000001', 2, to_date('12-09-2020', 'DD-MM-YYYY'));
+---------------------------
+insert into orders (user_id, booking_date, issue_date, is_canceled)
+values (6, to_date('25-07-2020', 'DD-MM-YYYY'), 
+		to_date('25-07-2020', 'DD-MM-YYYY'), false);
+		
+insert into order_book (book_id, order_id, return_date)
+values ('50000001', 3, to_date('12-09-2020', 'DD-MM-YYYY'));
+
+insert into order_book (book_id, order_id, return_date)
+values ('60000002', 3, to_date('12-10-2020', 'DD-MM-YYYY'));
+---------------------------
+insert into orders (user_id, booking_date, issue_date, is_canceled)
+values (6, to_date('25-07-2020', 'DD-MM-YYYY'), 
+		to_date('25-07-2020', 'DD-MM-YYYY'), false);
+		
+insert into order_book (book_id, order_id, return_date)
+values ('70000001', 4, to_date('11-09-2020', 'DD-MM-YYYY'));
+
+--insert into order_book (book_id, order_id, return_date)
+--values ('80000002', 4, to_date('11-10-2020', 'DD-MM-YYYY'));
+
+
+insert into order_book (book_id, order_id)
+values ('80000002', 4);
+
+
+
+
+
 
 
