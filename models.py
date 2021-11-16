@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import BigInteger, Boolean, Column, Date, ForeignKey, Integer, Table, Text, UniqueConstraint, text
+from sqlalchemy import BigInteger, Boolean, Column, Date, ForeignKey, Integer, Table, Text, UniqueConstraint, text, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask
