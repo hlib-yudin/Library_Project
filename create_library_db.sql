@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      PostgreSQL 9.x                               */
-/* Created on:     10.11.2021 18:21:12                          */
+/* Created on:     15.11.2021 13:50:55                          */
 /*==============================================================*/
 
 
@@ -26,10 +26,10 @@ alter table if exists Order_book
    drop constraint if exists FK_ORDERS_B_ORDERS;
 
 alter table if exists Order_book
-   drop constraint if exists FK_USERS_INF_ORDERS;
-
-alter table if exists Order_book
    drop constraint if exists FK_BOOKS_ORDERS;
+
+alter table if exists Orders
+   drop constraint if exists FK_USERS_INF_ORDERS;
 
 alter table if exists Role_permission
    drop constraint if exists FK_ROLES_PE_ROLES;
@@ -97,9 +97,9 @@ create table Author (
 /* Table: Book                                                  */
 /*==============================================================*/
 create table Book (
-   edition_id           TEXT                 			   not null,
-   book_id              TEXT                 			   not null,
-   is_delete            BOOL        DEFAULT FALSE          not null,
+   edition_id           TEXT                 not null,
+   book_id              TEXT                 not null,
+   is_delete            BOOL                 not null default FALSE,
    constraint PK_BOOK primary key (book_id),
    constraint AK_KEY_2_BOOK unique (edition_id, book_id)
 );
@@ -155,21 +155,21 @@ create table Genre (
 /* Table: Order_book                                            */
 /*==============================================================*/
 create table Order_book (
-   user_id              INT8                 not null,
    book_id              TEXT                 not null,
    order_id             INT4                 not null,
    return_date          DATE                 null,
-   constraint PK_ORDER_BOOK primary key (user_id, book_id, order_id)
+   constraint PK_ORDER_BOOK primary key (book_id, order_id)
 );
 
 /*==============================================================*/
 /* Table: Orders                                                */
 /*==============================================================*/
 create table Orders (
-   order_id             SERIAL          			       not null,
-   booking_date         DATE          				       not null,
-   issue_date           DATE            			       null,
-   is_canceled          BOOL         DEFAULT FALSE         not null,
+   order_id             SERIAL               not null,
+   user_id              INT4                 not null,
+   booking_date         DATE                 not null,
+   issue_date           DATE                 null,
+   is_canceled          BOOL                 not null default FALSE,
    constraint PK_ORDERS primary key (order_id)
 );
 
@@ -279,13 +279,13 @@ alter table Order_book
       on delete restrict on update restrict;
 
 alter table Order_book
-   add constraint FK_USERS_INF_ORDERS foreign key (user_id)
-      references User_inf (user_id)
-      on delete restrict on update restrict;
-
-alter table Order_book
    add constraint FK_BOOKS_ORDERS foreign key (book_id)
       references Book (book_id)
+      on delete restrict on update restrict;
+
+alter table Orders
+   add constraint FK_USERS_INF_ORDERS foreign key (user_id)
+      references User_inf (user_id)
       on delete restrict on update restrict;
 
 alter table Role_permission
@@ -317,4 +317,6 @@ alter table User_status
    add constraint FK_USER_STA_STATUS foreign key (status_id)
       references Status (status_id)
       on delete restrict on update restrict;
+
+
 
