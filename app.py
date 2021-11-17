@@ -32,7 +32,7 @@ def index():
 def catalogue():
     return render_template('catalog.html')
 
-@app.route("/books/basket", methods = ["GET"])
+@app.route("/books/basket")
 def basket():
     return render_template('basket.html')
 
@@ -392,11 +392,12 @@ def check_availability(editions_id):
         return check_list
 
 
-@app.route('/signup/user')
-def sign_up(login, password, first_name, last_name, middle_name, role_name):
+@app.route('/signup/user', methods = ['POST'])
+def sign_up():
     # Проводить реєстрацію користувача з даними полями.
     # Логін і пароль приходять вже в зашифрованому вигляді (sha-256).
-
+    print(request.data);
+    '''
     # шукаємо користувачів з даним логіном
     users = UserInf.query.filter_by(user_login=login).all()
     # якщо вони вже існують -- не проводимо реєстрацію
@@ -422,10 +423,13 @@ def sign_up(login, password, first_name, last_name, middle_name, role_name):
         # зберегти зміни -- TODO, після того, як перевірено правильність роботи цієї функції
         print(added_user)
         db.session.commit()
-        return "sign_up -- ok"
+    '''
+    return "sign_up -- ok"
 
-
-def log_in(login, password):
+@app.route("/login/user", methods = ('POST',))
+def log_in():
+    print(request.data);
+    '''
     # Проводить авторизацію користувача з вказаними зашифрованими логіном і паролем.
     users = UserInf.query.filter_by(user_login=login, user_password=password).all()
     if len(users) == 0:
@@ -438,7 +442,8 @@ def log_in(login, password):
         flask_session['name'] = user.user_name
         flask_session['role'] = user.role.role_name
         print(user, user.role.role_name)
-        return "log_in - ok"
+    '''
+    return "log_in - ok"
 
 
 if __name__ == '__main__':
