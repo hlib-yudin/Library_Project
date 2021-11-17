@@ -392,7 +392,7 @@ def check_availability(editions_id):
         return check_list
 
 
-
+@app.route('/signup/user')
 def sign_up(login, password, first_name, last_name, middle_name, role_name):
     # Проводить реєстрацію користувача з даними полями.
     # Логін і пароль приходять вже в зашифрованому вигляді (sha-256).

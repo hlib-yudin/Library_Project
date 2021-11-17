@@ -17,9 +17,8 @@ const setNavbar = (type) => {
 //aria-current="page"
 const createNavbar = () => {
     const type = sessionStorage.getItem('status');
-    console.log(type);
-    if(type !== undefined){
-        console.log(type);
+
+    if(type !== null){
         setNavbar(type);
         return;
     }

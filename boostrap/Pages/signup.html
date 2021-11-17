@@ -69,6 +69,7 @@
 		json[key] = value; });
 		console.log(json);
 		//нужно добавить проверки
+		//if(json)
 		/*
 		registration
 			{
@@ -85,32 +86,16 @@
 			}
 		*/
 		try {
-			await fetch('', {//вставте необхідну урлу
+			await fetch("{{url_for('sign_up')}}", {//вставте необхідну урлу
 				method: 'post',
 				body: JSON.stringify(json)}
-				);
+				).then( response => alert(response));
 		}
 		catch(error){
 			alert('Failed sending');
 			return;
 		}
 	
-		await fetch('', )//вставте необхідну урлу для перевірки респонсу метод гет
-		.then(response => {
-			const parsedResponse = response.json().response
-			if(!parsedResponse.length){
-				alert('реєстрація пройшла успішно');
-
-				return;
-			}else {
-				alert(parsedResponse);
-				return;
-			}
-		})
-		.catch((error) => {
-			alert('Failed sending');
-			return;
-		});
 	};
 	</script>
 </body>
