@@ -350,7 +350,7 @@ def take_books_data():
         }
         book_data_list.append(book_data_output)
        # print(book_data_output)
-    return book_data_list
+    return {'res':book_data_list}
 
 
 def find_by_title(title):
@@ -374,7 +374,7 @@ def find_by_title(title):
         }
         book_data_list.append(book_data_output)
         print(book_data_output)
-    return book_data_list
+    return {'res':book_data_list}
 
 
 def check_availability(editions_id):
