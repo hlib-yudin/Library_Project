@@ -66,19 +66,16 @@
 </div>
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
-    /*
     const submitReturning = async () => {
- 
         const form = document.forms.submit_returning;
         let json = [];
         formData = new FormData(form);
-        formData.forEach(function(value, key){
+        formData.forEach((value, key) => {
             json.push({'order_id': parseInt(key),
                     'book_id': value,
-                    'user_id': {{json['user_id']}} });           }); // {{json['user_id']}}
-            
-        
-   
+                    'user_id': "{{json['user_id']}}" });
+                 }); // {{json['user_id']}}
+
         try {
             await fetch('{{url_for("return_books")}}', {//вставте необхідну урлу
                 method: 'post',
@@ -109,7 +106,7 @@
             return;
         });
     }*/
-//}
+}
     
 </script>
 
