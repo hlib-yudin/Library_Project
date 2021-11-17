@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, render_template, url_for, request, redirect, json, session as flask_session
+from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, session as flask_session
 from config import Config
 from datetime import date
 from dateutil.relativedelta import *
@@ -41,7 +41,7 @@ def sigin():
     return render_template('signin.html')
 
 @app.route("/books/signup")
-def sigup():
+def signup():
     return render_template('signup.html')
 
 @app.route("/books/addBook")
@@ -325,32 +325,36 @@ def is_debtor(user_id):
         is_debtor_flag = True
     return is_debtor_flag
 
+@app.route("/catalogue/addBook", methods = ['POST'])
+def addCatalogueBook():
+    book = request.data;
+    return render_template('basket.html', json = request.data)
 
-
-@app.route("/catalogue/return", methods = ["GET"])
+@app.route("/catalogue/return", methods = ['GET'])
 def take_books_data():
-    book_data_list = []
-    editions = EditionInf.query.all()
-    for edition in editions:
-        edition_genres = edition.genres
-        edition_genres = ", ".join(genre.genre for genre in edition_genres)
+    if request.method == 'GET':
+        book_data_list = []
+        editions = EditionInf.query.all()
+        for edition in editions:
+            edition_genres = edition.genres
+            edition_genres = ", ".join(genre.genre for genre in edition_genres)
 
-        edition_authors = edition.authors
-        edition_authors = ", ".join(
-            " ".join([author.author_name, str(author.author_middle_name or ''), author.author_surname]) for author in
-            edition_authors)
-        num_of_available = EditionCount.query.filter_by(edition_id=edition.edition_id).all()[0]
-        book_data_output = {
-            "edition_id": edition.edition_id,
-            "book_title": edition.book_title,
-            "authors": edition_authors,
-            "genres": edition_genres,
-            "year": edition.edition_year,
-            "number_of_available": num_of_available.number_of_available
-        }
-        book_data_list.append(book_data_output)
-       # print(book_data_output)
-    return {'res':book_data_list}
+            edition_authors = edition.authors
+            edition_authors = ", ".join(
+                " ".join([author.author_name, str(author.author_middle_name or ''), author.author_surname]) for author in
+                edition_authors)
+            num_of_available = EditionCount.query.filter_by(edition_id=edition.edition_id).all()[0]
+            book_data_output = {
+                "edition_id": edition.edition_id,
+                "book_title": edition.book_title,
+                "authors": edition_authors,
+                "genres": edition_genres,
+                "year": edition.edition_year,
+                "number_of_available": num_of_available.number_of_available
+            }
+            book_data_list.append(book_data_output)
+        #print(book_data_output)
+        return make_response(jsonify({'books':book_data_list}))
 
 
 def find_by_title(title):
@@ -426,7 +430,7 @@ def sign_up():
     '''
     return "sign_up -- ok"
 
-@app.route("/login/user", methods = ('POST',))
+@app.route("/login/user", methods = ['POST'])
 def log_in():
     print(request.data);
     '''

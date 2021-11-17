@@ -53,49 +53,60 @@
     }
     */
    alert("{{url_for('take_books_data')}}");
-    await fetch("{{url_for('take_books_data')}}", {method: 'get'})//вставте необхідну урлу для перевірки респонсу метод гет
+   await fetch("{{url_for('take_books_data')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
 	.then(response => {
-    var data = response.json();
+    if (response.status !== 200) {
+          alert(`Looks like there was a problem. Status code: ${response.status}`);
+          return;
+        }
 
+    return response.json()})
+    .then(data => {
+/*
     let i = data.pagination;
     while(i > 0){
       pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination(${i})">${i}</a></li>`);
       i-=1;
     }
-
+*/
     data.books.forEach((book,index) => {
-      row.insertAdjacentHTML('afterend',`
-  <div class="col-md-4">
+      let div = document.createElement('div');
+      div.className = "col-md-4";
+      div.innerHTML =  `
     <div class="card mb-4 box-shadow" id = ${'book'+index}>
        <div class="card-body">
-          <p class="card-text">${book.title}</p>
-          <p class="card-text">${book.author}</p>
-          <p class="card-text">${book.genre}</p>
+          <p class="card-text">${book.book_title}</p>
+          <p class="card-text">${book.authors}</p>
+          <p class="card-text">${book.year}</p>
             <div class="d-flex justify-content-between align-items-center">
               <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-outline-primary">ADD</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" >INFO</button>
-
+                <button type="button" class="btn btn-sm btn-outline-primary" >ADD</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">INFO</button>
               </div>
             </div>
         </div>
     </div>
-  </div>
-  `);
+  `;
+  const functions = [addBook,getInfo];
+    div.querySelectorAll('button').forEach((button,index) => {
+      button.addEventListener("click", () => functions[index](button,book));
     });
-	})
-	.catch((error) => {
-		alert('Failed sending',error);
-		return;
-	});
-  };
+  //block.find('button').on('click', () => addBook(book));
 
-const getInfo = (event) =>{
-  const card = event.parentNode.parentNode;
+      row.append(div);
+    });
+});
+};
+
+const getInfo = (event, data) =>{
+  if(event){
+    const card = event.parentNode.parentNode;
   
   event.parentNode.removeChild(event);
  
-  card.insertAdjacentHTML('beforebegin', `<p class="card-text">${data.description}</p>`);//перевірити доступність даних
+  card.insertAdjacentHTML('beforebegin', `<p class="card-text">${data.genres}</p>
+  <p class="card-text">${data.number_of_available}</p>`);
+  }
 };
 /* треба перевірити здогадку, але після того як запрацює бд
   const addSearchToStorage = () => {
@@ -104,7 +115,25 @@ const getInfo = (event) =>{
     sessionStorage.setItem('input',input);
   };
 */
+const addBook = (event, book) => {
+  const field = event.parentNode.parentNode.parentNode.parentNode.id;
 
+  localStorage.setItem(field, JSON.stringify(book));
+  await fetch('', {
+    method: 'POST',
+    body: book,
+  })//вставте необхідну урлу для перевірки респонсу метод гет
+	    .then(response => {
+        if (response.status !== 200) {
+          alert(`Looks like there was a problem. Status code: ${response.status}`);
+          return;
+        }
+
+    return response.json()})
+    .then(data => {
+      alert(data);});
+};
+/*
 const getPagination = async (index) => {
   const json = {
     "pageIndex":index,
@@ -121,7 +150,8 @@ const getPagination = async (index) => {
 		return;
 	}
 };
-  getBooks();
+*/
+getBooks();
 </script>
 </body>
 </html>
