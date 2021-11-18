@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app import db
+from datetime import * 
 
 metadata = db.Model.metadata
 
@@ -49,7 +50,11 @@ class EditionCount(EditionInf):
                         primary_key=True)
     number_of_available = Column(BigInteger, nullable=False)
 
+    def count_update(self):
+        self.number_of_available -= 1
+        db.session.commit()
 
+        
 class Genre(db.Model):
     __tablename__ = 'genre'
 
@@ -98,7 +103,6 @@ class UserInf(db.Model):
     status = relationship("Status", secondary='user_status', uselist=False)
 
 
-
 class Book(db.Model):
     __tablename__ = 'book'
     __table_args__ = (
@@ -136,6 +140,17 @@ class Order(db.Model):
     is_canceled = Column(Boolean, nullable=False, server_default=text("false"))
 
     user = relationship('UserInf')
+    
+    def is_canceled_update(self, new_status):
+        self.is_canceled = new_status
+        db.session.commit()
+
+    @classmethod
+    def add(cls, user_id):
+        new_order = Order(user_id=user_id, booking_date=date.today(), issue_date=None, is_canceled=False)
+        db.session.add(new_order)
+        db.session.commit()
+        return new_order    
 
 
 t_role_permission = Table(
@@ -168,3 +183,11 @@ class OrderBook(db.Model):
 
     book = relationship('Book')
     order = relationship('Order')
+    
+    
+    @classmethod
+    def add(cls, book_id, order_id):
+        new_order = OrderBook(book_id=book_id, order_id=order_id, return_date=None)
+        db.session.add(new_order)
+        db.session.commit()
+        return new_order
