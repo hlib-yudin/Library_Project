@@ -330,6 +330,136 @@ def addCatalogueBook():
     book = request.data;
     return render_template('basket.html', json = request.data)
 
+
+# --------------------------Герасимчук -- Кошик та оформлення замовлення---------------------------------------------
+# функція працює коректно при умові, що return_date = None
+def is_canceled_change(ord):
+    allowed_booking_days = 14
+    # треба перевірити скільки бронь вже висить
+    today_date = date.today()
+    order_date = db.session.query(Order.booking_date).filter_by(order_id=ord.order_id).first()[0]
+    booking_days = number_of_days(order_date, today_date)
+    if allowed_booking_days < booking_days:
+        # is_canceled is True
+        ord.is_canceled_update(new_status=True)
+        return 1
+    return 0
+
+
+def ordered_books_check(books):
+    new_book_list = books
+    for book_id in books:
+        # В таблиці може бути кілька замовлень з даною конкретною книгою
+        booked = db.session.query(Order).join(OrderBook, Order.order_id == OrderBook.order_id).filter_by(book_id=book_id).all()
+        for ord in booked:
+            issue_date = ord.issue_date
+            if issue_date is None and is_canceled_change(ord):
+                new_book_list.remove(book_id)
+    return new_book_list
+
+
+def available_books_now(edition_id):
+    edition_books = db.session.query(Book.book_id).filter_by(edition_id=edition_id).all()
+    # книжки одного видання, яких немає в наявності
+    # можливі випадки: (забрали і не повернули) + (не забрали, але замовлення не відмінили))=(не забрали і не відмінили)
+    ordered_books = db.session.query(OrderBook.book_id).join(Order, Order.order_id == OrderBook.order_id). \
+        filter(OrderBook.return_date == None, Order.is_canceled == False).all()
+    # перевірка коректності списку книг ordered_books
+    checked = ordered_books_check(ordered_books)
+    books = set(edition_books).symmetric_difference(set(checked)) - set(checked)
+    available_books = list()
+    for el in list(books):
+        available_books.append(el[0])
+    return available_books
+
+
+def can_add(user_id):
+    amount_of_books = {'normal': 10, 'privileged': 10, 'debtor': 0}
+    order_list = db.session.query(Order.order_id).filter_by(user_id=user_id).all()
+    user_status = get_user_status(user_id)
+    in_hands = 0
+    for order in order_list:
+        return_date = db.session.query(OrderBook.return_date).filter_by(order_id=order.order_id).all()
+        for re_date in return_date:
+            if re_date.return_date is None:
+                in_hands += 1
+    if amount_of_books[user_status] > in_hands:
+        can_add = amount_of_books[user_status] - in_hands
+        return can_add
+    else:
+        return 0
+
+
+def add_book_to_basket(user_id):
+    to_continue = True
+    edition_book_user_list = [user_id]
+    while to_continue:
+        # вияснити яку саме книгу він обрав -- edition_id, зчитати зі сторінки
+        edition_id = '5-325-00380-1'
+        edition_book_user_list.append(edition_id)
+        # якщо закінчили, то перейти до кошику, нажавши кнопку і отримати якийсь sign
+        sign = 1
+        if sign:
+            to_continue = False
+    return edition_book_user_list
+
+
+def book_deleting(chosen_books, need_to_delete):
+    chosen_books = [3, '5-325-00380-1', '118-116-11-3113-1']
+    # треба послати команду, щоб видалив книгу з наявних chosen_books, повертає список editions_id, які можна видаляти
+    # після видалення кількість книжок збільшується,
+    deleted = ['5-325-00380-1']
+    if len(deleted) < need_to_delete:
+        return 'need to delete more'
+    a = chosen_books.pop(0)
+    A = set(chosen_books)
+    B = set(deleted)
+    C = list(A.difference(B))
+    C.append(a)
+    C = list(reversed(C))
+    return C
+
+
+def order(chosen_books):
+    user_id = chosen_books.pop(0)
+    # створити новий запис в бд в Orders
+    order_id = Order.add(user_id=user_id)
+    for edition_id in chosen_books:
+        edition_amount = db.session.query(EditionCount).filter_by(edition_id=edition_id).first().number_of_available
+        if edition_amount > 0:
+            # edition_amount need to be equal to len(available_books)
+            available_books = available_books_now(edition_id)
+            b_order_id = available_books[-1]
+            # створити новий запис в бд в Order_book
+            OrderBook.add(book_id=b_order_id, order_id=order_id.order_id)
+            # після бронювання книги зменшуємо кількість однакових книг
+            book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()
+            book.count_update()
+        else:
+            print("книги немає в наявності")
+    return True
+
+
+def book_ordering_amount(user_id, chosen_books):
+    amount_of_chosen = len(chosen_books) - 1  # оскільки перший елемент user_id
+    books_can_add = can_add(user_id)
+    need_to_delete = amount_of_chosen - books_can_add
+    if books_can_add == 0:
+        return "User can not order because is debtor or already have 10 books"
+    if need_to_delete <= 0:
+        ordering = order(chosen_books)
+    elif need_to_delete > 0:
+        new_order = book_deleting(chosen_books, need_to_delete)
+        ordering = order(new_order)
+    return True
+
+
+def basket(user_id):
+    edition_book_user_list = add_book_to_basket(user_id)
+    order = book_ordering_amount(user_id, edition_book_user_list)
+# -------------------------------------------------------------------------------------------------------------------
+
+
 @app.route("/catalogue/return", methods = ['GET'])
 def take_books_data():
     if request.method == 'GET':
