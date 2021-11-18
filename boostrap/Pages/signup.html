@@ -12,8 +12,20 @@
     <title>Sign up</title>
 </head>
 <body>
+
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages %}
+				<div class="alert alert-danger" role="alert">
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float:right"></button>
+				</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+
     <div class="signup-form">
-    <form name="sign_up" class="form-horizontal">
+    <form name="sign_up" class="form-horizontal" method="POST" action="{{url_for('sign_up')}}">
       	<div class="row">
         	<div class="col-8 offset-4">
 				<h2>Sign Up</h2>
@@ -52,11 +64,11 @@
 		<div class="form-group row">
 			<div class="col-8 offset-4">
 				<p><label class="form-check-label"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a>.</label></p>
-				<button type="submit" onclick="signUp()" class="btn btn-primary btn-lg">Sign Up</button>
+				<button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
 			</div>  
 		</div>		      
     </form>
-	<div class="text-center">Already have an account? <a href="{{url_for('sigin')}}">Login here</a></div>
+	<div class="text-center">Already have an account? <a href="{{url_for('log_in')}}">Login here</a></div>
 </div>
 
 <script>
