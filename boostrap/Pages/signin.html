@@ -12,8 +12,20 @@
     <title>Sign in</title>
 </head>
 <body>
+
+	{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			{% for message in messages %}
+				<div class="alert alert-danger" role="alert">
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float:right"></button>
+				</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+
     <div class="signup-form">
-    <form class="form-horizontal" name='sign_In'>
+    <form class="form-horizontal" name='sign_In' action="{{url_for('log_in')}}" method='POST'>
       	<div class="row">
         	<div class="col-8 offset-4">
 				<h2>Sign in</h2>
@@ -34,7 +46,7 @@
         </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<button type="submit" onclick="signIn()" class="btn btn-primary btn-lg">Sign in</button>
+				<button type="submit" class="btn btn-primary btn-lg">Sign in</button>
 			</div>
 		</div>
     </form>
@@ -53,12 +65,17 @@ const signIn =  async () => {
 		return;
 	}
 
-
+	try {
 	await fetch("{{url_for('log_in')}}", {//вставте необхідну урлу
 		method: 'POST',
 		body: JSON.stringify(json)}
-	).than(response => alert(response))
-	.catch(error => alert(error));
+	);
+	}
+	finally {
+
+	} 
+
+	//location.replace
 
 };
 </script>

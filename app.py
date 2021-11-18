@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, session as flask_session
+from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, flash, session as flask_session
 from config import Config
 from datetime import date
 from dateutil.relativedelta import *
@@ -37,7 +37,7 @@ def basket():
     return render_template('basket.html')
 
 @app.route("/books/signin")
-def sigin():
+def signin():
     return render_template('signin.html')
 
 @app.route("/books/signup")
@@ -78,7 +78,7 @@ def return_books():
     user_id = data[0]['user_id']
     old_user_status = get_user_status(user_id)
     res = return_of_book(data)
-    db.session.commit()
+    #db.session.commit()
     is_dep = is_debtor(user_id)
     if old_user_status == 'debtor' and not is_debtor(user_id):
         change_user_status(user_id, 'normal')
@@ -357,7 +357,11 @@ def take_books_data():
         return make_response(jsonify({'books':book_data_list}))
 
 
-def find_by_title(title):
+def find_by_title():
+    arrived_json = request.data.decode('utf-8')
+    data = json.loads(arrived_json)
+    title = data['book_title']
+    print(title)
     book_data_list = []
     editions = EditionInf.query.filter_by(book_title=title).all()
     for edition in editions:
@@ -432,22 +436,40 @@ def sign_up():
 
 @app.route("/login/user", methods = ['POST'])
 def log_in():
-    print(request.data);
-    '''
+    print(request.form)
+    #arrived_json = json.loads(request.data.decode('utf-8'))
+    #login = arrived_json["user_login"]
+    #password = arrived_json["user_password"]
+    login = request.form["user_login"]
+    password = request.form["user_password"]
+    print(login)
+    
     # Проводить авторизацію користувача з вказаними зашифрованими логіном і паролем.
     users = UserInf.query.filter_by(user_login=login, user_password=password).all()
     if len(users) == 0:
         # TODO: замінити текст на json
-        return "Неправильний логін чи пароль"
+        flash("Неправильний логін чи пароль!")
+        return redirect(url_for('signin'))
+
     else:
         # зберегти інформацію про користувача в сесію
         user = users[0]
         flask_session['id'] = user.user_id
         flask_session['name'] = user.user_name
         flask_session['role'] = user.role.role_name
-        print(user, user.role.role_name)
-    '''
-    return "log_in - ok"
+        flask_session['basket'] = []
+        flask_session['permissions'] = []
+
+        role_permission = db.session.query(t_role_permission).filter_by(role_id = user.role.role_id).all()
+        permission_ids = [elem[1] for elem in role_permission]
+        for perm_id in permission_ids:
+            perm = Permission.query.filter_by(permission_id=perm_id).first()
+            flask_session['permissions'].append(perm.permission_description)
+
+        print(user, user.role.role_name, flask_session["permissions"])
+    
+    #return "log_in - ok"
+    return redirect("/books/return")
 
 
 if __name__ == '__main__':
