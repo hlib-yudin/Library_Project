@@ -52,12 +52,13 @@
         </div>
     </div>
 </div>
-
+<script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
 const getOrders = async () => {
     let basket = localStorage.getItem('book');
     const user_id = 1;
     console.log(basket);
+
     if(basket){
         await fetch("{{url_for('book_ordering_amount')}}",
          {method: 'POST', 
@@ -111,9 +112,9 @@ const deleteItem = (index) => {
     
     const {boookNameColumn,  bookAuthorColumn, buttonColumn} = getColumns();
 
-    boookNameColumn.children[index+1].remove()
-    bookAuthorColumn.children[index+1].remove()
-    buttonColumn.children[index+1].remove()
+    boookNameColumn.children[index+1].remove();
+    bookAuthorColumn.children[index+1].remove();
+    buttonColumn.children[index+1].remove();
     };
 
 const getColumns = () =>({
