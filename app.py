@@ -507,8 +507,8 @@ def take_books_data():
 
 @app.route("/catalogue/search", methods = ['POST'])
 def find_by_title():
-    title = request.data.decode('utf-8')
-    print(title)
+    title_json = request.data.decode('utf-8')
+    title = json.loads(title_json)['input']
     book_data_list = []
     editions = EditionInf.query.filter_by(book_title=title).all()
     for edition in editions:

@@ -124,7 +124,7 @@ const getInfo = (event, data) =>{
     const input = document.querySelector('input').value;
     const row = document.getElementById('blocks');
     alert(input);
-    await fetch("{{url_for('find_by_title')}}", {method: 'POST', body: JSON.stringify(input)})//вставте необхідну урлу для перевірки респонсу метод гет
+    await fetch("{{url_for('find_by_title')}}", {method: 'POST', body: JSON.stringify({input})})//вставте необхідну урлу для перевірки респонсу метод гет
 	.then(response => {
     if (response.status !== 200) {
           alert(`Looks like there was a problem. Status code: ${response.status}`);
