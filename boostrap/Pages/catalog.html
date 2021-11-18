@@ -109,11 +109,12 @@ const getInfo = (event, data) =>{
   }
 };
 
-  const search = (form) => {
+  const search = async (form) => {
     /*const input = document.querySelector('input').value;
 
     sessionStorage.setItem('input',input);*/
     console.log(form);
+    /*
     await fetch("{{url_for('find_by_title')}}", {method: 'POST', body: })//вставте необхідну урлу для перевірки респонсу метод гет
 	.then(response => {
     if (response.status !== 200) {
@@ -125,6 +126,7 @@ const getInfo = (event, data) =>{
     .then(data => {
       console.log();})
       .catch(error => alert('something going wrong'));
+      */
   };
 
 const addBook = (event, book) => {
