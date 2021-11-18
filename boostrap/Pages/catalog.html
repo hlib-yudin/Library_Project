@@ -15,7 +15,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
             </ul>
-            <form class="d-flex" onsubmit="search(this)"> <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search"> <button class="btn btn-outline-success">Search</button> </form>
+            <form class="d-flex" onsubmit="return false;" > <input class="form-control mr-2"  placeholder="Search" type="search" aria-label="Search"> <button class="btn btn-outline-success" onclick="search(event)">Search</button> </form>
         </div>
     </div>
     <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
@@ -70,7 +70,17 @@
     }
 */  console.log(data);
     data.books.forEach((book,index) => {
-      let div = document.createElement('div');
+      console.log(book);
+      row.append(createCard(book,index));
+    });
+    console.log(document.forms.form);
+
+    //document.forms.form.onsubmit = search(this);
+});
+};
+
+const createCard = (book, index) => {
+  let div = document.createElement('div');
       div.className = "col-md-4";
       div.innerHTML =  `
     <div class="card mb-4 box-shadow" id = ${'book'+index}>
@@ -93,9 +103,7 @@
     });
   //block.find('button').on('click', () => addBook(book));
 
-      row.append(div);
-    }).catch(error => alert(error));
-});
+    return div;
 };
 
 const getInfo = (event, data) =>{
@@ -113,29 +121,43 @@ const getInfo = (event, data) =>{
     /*const input = document.querySelector('input').value;
 
     sessionStorage.setItem('input',input);*/
-    console.log(form);
-    /*
-    await fetch("{{url_for('find_by_title')}}", {method: 'POST', body: })//вставте необхідну урлу для перевірки респонсу метод гет
+    const input = document.querySelector('input').value;
+    const row = document.getElementById('blocks');
+    alert(input);
+    await fetch("{{url_for('find_by_title')}}", {method: 'POST', body: JSON.stringify(input)})//вставте необхідну урлу для перевірки респонсу метод гет
 	.then(response => {
     if (response.status !== 200) {
           alert(`Looks like there was a problem. Status code: ${response.status}`);
           return;
         }
       console.log(response.status);
+      alert(response.status);
     return response.json()})
     .then(data => {
-      console.log();})
-      .catch(error => alert('something going wrong'));
-      */
+      if (data.books.length !== 0){
+        while (row.firstChild) {
+        row.removeChild(row.firstChild);
+       }
+        data.books.forEach((book,index) => {
+        row.append(createCard(book,index));
+    });
+      } else {
+        alert('no books');
+      }
+    });
+      //.catch(error => alert('something going wrong'));
+    return false;
   };
 
-const addBook = (event, book) => {
+const addBook = async (event, book) => {
   const field = event.parentNode.parentNode.parentNode.parentNode.id;
 
   localStorage.setItem(field, JSON.stringify(book));
-  /*await fetch('', {
+  //hardcoded
+  const user_id = 1;
+  await fetch("{{url_for('add_book_to_basket')}}", {
     method: 'POST',
-    body: book,
+    body: JSON.stringify({edition_id : book.edition_id, user_id}),
   })//вставте необхідну урлу для перевірки респонсу метод гет
 	    .then(response => {
         if (response.status !== 200) {
@@ -145,7 +167,7 @@ const addBook = (event, book) => {
 
     return response.json()})
     .then(data => {
-      alert(data);});*/
+      alert(data);});
 };
 /*
 const getPagination = async (index) => {

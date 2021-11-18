@@ -7,8 +7,8 @@ import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
@@ -431,13 +431,13 @@ def order(user_id, chosen_books):
 # Після натиснення на кнопку addBook, зберігає user_id та edition_id,
 # якщо обрали більше чим 1 книгу, буде список з edition_id
 # треба цей edition_book_user_dict для наступної функції
-# @app.route("/books/catalogue/addBook", methods=('POST', ))
-def add_book_to_basket(user_id, edition_id):
+@app.route("/books/catalogue/addBook", methods=['POST'])
+def add_book_to_basket():
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    data = json.loads(request.data);
     edition_book_user_dict = {"user_id": user_id, "edition_id": []}
     edition_book_user_dict["edition_id"].append(edition_id)
     return edition_book_user_dict
-
 
 # Для функції передається список обраних книг chosen_books та user_id з add_book_to_basket,
 # приймається список книг(edition_id), які користувач вирішив видалити
@@ -493,11 +493,9 @@ def take_books_data():
         #print(book_data_output)
         return make_response(jsonify({'books':book_data_list}))
 
-
+@app.route("/catalogue/search", methods = ['POST'])
 def find_by_title():
-    arrived_json = request.data.decode('utf-8')
-    data = json.loads(arrived_json)
-    title = data['book_title']
+    title = request.data.decode('utf-8')
     print(title)
     book_data_list = []
     editions = EditionInf.query.filter_by(book_title=title).all()
@@ -519,7 +517,7 @@ def find_by_title():
         }
         book_data_list.append(book_data_output)
         print(book_data_output)
-    return {'res':book_data_list}
+    return  make_response(jsonify({'books':book_data_list}))
 
 
 def check_availability(editions_id):
