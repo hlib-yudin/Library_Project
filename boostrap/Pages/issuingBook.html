@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="{{url_for('signincss')}}">
+<link rel="stylesheet" href="../Styles/sign.css">
     <title>Issuing book</title>
 </head>
 
@@ -27,7 +26,7 @@
 
 
     <div class="signup-form">
-    <form action="/examples/actions/confirmation.php" method="post" class="form-horizontal">
+    <form name="issue_form" action="{{url_for('issue_order')}}"  method="post" class="form-horizontal">
       	<div class="row">
         	<div class="col-8 offset-4">
 				<h2>Issuing a book</h2>
@@ -35,13 +34,13 @@
       	</div>
 
 		<div class="form-group row">
-			<label class="col-form-label col-4">Id</label>
+			<label class="col-form-label col-4">user_login</label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="user_login" required="required">
             </div>
         </div>
         	<div class="form-group row">
-			<label class="col-form-label col-4">Book Name</label>
+			<label class="col-form-label col-4">order_id</label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="order_id" required="required">
             </div>
@@ -49,11 +48,36 @@
 
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<button type="submit" class="btn btn-danger btn-lg">To issue</button>
+				<button type="submit" class="btn btn-danger btn-lg"  onclick="submitIssue()">To issue</button>
 			</div>
 		</div>
     </form>
 </div>
 <script src = "{{url_for('navbarCretionScript')}}"></script>
+
+<script>
+    const submitIssue = async () => {
+		const form = document.forms.issue_form;
+	
+		let json = {};
+		formData = new FormData(form)
+		formData.forEach(function(value, key){
+		json[key] = value; });
+		{#console.log(json);#}
+
+		try {
+			await fetch("{{url_for('issue_order')}}", {//вставте необхідну урлу
+				method: 'post',
+				body: JSON.stringify(json),}
+				).then( response => alert(response));
+		}
+		catch(error){
+			alert('Failed sending');
+			return;
+		}
+
+	};
+    
+</script>
 </body>
 </html>
