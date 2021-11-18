@@ -439,10 +439,12 @@ def order(user_id, chosen_books):
 def add_book_to_basket():
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     data = json.loads(request.data);
+    '''
     edition_book_user_dict = {"user_id": user_id, "edition_id": []}
     edition_book_user_dict["edition_id"].append(edition_id)
     # return response
     return edition_book_user_dict
+    '''
 
 # Для функції передається список обраних книг chosen_books та user_id з add_book_to_basket,
 # приймається список книг(edition_id), які користувач вирішив видалити
@@ -451,6 +453,7 @@ def add_book_to_basket():
 @app.route("/books/basket/get", methods=['POST'])
 def book_ordering_amount():
     print(json.loads(request.data))
+    '''
     amount_of_chosen = len(chosen_books)  # оскільки перший елемент user_id
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
@@ -466,7 +469,7 @@ def book_ordering_amount():
         # ordering = order(new_order)
     #make_response(jsonify({'books':book_data_list}))    
     return new_order
-
+    '''
 
 # на вході отримує новий список книг і user_id з book_ordering_amount
 # @app.route("/books/basket/submit", methods=('POST', ))
