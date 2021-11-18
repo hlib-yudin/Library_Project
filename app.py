@@ -534,14 +534,26 @@ def check_availability(editions_id):
 def sign_up():
     # Проводить реєстрацію користувача з даними полями.
     # Логін і пароль приходять вже в зашифрованому вигляді (sha-256).
-    print(request.data);
-    '''
+    """print(request.data)
+    arrived_json = json.loads(request.data.decode('utf-8'))
+    login = arrived_json["user_login"]
+    password = arrived_json["user_password"]
+    first_name = arrived_json["user_name"]
+    last_name = arrived_json["surname"]
+    middle_name = arrived_json["middle_name"]"""
+    login = request.form["user_login"]
+    password = request.form["user_password"]
+    first_name = request.form["user_name"]
+    last_name = request.form["surname"]
+    middle_name = request.form["middle_name"]
+
     # шукаємо користувачів з даним логіном
     users = UserInf.query.filter_by(user_login=login).all()
     # якщо вони вже існують -- не проводимо реєстрацію
     if len(users) > 0:
-        # TODO: замість тексту повернути json
-        return "Даний логін вже існує"
+        flash("Даний логін вже існує!")
+        return redirect(url_for('signup'))
+
     else:
         # створити нового користувача
         new_user = UserInf(user_login=login,
@@ -551,18 +563,22 @@ def sign_up():
                            middle_name=middle_name)
         # додати його в таблицю UserInf
         db.session.add(new_user)
-        # додати його роль в таблицю t_user_role
+        # додати його роль в таблицю t_user_role 
         added_user = UserInf.query.filter_by(user_login=login, user_password=password).first()
+        # поки додаємо лише читачів -- TODO: додавати бібліотекарів теж
+        role_name = 'reader'
         role = Role.query.filter_by(role_name=role_name).first()
         added_user.role = role
+
         # додати його статус в таблицю t_user_status
         status = Status.query.filter_by(status_name="normal").first()
         added_user.status = status
-        # зберегти зміни -- TODO, після того, як перевірено правильність роботи цієї функції
+        # зберегти зміни
         print(added_user)
-        db.session.commit()
-    '''
-    return "sign_up -- ok"
+        #db.session.commit()
+
+    return redirect("/books/return")
+
 
 @app.route("/login/user", methods = ['POST'])
 def log_in():
@@ -577,7 +593,6 @@ def log_in():
     # Проводить авторизацію користувача з вказаними зашифрованими логіном і паролем.
     users = UserInf.query.filter_by(user_login=login, user_password=password).all()
     if len(users) == 0:
-        # TODO: замінити текст на json
         flash("Неправильний логін чи пароль!")
         return redirect(url_for('signin'))
 
