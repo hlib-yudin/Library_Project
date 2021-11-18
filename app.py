@@ -434,9 +434,8 @@ def order(user_id, chosen_books):
 # @app.route("/books/catalogue/addBook", methods=('POST', ))
 def add_book_to_basket(user_id, edition_id):
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    edition_book_user_dict = dict()
-    edition_book_user_dict[user_id] = []
-    edition_book_user_dict[user_id].append(edition_id)
+    edition_book_user_dict = {"user_id": user_id, "edition_id": []}
+    edition_book_user_dict["edition_id"].append(edition_id)
     return edition_book_user_dict
 
 
