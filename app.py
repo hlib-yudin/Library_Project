@@ -26,7 +26,7 @@ def hello_world():
 def index():
 
     #return redirect(url_for("page_for_returning_books"))
-    return redirect(url_for("issue_order"))
+    return redirect(url_for('signup'))
 
 @app.route("/books/catalogue")
 def catalogue():
@@ -57,8 +57,16 @@ def navbarCretionScript():
     return render_template('navbarCreation.js')
 
 @app.route("/navbar/css")
-def navbarcss():
+def signincss():
     return render_template('sign.css')
+
+@app.route("/style/css")
+def stylecss():
+    return render_template('style.css')
+
+@app.route("/shopping/css")
+def shoppingcss():
+    return render_template('shopping.css')
 
 @app.route("/books/return/submit", methods = ('POST',))
 def return_books():
@@ -432,8 +440,10 @@ def sign_up():
 
 @app.route("/login/user", methods = ['POST'])
 def log_in():
-    print(request.data);
-    '''
+    print(request.data)
+    arrived_json = json.loads(request.data.decode('utf-8'))
+    login = arrived_json["user_login"]
+    password = arrived_json["user_password"]
     # Проводить авторизацію користувача з вказаними зашифрованими логіном і паролем.
     users = UserInf.query.filter_by(user_login=login, user_password=password).all()
     if len(users) == 0:
@@ -446,7 +456,7 @@ def log_in():
         flask_session['name'] = user.user_name
         flask_session['role'] = user.role.role_name
         print(user, user.role.role_name)
-    '''
+
     return "log_in - ok"
 
 
