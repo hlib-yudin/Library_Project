@@ -40,6 +40,10 @@ def basket():
 def signin():
     return render_template('signin.html')
 
+@app.route("/books/issuingBook")
+def issuebooks():
+    return render_template('issuingBook.html')
+
 @app.route("/books/signup")
 def signup():
     return render_template('signup.html')
