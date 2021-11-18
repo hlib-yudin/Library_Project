@@ -437,13 +437,16 @@ def add_book_to_basket():
     data = json.loads(request.data);
     edition_book_user_dict = {"user_id": user_id, "edition_id": []}
     edition_book_user_dict["edition_id"].append(edition_id)
+    # return response
     return edition_book_user_dict
 
 # Для функції передається список обраних книг chosen_books та user_id з add_book_to_basket,
 # приймається список книг(edition_id), які користувач вирішив видалити
 # на виході новий список книг
-# @app.route("/books/basket", methods=('GET', 'POST'))
-def book_ordering_amount(user_id, chosen_books):
+#обеденить с order_submi
+@app.route("/books/basket/get", methods=['POST'])
+def book_ordering_amount():
+    print(json.loads(request.data))
     amount_of_chosen = len(chosen_books)  # оскільки перший елемент user_id
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
@@ -451,11 +454,13 @@ def book_ordering_amount(user_id, chosen_books):
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     deleted_books = ['5-325-00380-1']
     if books_can_add == 0:
+        #make_response(jsonify({'books':"User can not order because is debtor or already have 10 books"}))  
         return "User can not order because is debtor or already have 10 books"
     elif need_to_delete > 0:
         print("Кількість книг, які треба видалити ", need_to_delete)
         new_order = book_deleting(chosen_books, need_to_delete, deleted_books)
         # ordering = order(new_order)
+    #make_response(jsonify({'books':book_data_list}))    
     return new_order
 
 
@@ -608,6 +613,7 @@ def log_in():
         flask_session['role'] = user.role.role_name
         flask_session['basket'] = []
         flask_session['permissions'] = []
+        print(flask_session)
 
         role_permission = db.session.query(t_role_permission).filter_by(role_id = user.role.role_id).all()
         permission_ids = [elem[1] for elem in role_permission]

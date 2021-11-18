@@ -152,7 +152,7 @@ const getInfo = (event, data) =>{
 const addBook = async (event, book) => {
   const field = event.parentNode.parentNode.parentNode.parentNode.id;
 
-  localStorage.setItem(field, JSON.stringify(book));
+  localStorage.setItem('book', JSON.stringify(book));
   //hardcoded
   const user_id = 1;
   await fetch("{{url_for('add_book_to_basket')}}", {
