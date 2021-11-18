@@ -376,7 +376,7 @@ def available_books_now(edition_id):
 def can_add(user_id):
     amount_of_books = {'normal': 10, 'privileged': 10, 'debtor': 0}
     order_list = db.session.query(Order.order_id).filter_by(user_id=user_id).all()
-    user_status = get_user_status(user_id)
+    user_status = UserInf.query.filter_by(user_id=user_id).first().status.status_name
     in_hands = 0
     for order in order_list:
         return_date = db.session.query(OrderBook.return_date).filter_by(order_id=order.order_id).all()
@@ -390,38 +390,18 @@ def can_add(user_id):
         return 0
 
 
-def add_book_to_basket(user_id):
-    to_continue = True
-    edition_book_user_list = [user_id]
-    while to_continue:
-        # вияснити яку саме книгу він обрав -- edition_id, зчитати зі сторінки
-        edition_id = '5-325-00380-1'
-        edition_book_user_list.append(edition_id)
-        # якщо закінчили, то перейти до кошику, нажавши кнопку і отримати якийсь sign
-        sign = 1
-        if sign:
-            to_continue = False
-    return edition_book_user_list
-
-
-def book_deleting(chosen_books, need_to_delete):
-    chosen_books = [3, '5-325-00380-1', '118-116-11-3113-1']
+def book_deleting(chosen_books, need_to_delete, deleted):
     # треба послати команду, щоб видалив книгу з наявних chosen_books, повертає список editions_id, які можна видаляти
     # після видалення кількість книжок збільшується,
-    deleted = ['5-325-00380-1']
     if len(deleted) < need_to_delete:
         return 'need to delete more'
-    a = chosen_books.pop(0)
     A = set(chosen_books)
     B = set(deleted)
     C = list(A.difference(B))
-    C.append(a)
-    C = list(reversed(C))
     return C
 
 
-def order(chosen_books):
-    user_id = chosen_books.pop(0)
+def order(user_id, chosen_books):
     # створити новий запис в бд в Orders
     order_id = Order.add(user_id=user_id)
     for edition_id in chosen_books:
@@ -440,23 +420,43 @@ def order(chosen_books):
     return True
 
 
+# Після натиснення на кнопку addBook, зберігає user_id та edition_id,
+# якщо обрали більше чим 1 книгу, буде список з edition_id
+# треба цей edition_book_user_dict для наступної функції
+# @app.route("/books/catalogue/addBook", methods=('POST', ))
+def add_book_to_basket(user_id, edition_id):
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    edition_book_user_dict = dict()
+    edition_book_user_dict[user_id] = []
+    edition_book_user_dict[user_id].append(edition_id)
+    return edition_book_user_dict
+
+
+# Для функції передається список обраних книг chosen_books та user_id з add_book_to_basket,
+# приймається список книг(edition_id), які користувач вирішив видалити
+# на виході новий список книг
+# @app.route("/books/basket", methods=('GET', 'POST'))
 def book_ordering_amount(user_id, chosen_books):
-    amount_of_chosen = len(chosen_books) - 1  # оскільки перший елемент user_id
+    amount_of_chosen = len(chosen_books)  # оскільки перший елемент user_id
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
+    new_order = chosen_books
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    deleted_books = ['5-325-00380-1']
     if books_can_add == 0:
         return "User can not order because is debtor or already have 10 books"
-    if need_to_delete <= 0:
-        ordering = order(chosen_books)
     elif need_to_delete > 0:
-        new_order = book_deleting(chosen_books, need_to_delete)
-        ordering = order(new_order)
-    return True
+        print("Кількість книг, які треба видалити ", need_to_delete)
+        new_order = book_deleting(chosen_books, need_to_delete, deleted_books)
+        # ordering = order(new_order)
+    return new_order
 
 
-def basket(user_id):
-    edition_book_user_list = add_book_to_basket(user_id)
-    order = book_ordering_amount(user_id, edition_book_user_list)
+# на вході отримує новий список книг і user_id з book_ordering_amount
+# @app.route("/books/basket/submit", methods=('POST', ))
+def order_submit(user_id, new_order):
+    order(user_id, new_order)
+    return 'order completed'
 # -------------------------------------------------------------------------------------------------------------------
 
 
