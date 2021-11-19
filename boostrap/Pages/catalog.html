@@ -11,14 +11,14 @@
 </head>
 <body>
           <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid"> <a class="navbar-brand" href="../index.html">Book Catalog</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+    <div class="container-fluid"> <div class="navbar-brand">Book Catalog</div> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
             </ul>
             <form class="d-flex" onsubmit="return false;" > <input class="form-control mr-2"  placeholder="Search" type="search" aria-label="Search"> <button class="btn btn-outline-success" onclick="search(event)">Search</button> </form>
         </div>
     </div>
-    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
+    <!--<div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>-->
 
 </nav>
     <div class="album py-5 bg-light">
@@ -38,46 +38,27 @@
     const row = document.getElementById('blocks');
     const pagination = document.getElementById('pages');
 
-    /*
-    json
-    {
-      pagination: 2,
-      books:  [
-        {
-    "book_title":"",
-    "author":"",
-    "genre":"",
-    "book_id":"",iption":"?",
-    }
-    ]
-    }
-    */
-   alert("{{url_for('take_books_data')}}");
-   await fetch("{{url_for('take_books_data')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
-	.then(response => {
-    if (response.status !== 200) {
-          alert(`Looks like there was a problem. Status code: ${response.status}`);
-          return;
-        }
-      console.log(response.status);
-    return response.json()})
-    .then(data => {
+    await fetch("{{url_for('take_books_data')}}", {method: 'GET'})
+	  .then(response => {
+      if (response.status !== 200) {
+        alert(`Виникла проблема. Статус код: ${response.status}`);
+        return;
+      }
+      return response.json()})
+      .then(data => {
 /*
+    додавання декількох сторінок
     let i = data.pagination;
     while(i > 0){
       pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination(${i})">${i}</a></li>`);
       i-=1;
     }
-*/  console.log(data);
-    data.books.forEach((book,index) => {
-      console.log(book);
-      row.append(createCard(book,index));
+*/
+      data.books.forEach((book,index) => {
+        row.append(createCard(book,index));
+      });
     });
-    console.log(document.forms.form);
-
-    //document.forms.form.onsubmit = search(this);
-});
-};
+  };
 
 const createCard = (book, index) => {
   let div = document.createElement('div');
@@ -101,7 +82,6 @@ const createCard = (book, index) => {
     div.querySelectorAll('button').forEach((button,index) => {
       button.addEventListener("click", () => functions[index](button,book));
     });
-  //block.find('button').on('click', () => addBook(book));
 
     return div;
 };
@@ -109,29 +89,23 @@ const createCard = (book, index) => {
 const getInfo = (event, data) =>{
   if(event){
     const card = event.parentNode.parentNode;
-  
-  event.parentNode.removeChild(event);
+    event.parentNode.removeChild(event);
  
-  card.insertAdjacentHTML('beforebegin', `<p class="card-text">${data.genres}</p>
-  <p class="card-text">${data.number_of_available}</p>`);
+    card.insertAdjacentHTML('beforebegin', `<p class="card-text">${data.genres}</p>
+                                            <p class="card-text">${data.number_of_available}</p>`);
   }
 };
 
   const search = async (form) => {
-    /*const input = document.querySelector('input').value;
-
-    sessionStorage.setItem('input',input);*/
     const input = document.querySelector('input').value;
     const row = document.getElementById('blocks');
-    alert(input);
+
     await fetch("{{url_for('find_by_title')}}", {method: 'POST', body: JSON.stringify({input})})//вставте необхідну урлу для перевірки респонсу метод гет
-	.then(response => {
+	  .then(response => {
     if (response.status !== 200) {
-          alert(`Looks like there was a problem. Status code: ${response.status}`);
+          alert(`Виникла проблема. Статус код: ${response.status}`);
           return;
         }
-      console.log(response.status);
-      alert(response.status);
     return response.json()})
     .then(data => {
       if (data.books.length !== 0){
@@ -145,64 +119,44 @@ const getInfo = (event, data) =>{
         alert('no books');
       }
     });
-      //.catch(error => alert('something going wrong'));
+
     return false;
   };
 
 const addBook = async (event, book) => {
-  const field = event.parentNode.parentNode.parentNode.parentNode.id;
-
-  localStorage.setItem('book', JSON.stringify(book));
-  //hardcoded
-  const user_id = 1;
   await fetch("{{url_for('add_book_to_basket')}}", {
     method: 'POST',
-    body: JSON.stringify({edition_id : book.edition_id, user_id}),
-  })//вставте необхідну урлу для перевірки респонсу метод гет
-	    .then(response => {
-        if (response.status !== 200) {
-          alert(`Looks like there was a problem. Status code: ${response.status}`);
-          return;
-        }
-
-    return response.json()})
-    .then(data => {
-      alert(JSON.parse(data));});
-};
-/*
-const getPagination = async (index) => {
-  const json = {
-    "pageIndex":index,
-  };
-
-  try {
-		await fetch('', {//вставте необхідну урлу
-			method: 'post',
-			body: JSON.stringify(json)}
-			);
-	}
-	catch(error){
-		alert('Failed sending');
-		return;
-	}
-};
-*/
-const getUserRole = async () => {
-  await fetch("{{url_for('getUserRole')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
+    body: JSON.stringify({edition_id : book.edition_id}),
+  })
 	.then(response => {
     if (response.status !== 200) {
-          alert(`Looks like there was a problem. Status code: ${response.status}`);
-          return;
-        }
-      console.log(response.status);
-      alert(response.status);
-    return response.json()})
-    .then(data => {
+      alert(`Looks like there was a problem. Status code: ${response.status}`);
+      return;
+    }
+
+    return response.json()
+  }).then(data => {
+      alert(JSON.parse(JSON.stringify(data)).response);
+  });
+};
+
+const getUserRole = async () => {
+  await fetch("{{url_for('getUserRole')}}", {method: 'GET'})
+	.then(response => {
+    if (response.status !== 200) {
+      alert(`Looks like there was a problem. Status code: ${response.status}`);
+      return;
+    }
+
+    return response.json()
+  }).then(data => {
       createNavbar(data.role);
     });
-};
+  };
+
 getUserRole();
 getBooks();
 </script>
+
 </body>
 </html>
