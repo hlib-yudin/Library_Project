@@ -26,7 +26,7 @@
 
 
     <div class="signup-form">
-    <form name="issue_form" action="{{url_for('issue_order')}}"  method="post" class="form-horizontal">
+    <form name="issue_form" onsubmit="return false;"  class="form-horizontal">
       	<div class="row">
         	<div class="col-8 offset-4">
 				<h2>Issuing a book</h2>
@@ -48,7 +48,7 @@
 
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<button type="submit" class="btn btn-danger btn-lg"  onclick="submitIssue()">To issue</button>
+				<button type="submit" class="btn btn-danger btn-lg"  onclick="submitIssue(event)">To issue</button>
 			</div>
 		</div>
     </form>
@@ -56,29 +56,29 @@
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 
 <script>
-    const submitIssue = async () => {
-		const form = document.forms.issue_form;
-	
-		let json = {};
-		formData = new FormData(form)
-		formData.forEach(function(value, key){
-		json[key] = value; });
-		//{#console.log(json);#}
 
-		try {
-			await fetch("{{url_for('issue_order')}}", {//вставте необхідну урлу
-				method: 'post',
-				body: JSON.stringify(json),}
-				).then( response => alert(response));
-		}
-		catch(error){
-			alert('Failed sending');
-			return;
-		}
+const submitIssue = async (form) => {
 
-	};
+    const user_login = document.getElementsByName("user_login")[0].value;
+    const order_id = document.getElementsByName('order_id')[0].value;
+    let my_json = {'user_login': user_login, 'order_id':order_id}
 
-createNavbar();
+    await fetch("{{url_for('issue_order')}}", {method: 'POST', body: JSON.stringify(my_json)})//вставте необхідну урлу для перевірки респонсу метод гет
+	.then(response => {
+    if (response.status !== 200) {
+          alert(`Looks like there was a problem. Status code: ${response.status}`);
+          return;
+        }
+    return response.json()})
+    .then(data => {
+        alert(data.res_message);
+    });
+
+    return false;
+  };
+    
 </script>
 </body>
 </html>
+
+
