@@ -396,7 +396,7 @@ def is_canceled_change(ord):
     allowed_booking_days = 14
     # треба перевірити скільки бронь вже висить
     today_date = date.today()
-    order_date = db.session.query(Order.booking_date).filter_by(order_id=ord.order_id).first()[0]
+    order_date = ord.booking_date
     booking_days = number_of_days(order_date, today_date)
     if allowed_booking_days < booking_days:
         # is_canceled is True
@@ -406,30 +406,37 @@ def is_canceled_change(ord):
 
 
 def ordered_books_check(books):
-    new_book_list = books
-    for book_id in books:
-        # В таблиці може бути кілька замовлень з даною конкретною книгою
-        booked = db.session.query(Order).join(OrderBook, Order.order_id == OrderBook.order_id).filter_by(book_id=book_id).all()
-        for ord in booked:
-            issue_date = ord.issue_date
-            if issue_date is None and is_canceled_change(ord):
-                new_book_list.remove(book_id)
+    new_book_list = list()
+    for inf in books:
+        book_id = inf.book_id
+        issue_date = inf.issue_date
+        if issue_date is None and is_canceled_change(inf):
+            continue
+        else:
+            new_book_list.append(book_id)
     return new_book_list
 
 
 def available_books_now(edition_id):
+    # список всіх книжок одного видання
     edition_books = db.session.query(Book.book_id).filter_by(edition_id=edition_id).all()
-    # книжки одного видання, яких немає в наявності
-    # можливі випадки: (забрали і не повернули) + (не забрали, але замовлення не відмінили))=(не забрали і не відмінили)
-    ordered_books = db.session.query(OrderBook.book_id).join(Order, Order.order_id == OrderBook.order_id). \
-        filter(OrderBook.return_date == None, Order.is_canceled == False).all()
+
+    # книжки одного видання, яких немає в наявності, тому що заброньовані, або не повернені
+    ordered_books = db.session.query(Book.book_id, Order.booking_date, Order.issue_date).\
+        join(OrderBook, Book.book_id == OrderBook.book_id).\
+        join(Order, Order.order_id == OrderBook.order_id). \
+        filter(Book.edition_id == edition_id, OrderBook.return_date == None, Order.is_canceled == False).all()
     # перевірка коректності списку книг ordered_books
     checked = ordered_books_check(ordered_books)
-    books = set(edition_books).symmetric_difference(set(checked)) - set(checked)
-    available_books = list()
-    for el in list(books):
-        available_books.append(el[0])
-    return available_books
+
+    edition_books_list = list()
+    for el in edition_books:
+        edition_books_list.append(el[0])
+
+    A = set(edition_books_list)
+    B = set(checked)
+    books = list(A.difference(B))
+    return books
 
 
 def can_add(user_id):
