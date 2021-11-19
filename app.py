@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, flash, session as flask_session
+from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, flash, session
+from flask_session import Session  # https://pythonhosted.org/Flask-Session
 from config import Config
 from datetime import date
 from dateutil.relativedelta import *
@@ -8,9 +9,15 @@ import json
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
+
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
+
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"  # So the token cache will be stored in a server-side session
+Session(app)
 
 db = SQLAlchemy(app)
 db.init_app(app)
@@ -31,9 +38,9 @@ def index():
 @app.route('/orders')
 def page_for_orders():
     # Сторінка для відображення замовлень користувача (її бачить не бібліотекарЮ, а читач)
-    if not flask_session.get('id'):
+    if not session.get('id'):
         return "Авторизуйтеся"
-    user_id = flask_session["id"]
+    user_id = session["id"]
     user = UserInf.query.filter_by(user_id=user_id).first()
     # показуємо лише заброньовані та не повністю повернені замовлення
     # TODO: не показувати повністю повернені замовлення!!!!!!!!!!!!!!!!!!!!!!!!
@@ -474,25 +481,21 @@ def order(user_id, chosen_books):
     return True
 
 
-# Після натиснення на кнопку addBook, зберігає user_id та edition_id,
+# Після натиснення на кнопку addBook, зберігає edition_id в сесію,
 # якщо обрали більше чим 1 книгу, буде список з edition_id
 # треба цей edition_book_user_dict для наступної функції
 @app.route("/books/catalogue/addBook", methods=['POST'])
 def add_book_to_basket():
-    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # мені можна посилати лише edition_id, адже user_id привязаний до сесії
     data = json.loads(request.data);
-    user_id = data['user_id']
+    # user_id = data['user_id']
     edition_id = data['edition_id']
-    с = flask_session
-    b = flask_session.get('id')
-
-    a = flask_session['basket'].append(edition_id)
-    '''
-    edition_book_user_dict = {"user_id": user_id, "edition_id": []}
-    edition_book_user_dict["edition_id"].append(edition_id)
-    # return response
-    return edition_book_user_dict
-    '''
+    print('session ', session)
+    my_session = session['basket']
+    if session.get('id'):
+        session['basket'].append(edition_id)
+        session.modified = True  # для того, щоб сесія оновлювалась
+    return redirect(url_for('catalogue'))
 
 
 # приймається список книг(edition_id), які користувач вирішив видалити
@@ -641,8 +644,21 @@ def sign_up():
         added_user.status = status
         # зберегти зміни
         print(added_user)
-        #db.session.commit()
-
+        db.session.commit()
+        
+        users = UserInf.query.filter_by(user_login=login, user_password=password).all()
+        # зберегти інформацію про користувача в сесію
+        user = users[0]
+        session['id'] = user.user_id
+        session['name'] = user.user_name
+        session['role'] = user.role.role_name
+        session['basket'] = []
+        session['permissions'] = []
+        role_permission = db.session.query(t_role_permission).filter_by(role_id=user.role.role_id).all()
+        permission_ids = [elem[1] for elem in role_permission]
+        for perm_id in permission_ids:
+            perm = Permission.query.filter_by(permission_id=perm_id).first()
+            session['permissions'].append(perm.permission_description)
     return redirect("/books/return")
 
 
@@ -664,20 +680,20 @@ def log_in():
     else:
         # зберегти інформацію про користувача в сесію
         user = users[0]
-        flask_session['id'] = user.user_id
-        flask_session['name'] = user.user_name
-        flask_session['role'] = user.role.role_name
-        flask_session['basket'] = []
-        flask_session['permissions'] = []
-        print(flask_session)
+        session['id'] = user.user_id
+        session['name'] = user.user_name
+        session['role'] = user.role.role_name
+        session['basket'] = []
+        session['permissions'] = []
+        print(session)
 
         role_permission = db.session.query(t_role_permission).filter_by(role_id = user.role.role_id).all()
         permission_ids = [elem[1] for elem in role_permission]
         for perm_id in permission_ids:
             perm = Permission.query.filter_by(permission_id=perm_id).first()
-            flask_session['permissions'].append(perm.permission_description)
+            session['permissions'].append(perm.permission_description)
 
-        print(user, user.role.role_name, flask_session["permissions"])
+        print(user, user.role.role_name, session["permissions"])
     
     #return "log_in - ok"
     return redirect("/books/return")
