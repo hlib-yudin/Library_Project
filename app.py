@@ -472,7 +472,7 @@ def order(user_id, chosen_books):
             book.count_update()
         else:
             return "книги немає в наявності"
-    return True
+    return "замовлення пройшло успішно"
 
 
 # Після натиснення на кнопку addBook, зберігає edition_id в сесію,
