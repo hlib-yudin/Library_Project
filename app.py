@@ -495,9 +495,18 @@ def add_book_to_basket():
 
 @app.route("/books/basket", methods=['POST'])
 def basket():
-    chosen_books = session['basket']
     user_id = session['id']
-    return make_response(jsonify({'user_id': user_id, 'edition_id': chosen_books}))
+    chosen_books = session['basket']
+    main_json = {'user_id': user_id, 'basket': []}
+    for book_edition_id in chosen_books:
+        book_info = db.session.query(EditionInf).filter_by(edition_id=book_edition_id).first()
+        book_title = book_info.book_title
+        edition_year = book_info.edition_year
+        basket_json = {'edition_id': book_edition_id,
+                       'book_title': book_title,
+                       'edition_year': edition_year}
+        main_json['basket'].append(basket_json)
+    return make_response(jsonify(main_json))
 
 
 # приймається список книг(edition_id), які користувач вирішив видалити
