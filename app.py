@@ -449,17 +449,6 @@ def can_add(user_id):
         return 0
 
 
-def book_deleting(chosen_books, need_to_delete, deleted):
-    # треба послати команду, щоб видалив книгу з наявних chosen_books, повертає список editions_id, які можна видаляти
-    # після видалення кількість книжок збільшується,
-    if len(deleted) < need_to_delete:
-        return 'need to delete more'
-    A = set(chosen_books)
-    B = set(deleted)
-    C = list(A.difference(B))
-    return C
-
-
 def order(user_id, chosen_books):
     # створити новий запис в бд в Orders
     order_id = Order.add(user_id=user_id)
@@ -475,7 +464,7 @@ def order(user_id, chosen_books):
             book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()
             book.count_update()
         else:
-            print("книги немає в наявності")
+            return "книги немає в наявності"
     return True
 
 
@@ -513,32 +502,28 @@ def basket_data():
 # приймається список книг(edition_id), які користувач вирішив видалити
 @app.route("/books/basket/delete", methods=['POST'])
 def book_ordering_amount():
-    # треба отримати які книги треба видалити
-    print(json.loads(request.data))
-    deleted_books = ['5-325-00380-1']
+    data = json.loads(request.data);
+    edition_id = data['edition_id']
+    if session.get('id'):
+        session['basket'].remove(edition_id)
+    return make_response(jsonify({'response':'book deleted'}))
 
-    #make_response(jsonify({'books':book_data_list}))    
-    return 1
 
-
-# @app.route("/books/basket/submit", methods=('POST', ))
-def order_submit(user_id, chosen_books):
+@app.route("/books/basket/submit", methods=('POST', ))
+def order_submit():
     # chosen_books - все, що додано до кошика
+    chosen_books = session['basket']
+    user_id = session['id']
     amount_of_chosen = len(chosen_books)
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
-    new_order = chosen_books
-    # ми ці дані отримати вже маємо якось з book_ordering_amount, домовились що спробуємо через фласк сесію
-    deleted_books = ['5-325-00380-1']
     if books_can_add == 0:
-        # make_response(jsonify({'books':"User can not order because is debtor or already have 10 books"}))
-        return "User can not order because is debtor or already have 10 books"
+        return make_response(jsonify({'books':"User can not order because is debtor or already have 10 books"}))
     elif need_to_delete > 0:
+        # зробити з цього один ретурн - повідомлення
         print("Кількість книг, які треба видалити ", need_to_delete)
-        new_order = book_deleting(chosen_books, need_to_delete, deleted_books)
-        order(user_id, new_order)
         return 1
-    order(user_id, new_order)
+    order(user_id, chosen_books)
     return 'order completed'
 # -------------------------------------------------------------------------------------------------------------------
 
