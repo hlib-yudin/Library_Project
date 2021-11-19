@@ -500,7 +500,7 @@ def add_book_to_basket():
 
 
 # приймається список книг(edition_id), які користувач вирішив видалити
-@app.route("/books/basket/get", methods=['POST'])
+@app.route("/books/basket/delete", methods=['POST'])
 def book_ordering_amount():
     # треба отримати які книги треба видалити
     print(json.loads(request.data))
