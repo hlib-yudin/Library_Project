@@ -63,7 +63,7 @@
 		formData = new FormData(form)
 		formData.forEach(function(value, key){
 		json[key] = value; });
-		{#console.log(json);#}
+		//{#console.log(json);#}
 
 		try {
 			await fetch("{{url_for('issue_order')}}", {//вставте необхідну урлу
@@ -77,7 +77,8 @@
 		}
 
 	};
-    
+
+createNavbar();
 </script>
 </body>
 </html>

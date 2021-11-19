@@ -8,26 +8,23 @@ const librarianNavbar = `<li class="nav-item"> <a class="nav-link active" aria-c
 
 const setNavbar = (type) => {
     const navbarNode = document.getElementById('navbarSupportedContent');
-    if(type === 'defaultNavbar'){
+    if(type === 'reader'){
         navbarNode.children[0].insertAdjacentHTML('afterbegin', defaultNavbar);
     } else {
         navbarNode.children[0].insertAdjacentHTML('afterbegin', librarianNavbar);
     }
 };
 //aria-current="page"
-const createNavbar = () => {
+const createNavbar = (role) => {
     const type = sessionStorage.getItem('status');
 
-    if(type !== null){
+    if(type !== null && (!role || role === type)){
         setNavbar(type);
         return;
     }
 
-    const value = 'defaultNavbar';
 
-    sessionStorage.setItem('status',value);
+    sessionStorage.setItem('status',role);
 
-    setNavbar(value);
+    setNavbar(role);
 };
-
-createNavbar();

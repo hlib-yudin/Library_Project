@@ -187,6 +187,21 @@ const getPagination = async (index) => {
 	}
 };
 */
+const getUserRole = async () => {
+  await fetch("{{url_for('getUserRole')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
+	.then(response => {
+    if (response.status !== 200) {
+          alert(`Looks like there was a problem. Status code: ${response.status}`);
+          return;
+        }
+      console.log(response.status);
+      alert(response.status);
+    return response.json()})
+    .then(data => {
+      createNavbar(data.role);
+    });
+};
+getUserRole();
 getBooks();
 </script>
 </body>

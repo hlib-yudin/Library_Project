@@ -660,7 +660,14 @@ def sign_up():
         for perm_id in permission_ids:
             perm = Permission.query.filter_by(permission_id=perm_id).first()
             session['permissions'].append(perm.permission_description)
-    return redirect("/books/return")
+    if user.role.role_name == 'librarian': 
+        return redirect("/books/return")
+    else:
+        return redirect(url_for('catalogue'))
+
+@app.route("/role/user", methods = ['GET'])
+def getUserRole():
+    return make_response(jsonify({'role': session['role']}))
 
 
 @app.route("/login/user", methods = ['POST'])
@@ -694,10 +701,13 @@ def log_in():
             perm = Permission.query.filter_by(permission_id=perm_id).first()
             session['permissions'].append(perm.permission_description)
 
-        print(user, user.role.role_name, session["permissions"])
-    
+    role = user.role.role_name
+
     #return "log_in - ok"
-    return redirect("/books/return")
+    if user.role.role_name == 'librarian': 
+        return redirect("/books/return")
+    else:
+        return redirect(url_for('catalogue'))
 
 
 if __name__ == '__main__':
