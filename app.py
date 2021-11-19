@@ -335,6 +335,7 @@ def grant_privileges(user_id):
 
     subq = db.session.query(Order.order_id,
                            func.max(OrderBook.return_date).label('max_return_date')).filter(Order.user_id == user_id,
+                                                                                            Order.is_canceled != False,
                                                                                             Order.order_id == OrderBook.order_id).group_by(
         Order.order_id).subquery('subq')
     res2 = db.session.query(subq.c.order_id, Order.issue_date, subq.c.max_return_date).filter(subq.c.order_id == Order.order_id).order_by(subq.c.max_return_date.desc()).limit(2).all()
