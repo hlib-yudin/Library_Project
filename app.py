@@ -153,64 +153,65 @@ def return_books():
 
 
 
-@app.route('/order/issue')
+@app.route("/order/issue", methods=('POST',))
 def issue_order():
     # Функція для підтвердження видачі замовлення.
     # Приймає json: {"user_login": ...,    "order_id": ... }
     # TODO: нормально протестувати цю функцію!!!!!
 
-    #arrived_json = json.loads(request.data.decode('utf-8'))
-    arrived_json = {"user_login": '3', "order_id": 1}
+    arrived_json = json.loads(request.data.decode('utf-8'))
+    # arrived_json = {"user_login": '3', "order_id": 1}
     print(arrived_json)
     arrived_login = arrived_json["user_login"]
     arrived_order_id = arrived_json["order_id"]
 
-    # 1) валідація 
+    order_u_login = db.session.query(Order.order_id, UserInf.user_login, Order.is_canceled).filter(
+        Order.order_id == arrived_order_id,
+        Order.user_id == UserInf.user_id).first()
+    # 1) валідація
     # чи є такий логін?
-    users = UserInf.query.filter_by(user_login = arrived_login).all()
+    users = UserInf.query.filter_by(user_login=arrived_login).all()
     if len(users) == 0:
-        return "no users with given login"
-
+        return make_response(jsonify({'res_message': 'no users with given login!'}))
     # чи є таке замовлення?
     user = users[0]
-    orders = Order.query.filter_by(order_id = arrived_order_id).all()
+    orders = Order.query.filter_by(order_id=arrived_order_id).all()
     if len(orders) == 0:
-        return "no orders with given id"
+        return make_response(jsonify({'res_message': 'no orders with given id!'}))
 
     # чи має даний юзер дане замовлення?
     order = orders[0]
-    if order.user.user_id != user.user_id:
-        return "given person didn't make given order"
+    if order_u_login.user_login != arrived_login:
+        return make_response(jsonify({'res_message': "given person didn't make given order!"}))
 
     # чи скасоване замовлення?
     if order.is_canceled:
-        return "order was canceled"
+        return make_response(jsonify({'res_message': 'order was canceled!'}))
 
     # чи замовлення вже видане?
     if order.issue_date:
-        return "order was already issued"
+        return make_response(jsonify({'res_message': 'order was already issued!'}))
 
     # чи є читач боржником?
-    if user.status.status_name == "debtor":
+    if user.status.status_name == 'debtor':
         # якщо боржник -- скасувати замовлення
         order.is_canceled = True
-        #db.session.commit()
-        return "person is debtor -- order was cancelled" 
+        # db.session.commit()
+
+        return make_response(jsonify({'res_message': 'person is debtor -- order was cancelled!'}))
 
     # якщо читач є боржником, але в базі даних про це ще немає інформації
     if is_debtor(user.user_id):
         order.is_canceled = True
-        user.status = Status.query.filter_by(status_name = "debtor").first()
-        #db.session.commit()
-        return "person is debtor -- order was cancelled" 
-
+        user.status = Status.query.filter_by(status_name='debtor').first()
+        # db.session.commit()
+        return make_response(jsonify({'res_message': 'person is debtor -- order was cancelled!'}))
 
     # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
     order.issue_date = date.today().strftime('%Y-%m-%d')
     print(order.issue_date)
-    #db.session.commit()
-    return "order was successfully issued"
-
+    # db.session.commit()
+    return make_response(jsonify({'res_message': 'order was successfully issued!'}))
 
 
 
