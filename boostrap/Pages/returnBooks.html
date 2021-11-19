@@ -114,46 +114,11 @@ const getUserRole = async () => {
         }
     return response.json()})
     .then(data => {
-      createNavbar(data.role);
+      createNavbar(data.permissions,data.role);
+      sessionStorage.setItem('permitions',data.permissions);
     });
 };
 getUserRole();
 </script>
-
-<!--
-    <div class="signup-form">
-    <form action="/examples/actions/confirmation.php" method="post" class="form-horizontal">
-      	<div class="row">
-        	<div class="col-8 offset-4">
-				<h2>Add book</h2>
-			</div>	
-      	</div>			
-
-		<div class="form-group row">
-			<label class="col-form-label col-4">Id</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="id" required="required">
-            </div>        	
-        </div>
-        	<div class="form-group row">
-			<label class="col-form-label col-4">Book Name</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="name" required="required">
-            </div>        	
-        </div>
-		<div class="form-group row">
-			<label class="col-form-label col-4">Author</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="author" required="required">
-            </div>        	
-        </div>
-		<div class="form-group row">
-			<div class="col-8 offset-4">
-				<button type="submit" class="btn btn-primary btn-lg">Add</button>
-			</div>  
-		</div>		      
-    </form>
-</div>
--->
 </body>
 </html>

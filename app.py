@@ -105,6 +105,10 @@ def addBook():
 def removeBook():
     return render_template('removeBook.html')
 
+@app.route("/books/orders")
+def viewOrders():
+    return render_template('viewOrders.html')
+
 @app.route("/scripts/navbarCreation")
 def navbarCretionScript():
     return render_template('navbarCreation.js')
@@ -663,12 +667,19 @@ def sign_up():
 
 @app.route("/role/user", methods = ['GET'])
 def getUserRole():
-    return make_response(jsonify({'role': session['role']}))
+    return make_response(jsonify({'role': session['role'], 'permissions': session['permissions']}))
 
 
 @app.route("/login/user", methods = ['POST'])
 def log_in():
     print(request.form)
+    permission_for_page = {
+        'add books':'addBook',
+        'delete books': 'issuebooks',
+        'issue/accept books':'issuebooks',
+        'order books':'/orders',
+        'register librarians':'',
+    }
     #arrived_json = json.loads(request.data.decode('utf-8'))
     #login = arrived_json["user_login"]
     #password = arrived_json["user_password"]
@@ -698,7 +709,7 @@ def log_in():
             session['permissions'].append(perm.permission_description)
 
     role = user.role.role_name
-
+    print(session['permissions'])
     #return "log_in - ok"
     if user.role.role_name == 'librarian': 
         return redirect("/books/return")
