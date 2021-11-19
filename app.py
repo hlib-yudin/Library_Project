@@ -388,10 +388,6 @@ def is_debtor(user_id):
         is_debtor_flag = True
     return is_debtor_flag
 
-@app.route("/catalogue/addBook", methods = ['POST'])
-def addCatalogueBook():
-    book = request.data;
-    return render_template('basket.html', json = request.data)
 
 
 # --------------------------Герасимчук -- Кошик та оформлення замовлення---------------------------------------------
