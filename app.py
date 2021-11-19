@@ -113,18 +113,6 @@ def viewOrders():
 def navbarCretionScript():
     return render_template('navbarCreation.js')
 
-@app.route("/navbar/css")
-def signincss():
-    return render_template('sign.css')
-
-@app.route("/style/css")
-def stylecss():
-    return render_template('style.css')
-
-@app.route("/shopping/css")
-def shoppingcss():
-    return render_template('shopping.css')
-
 @app.route("/books/return/submit", methods = ('POST',))
 def return_books():
     # Функція для повернення книг (ще не зроблена)
@@ -529,13 +517,13 @@ def order_submit():
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
     if books_can_add == 0:
-        return make_response(jsonify({'books':"User can not order because is debtor or already have 10 books"}))
+        return make_response(jsonify({'response':"User can not order because is debtor or already have 10 books"}))
     elif need_to_delete > 0:
         # зробити з цього один ретурн - повідомлення
         print("Кількість книг, які треба видалити ", need_to_delete)
         return 1
     order(user_id, chosen_books)
-    return make_response(jsonify({'books': "Order complete"}))
+    return make_response(jsonify({'response': "Order complete"}))
 # -------------------------------------------------------------------------------------------------------------------
 
 
