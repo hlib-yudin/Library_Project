@@ -509,7 +509,7 @@ def book_ordering_amount():
     return make_response(jsonify({'response':'book deleted'}))
 
 
-@app.route("/books/basket/submit", methods=('POST', ))
+@app.route("/books/basket/submit", methods=['GET'])
 def order_submit():
     # chosen_books - все, що додано до кошика
     chosen_books = session['basket']
