@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
-<link rel="stylesheet" href="{{url_for('navbarcss')}}">
+<link rel="stylesheet" href="{{url_for('signincss')}}">
     <title>View orders</title>
 </head>
 <body>
@@ -20,7 +20,7 @@
             </ul>
         </div>
     </div>
-    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('sigup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
+    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
 
 </nav>
 
@@ -33,24 +33,25 @@
     <div class="order">
         
         <h2>Замовлення № {{order.order_id}}</h2>
-        <h4>{{order.order_issue_date}}</h4>
+        <h4>{{order.order_status}}</h4>
         
         {% for book in order.books %}
             <div class="book_row">
                 <div>{{book.edition_name}}</div>
                 <div>{{", ".join(book.edition_authors)}}</div>
                 <div>{{book.edition_year}}</div>
+                <!--
                 <input type="checkbox" class="form-check-input" id="exampleCheck1" name={{order.order_id}} value={{book.book_id}}>
+                -->
             </div>
         {% endfor %}
-        <!--TODO: pass parameters into submitReturning to distinguish between forms!!!-->
     </div>
     {% endfor %}
 
 
     <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Launch demo modal
+    Кнопка для скасування замовлення (ще в розробці)
   </button>
   
   <!-- Modal -->
@@ -122,40 +123,6 @@
     
 </script>
 
-<!--
-    <div class="signup-form">
-    <form action="/examples/actions/confirmation.php" method="post" class="form-horizontal">
-      	<div class="row">
-        	<div class="col-8 offset-4">
-				<h2>Add book</h2>
-			</div>	
-      	</div>			
 
-		<div class="form-group row">
-			<label class="col-form-label col-4">Id</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="id" required="required">
-            </div>        	
-        </div>
-        	<div class="form-group row">
-			<label class="col-form-label col-4">Book Name</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="name" required="required">
-            </div>        	
-        </div>
-		<div class="form-group row">
-			<label class="col-form-label col-4">Author</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="author" required="required">
-            </div>        	
-        </div>
-		<div class="form-group row">
-			<div class="col-8 offset-4">
-				<button type="submit" class="btn btn-primary btn-lg">Add</button>
-			</div>  
-		</div>		      
-    </form>
-</div>
--->
 </body>
 </html>

@@ -7,8 +7,8 @@ import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
@@ -27,6 +27,48 @@ def index():
 
     #return redirect(url_for("page_for_returning_books"))
     return redirect(url_for('signup'))
+
+@app.route('/orders')
+def page_for_orders():
+    # Сторінка для відображення замовлень користувача (її бачить не бібліотекарЮ, а читач)
+    if not flask_session.get('id'):
+        return "Авторизуйтеся"
+    user_id = flask_session["id"]
+    user = UserInf.query.filter_by(user_id=user_id).first()
+    # показуємо лише заброньовані та не повністю повернені замовлення
+    # TODO: не показувати повністю повернені замовлення!!!!!!!!!!!!!!!!!!!!!!!!
+    orders = Order.query.filter_by(user_id=user_id, is_canceled=False).all()
+
+    # складаємо json з інформацією про замовлення
+    json_orders = {"user_id": user.user_id, "orders": []}
+    for order in orders:
+        books = OrderBook.query.filter_by(order_id=order.order_id).all()
+        books = [book.book for book in books if book.return_date == None]
+        new_json = {
+            "order_id": order.order_id,
+            "order_status": "Видане" if order.issue_date else "Заброньоване",
+            #"order_issue_date": order.issue_date,
+            "order_in_time": True,  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
+            "books": []
+        }
+        for book in books:
+            edition = book.edition
+            new_json_2 = {
+                "book_id": book.book_id,
+                "edition_name": edition.book_title,
+                "edition_authors": [author.author_surname + " " + author.author_name + " " +
+                                    (author.author_middle_name if author.author_middle_name else "")
+                                    for author in edition.authors],
+                "edition_year": edition.edition_year
+            }
+            new_json["books"].append(new_json_2)
+
+        if len(new_json['books']) > 0:
+            json_orders["orders"].append(new_json)
+
+    if len(json_orders['orders']) == 0:
+        return "Замовлень немає"
+    return render_template('viewOrders.html', json = json_orders)
 
 @app.route("/books/catalogue")
 def catalogue():
