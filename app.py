@@ -484,16 +484,20 @@ def order(user_id, chosen_books):
 # треба цей edition_book_user_dict для наступної функції
 @app.route("/books/catalogue/addBook", methods=['POST'])
 def add_book_to_basket():
+    session.modified = True  # для того, щоб сесія оновлювалась
     # мені можна посилати лише edition_id, адже user_id привязаний до сесії
     data = json.loads(request.data);
-    # user_id = data['user_id']
     edition_id = data['edition_id']
-    print('session ', session)
-    my_session = session['basket']
     if session.get('id'):
         session['basket'].append(edition_id)
-        session.modified = True  # для того, щоб сесія оновлювалась
     return redirect(url_for('catalogue'))
+
+
+@app.route("/books/basket", methods=['POST'])
+def basket():
+    chosen_books = session['basket']
+    user_id = session['id']
+    return make_response(jsonify({'user_id': user_id, 'edition_id': chosen_books}))
 
 
 # приймається список книг(edition_id), які користувач вирішив видалити
