@@ -157,16 +157,17 @@ const addBook = async (event, book) => {
   const user_id = 1;
   await fetch("{{url_for('add_book_to_basket')}}", {
     method: 'POST',
-    body: JSON.stringify({book}),
+    body: JSON.stringify({edition_id : book.edition_id, user_id}),
   })//вставте необхідну урлу для перевірки респонсу метод гет
 	    .then(response => {
-        console.log(response);
         if (response.status !== 200) {
           alert(`Looks like there was a problem. Status code: ${response.status}`);
           return;
         }
 
-    alert('book added', response.status)});
+    return response.json()})
+    .then(data => {
+      alert(JSON.parse(data));});
 };
 /*
 const getPagination = async (index) => {

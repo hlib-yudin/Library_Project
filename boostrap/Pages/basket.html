@@ -34,8 +34,8 @@
                                         <div class="cart_item_title">Назва книги</div>
                                         <div class="cart_item_text">1984</div>
                                     </div>
-                                     <div class="cart_item_name cart_info_col"  id = "author">
-                                        <div class="cart_item_title">Автор</div>
+                                     <div class="cart_item_name cart_info_col"  id = "year">
+                                        <div class="cart_item_title">Рік</div>
                                         <div class="cart_item_text">George Orwell</div>
                                     </div>
                                     <div class="cart_item_name cart_info_col" id = "button">
@@ -55,33 +55,35 @@
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
 const getOrders = async () => {
-    let basket = localStorage.getItem('book');
+    //let basket = localStorage.getItem('book');
     const user_id = 1;
-    console.log(basket);
+   // console.log(basket);
 
     //if(basket){
         await fetch("{{url_for('basket_data')}}",
-         {method: 'POST', 
-         body: JSON.stringify({user_id, chosen_books: basket.edition_id})})//вставте необхідну урлу для перевірки респонсу метод гет
+         {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
 	    .then(response => {
         if (response.status !== 200) {
           alert(`Looks like there was a problem. Status code: ${response.status}`);
           return;
         }
+    alert(response);
     return response.json()})
     .then(data => {
-      alert(data);});
-   // }
-    /*
-    const {boookNameColumn,  bookAuthorColumn, buttonColumn} = getColumns();
-
-    basket.blocks.forEach((block, index) => {
-        boookNameColumn.insertAdjacentHTML('beforeend', `<div class="cart_item_text">${block.name}</div>`);
-        bookAuthorColumn.insertAdjacentHTML('beforeend', `<div class="cart_item_text">${block.author}</div>`);
+      const blocks = JSON.parse(JSON.stringify(data));
+      const {boookNameColumn,  bookYearColumn, buttonColumn} = getColumns();
+    blocks.basket.forEach((block, index) => {
+        boookNameColumn.insertAdjacentHTML('beforeend', `<div class="cart_item_text">${block.book_title}</div>`);
+        bookYearColumn.insertAdjacentHTML('beforeend', `<div class="cart_item_text">${block.edition_year}</div>`);
         buttonColumn.insertAdjacentHTML('beforeend', `<div type="button" onclick = "deleteItem(${index})" id = "${'button' + index}}" class="cart_item_text btn-dark">Видалити</button>`);
         });
+    console.log(blocks.basket);
     const title = document.getElementById("title");
-    title.insertAdjacentHTML("beforeend", `Basket<small> (${data.blocks.length} item in your basket) </small>`);
+    title.insertAdjacentHTML("beforeend", `Basket<small> (${blocks.basket.length} item in your basket) </small>`);
+    });
+   // }
+    /*
+    
 */
 };
 getOrders();
@@ -110,16 +112,16 @@ const deleteItem = (index) => {
     data.blocks.splice(index,1);
     sessionStorage.setItem('basket',JSON.stringify(data));
     
-    const {boookNameColumn,  bookAuthorColumn, buttonColumn} = getColumns();
+    const {boookNameColumn,  bookYearColumn, buttonColumn} = getColumns();
 
     boookNameColumn.children[index+1].remove();
-    bookAuthorColumn.children[index+1].remove();
+    bookYearColumn.children[index+1].remove();
     buttonColumn.children[index+1].remove();
     };
 
 const getColumns = () =>({
     boookNameColumn: document.getElementById("name"),
-    bookAuthorColumn: document.getElementById("author"),
+    bookYearColumn: document.getElementById("year"),
     buttonColumn: document.getElementById("button"),
 
 });

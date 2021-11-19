@@ -8,9 +8,9 @@ import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
@@ -490,11 +490,11 @@ def add_book_to_basket():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].append(edition_id)
-    return redirect(url_for('catalogue'))
+    return make_response(jsonify({'response':'book added'}))
 
 
-@app.route("/books/basket", methods=['POST'])
-def basket():
+@app.route("/books/basket/data", methods=['GET'])
+def basket_data():
     user_id = session['id']
     chosen_books = session['basket']
     main_json = {'user_id': user_id, 'basket': []}
@@ -506,6 +506,7 @@ def basket():
                        'book_title': book_title,
                        'edition_year': edition_year}
         main_json['basket'].append(basket_json)
+    print(main_json)
     return make_response(jsonify(main_json))
 
 
