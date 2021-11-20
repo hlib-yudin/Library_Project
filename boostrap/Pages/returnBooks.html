@@ -6,43 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Return book</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='shopping.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sign.css') }}">
     <!--
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='sign.css') }}">
     -->
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid"> <div class="navbar-brand">Book Catalog</div> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="navbar-brand">Book Catalog</div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto mb-2 mb-lg-0"></ul>
         </div>
     </div>
-    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
+    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon"
+                                    href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account">
+        <svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle>
+            <path fill="none" stroke="#fff" stroke-width="1.1"
+                  d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path>
+        </svg>
+    </a></div>
 
 </nav>
 
 
-
 <!--поле для вводу логіну читача-->
-<form method="get" action="{{url_for('page_for_returning_books')}}">
-    <div class="form-group">
-        <label class='form-label' for="login_query">Пошук замовлення</label>
-        <input type="text" name="login_query"
-               placeholder="Логін читача..." class="form-control">
-        </input>
-    </div>
-    <div class="form-group">
-      <button type="submit" class="btn btn-primary">Знайти</button>
-  </div>
-  </form>
+<div class="signup-form">
+    <form method="get" action="{{url_for('page_for_returning_books')}}" class="form-horizontal">
+<!--        <div class="form-group">-->
+<!--            <label class='form-label' for="login_query">Пошук замовлення</label>-->
+<!--            <div class="col-8">-->
+<!--                <input type="text" name="login_query"-->
+<!--                       placeholder="Логін читача..." class="form-control">-->
+<!--            </div>-->
+<!--            <div class="form-group">-->
+<!--                    <button type="submit" class="btn btn-danger btn-lg">Знайти</button>-->
+<!--            </div>-->
+<!--        </div>-->
 
+        <div class="row">
+        	<div class="col-8 offset-4">
+				<h2>Returning a book</h2>
+			</div>
+      	</div>
+
+		<div class="form-group row">
+			<label class="col-form-label col-4" for="login_query">Пошук замовленнь</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="login_query" placeholder="Логін читача..." required="required">
+            </div>
+        </div>
+
+
+		<div class="form-group row">
+			<div class="col-8 offset-4">
+                <button type="submit" class="btn btn-primary btn-lg">Знайти</button>
+			</div>
+		</div>
+    </form>
+</div>
 
 
 {% if json %}
@@ -54,44 +89,45 @@
             <div class="row">
                 <div class="col-lg-8 offset-lg-1">
                     <div class="cart_container">
-                        <div class="cart_title" id = title></div>
+                        <div class="cart_title" id=title></div>
                         {% for order in json['orders'] %}
                         <div class="cart_items">
                             <h2>Замовлення № {{order.order_id}}</h2>
                             <h4>{{order.order_issue_date}}</h4>
                             <ul class="cart_list">
-                                
+
                                 <li class="cart_item clearfix">
                                     <div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
-                                        <div class="cart_item_name cart_info_col" id = "name">
+                                        <div class="cart_item_name cart_info_col" id="name">
                                             <div class="cart_item_title"> Назва книги</div>
                                             {% for book in order.books %}
                                             <div class="cart_item_text">{{book.edition_name}}</div>
-                                            {% endfor %}                      
+                                            {% endfor %}
                                         </div>
-                                        <div class="cart_item_name cart_info_col"  id = "year">
+                                        <div class="cart_item_name cart_info_col" id="year">
                                             <div class="cart_item_title"> Рік</div>
                                             {% for book in order.books %}
                                             <div class="cart_item_text">{{book.edition_year}}</div>
                                             {% endfor %}
                                         </div>
-                                        <div class="cart_item_name cart_info_col" id = "authors">
+                                        <div class="cart_item_name cart_info_col" id="authors">
                                             <div class="cart_item_title"> Автори</div>
                                             {% for book in order.books %}
                                             <div class="cart_item_text">{{", ".join(book.edition_authors)}}</div>
                                             {% endfor %}
                                         </div>
-                                        <div class="cart_item_name cart_info_col" id = "checkbox">
+                                        <div class="cart_item_name cart_info_col" id="checkbox">
                                             <div class="cart_item_title">Повернуто</div>
                                             {% for book in order.books %}
                                             <div class="cart_item_text">
-                                            <input type="checkbox" class="form-check-input" id="exampleCheck1" name={{order.order_id}} value={{book.book_id}}>
+                                                <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                       name={{order.order_id}} value={{book.book_id}}>
                                             </div>
                                             {% endfor %}
                                         </div>
                                     </div>
                                 </li>
-                                
+
                             </ul>
                         </div>
                         {% endfor %}
@@ -108,13 +144,13 @@
 
 <!--
 {#
-<form name="submit_returning" onsubmit="return false;"> 
+<form name="submit_returning" onsubmit="return false;">
     {% for order in json['orders'] %}
     <div class="order">
-        
+
         <h2>Замовлення № {{order.order_id}}</h2>
         <h4>{{order.order_issue_date}}</h4>
-        
+
         {% for book in order.books %}
             <div class="book_row">
                 <div>{{book.edition_name}}</div>
@@ -123,7 +159,7 @@
                 <input type="checkbox" class="form-check-input" id="exampleCheck1" name={{order.order_id}} value={{book.book_id}}>
             </div>
         {% endfor %}
-     
+
     </div>
     {% endfor %}
     <button type="submit" class="btn btn-primary" onclick="submitReturning(event)">Submit</button>
@@ -137,54 +173,59 @@
 -->
 
 
-<script src = "{{url_for('navbarCretionScript')}}"></script>
+<script src="{{url_for('navbarCretionScript')}}"></script>
 <script>
     const submitReturning = async () => {
         const form = document.forms.submit_returning;
         let json = [];
         formData = new FormData(form);
         formData.forEach((value, key) => {
-            json.push({'order_id': parseInt(key),
-                    'book_id': value,
-                    'user_id': "{{json['user_id']}}" });
-                 }); // {{json['user_id']}}
+            json.push({
+                'order_id': parseInt(key),
+                'book_id': value,
+                'user_id': "{{json['user_id']}}"
+            });
+        }); // {{json['user_id']}}
 
         try {
             await fetch('{{url_for("return_books")}}', {//вставте необхідну урлу
-                method: 'post',
-                body: JSON.stringify(json)}
+                    method: 'post',
+                    body: JSON.stringify(json)
+                }
             ).then(response => {
-                                if (response.status !== 200) {
-                                    alert(`Looks like there was a problem. Status code: ${response.status}`);
-                                    return;
-                                    }
-                                return response.json()}
+                    if (response.status !== 200) {
+                        alert(`Looks like there was a problem. Status code: ${response.status}`);
+                        return;
+                    }
+                    return response.json()
+                }
             ).then(data => {
-                    alert(data.message);
-                    location.replace('{{url_for("page_for_returning_books")}}')});
-        }
-        catch(error){
+                alert(data.message);
+                location.replace('{{url_for("page_for_returning_books")}}')
+            });
+        } catch (error) {
             alert(error);
         }
 
         return false;
 
 
-}
-const getUserRole = async () => {
-  await fetch("{{url_for('getUserRole')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
-	.then(response => {
-    if (response.status !== 200) {
-          alert(`Looks like there was a problem. Status code: ${response.status}`);
-          return;
-        }
-    return response.json()})
-    .then(data => {
-      createNavbar(data.permissions,data.role);
-      sessionStorage.setItem('permitions',data.permissions);
-    });
-};
-getUserRole();
+    }
+    const getUserRole = async () => {
+        await fetch("{{url_for('getUserRole')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
+            .then(response => {
+                if (response.status !== 200) {
+                    alert(`Looks like there was a problem. Status code: ${response.status}`);
+                    return;
+                }
+                return response.json()
+            })
+            .then(data => {
+                createNavbar(data.permissions, data.role);
+                sessionStorage.setItem('permitions', data.permissions);
+            });
+    };
+    getUserRole();
 </script>
 </body>
 </html>
