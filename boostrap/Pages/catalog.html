@@ -150,7 +150,9 @@ const getUserRole = async () => {
 
     return response.json()
   }).then(data => {
-      createNavbar(data.permissions, data.role);
+    sessionStorage.setItem('permissions', data.permissions);
+    sessionStorage.setItem('status',data.role);
+    createNavbar();
     });
   };
 

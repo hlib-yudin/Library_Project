@@ -21,24 +21,21 @@ const setNavbar = (type, permissions) => {
     }
 };
 //aria-current="page"
-const createNavbar = (nav,role) => {
-    if (typeof nav === 'string'){
-        decoratorNavbar(nav.split(','),role);
+const createNavbar = () => {
+    const role = sessionStorage.getItem('status');
+    const permissions = sessionStorage.getItem('permissions');
+
+    if(!permissions){
+        permissions = [];
+    }
+
+    if(!role){
+        role ='reader';
+    }
+
+    if (typeof permissions === 'string'){
+        setNavbar(role,permissions.split(','));
     } else{
-        decoratorNavbar(nav,role);
+        setNavbar(role,permissions);
     }
-};
-
-const decoratorNavbar = (permissions,role) =>{
-    const type = sessionStorage.getItem('status');
-
-    if(type !== null && (!role || role === type)){
-        setNavbar(type, permissions);
-        return;
-    }
-
-
-    sessionStorage.setItem('status',role);
-
-    setNavbar(role, permissions);
 };
