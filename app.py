@@ -523,6 +523,7 @@ def order_submit():
         print("Кількість книг, які треба видалити ", need_to_delete)
         return 1
     order(user_id, chosen_books)
+    session['basket'].clear()
     return make_response(jsonify({'response': "Order complete"}))
 # -------------------------------------------------------------------------------------------------------------------
 
