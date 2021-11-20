@@ -131,7 +131,7 @@ def return_books():
     user_id = data[0]['user_id']
     old_user_status = get_user_status(user_id)
     res = return_of_book(data)
-    #db.session.commit()
+
     is_dep = is_debtor(user_id)
     if old_user_status == 'debtor' and not is_debtor(user_id):
         change_user_status(user_id, 'normal')
@@ -141,7 +141,7 @@ def return_books():
     for el in res:
         print(el)
     # db.session.commit()
-    return 'ok'
+    return make_response(jsonify({'message': "Книги успішно повернено"}))
 
 
 
@@ -221,10 +221,12 @@ def page_for_returning_books():
             # TODO: що повертає при помилці?
             return "user not found"
         user = users[0]
-        orders = Order.query.filter_by(user_id=user.user_id, is_canceled=False).all()
+        orders = Order.query.filter(Order.user_id==user.user_id, Order.is_canceled==False,
+            Order.issue_date != None).all()
         # TODO: що повертає при відсутності замовлень?
-        if len(orders) == 0:
-            return "no orders"
+        # повернемо json, у якого 'orders' = []
+        #if len(orders) == 0:
+        #    return "no orders"
 
         # складаємо json з інформацією про замовлення
         json_orders = {"user_id": user.user_id, "orders": []}
@@ -249,31 +251,34 @@ def page_for_returning_books():
                 }
                 new_json["books"].append(new_json_2)
 
-            json_orders["orders"].append(new_json)
+            if len(new_json['books']) > 0:
+                json_orders["orders"].append(new_json)
 
-    # відобразити html-сторінку
-    """json_orders = {
-        "user_id": "",
-        "orders": [{
-            "order_id": "1",
-            "order_issue_date": "20-08-20",
-            "order_in_time": True,
-            "books": [{
-                "book_id": "333-888-000",
-                "edition_name": "Harry Potter",
-                "edition_authors": ["JK", "Rowling"],
-                "edition_year": 2007,
-            },
-            {
-                "book_id": "333-888-001",
-                "edition_name": "Harry Potter 2",
-                "edition_authors": ["J.K. Rowling"],
-                "edition_year": 2008,
+        # відобразити html-сторінку
+        """json_orders = {
+            "user_id": "",
+            "orders": [{
+                "order_id": "1",
+                "order_issue_date": "20-08-20",
+                "order_in_time": True,
+                "books": [{
+                    "book_id": "333-888-000",
+                    "edition_name": "Harry Potter",
+                    "edition_authors": ["JK", "Rowling"],
+                    "edition_year": 2007,
+                },
+                {
+                    "book_id": "333-888-001",
+                    "edition_name": "Harry Potter 2",
+                    "edition_authors": ["J.K. Rowling"],
+                    "edition_year": 2008,
+                }]
+
             }]
-
-        }]
-    }"""
+        }"""
     return render_template('returnBooks.html', json=json_orders)
+    
+    
 
 
 
@@ -305,7 +310,7 @@ def return_of_book(dict_list):
         print('Return_date:', OrderBook.query.filter_by(order_id=order_id, book_id=book_id).first().return_date)
         print('-----------------------------------------------------')
         # TODO: додати db.session.commit()
-        # db.session.commit()
+        #db.session.commit()
     return res_list
 
 def get_user_status(user_id):

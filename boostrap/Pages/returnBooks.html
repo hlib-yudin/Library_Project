@@ -40,7 +40,8 @@
 
 <div class="list_of_orders">
 {% if json %}
-<form name="submit_returning" method="post"> <!--action="/books/return/id"> --> <!--change action URL-->
+{% if json.orders %}
+<form name="submit_returning" onsubmit="return false;"> <!--action="/books/return/id"> --> <!--change action URL-->
     {% for order in json['orders'] %}
     <div class="order">
         
@@ -58,9 +59,13 @@
         <!--TODO: pass parameters into submitReturning to distinguish between forms!!!-->
     </div>
     {% endfor %}
-    <button type="submit" class="btn btn-primary" onclick="submitReturning()">Submit</button>
+    <button type="submit" class="btn btn-primary" onclick="submitReturning(event)">Submit</button>
     </form>
+{% else %}
+<h2>У даного користувача виданих замовлень немає!</h2>
 {% endif %}
+{% endif %}
+
 </div>
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
@@ -78,32 +83,23 @@
             await fetch('{{url_for("return_books")}}', {//вставте необхідну урлу
                 method: 'post',
                 body: JSON.stringify(json)}
-                );
+            ).then(response => {
+                                if (response.status !== 200) {
+                                    alert(`Looks like there was a problem. Status code: ${response.status}`);
+                                    return;
+                                    }
+                                return response.json()}
+            ).then(data => {
+                    alert(data.message);
+                    location.replace('{{url_for("page_for_returning_books")}}')});
         }
         catch(error){
             alert(error);
         }
 
-        
-        location.replace('/');
+        return false;
 
-        /*await fetch('/books/return/id', )//вставте необхідну урлу для перевірки респонсу метод гет
-        .then(response => {
-            const parsedResponse = response.json().response
-            if(!parsedResponse.length){
-                alert('реєстрація пройшла успішно');
 
-                return;
-            }else {
-                alert(parsedResponse);
-                return;
-            }
-        })
-        .catch((error) => {
-            alert('Failed sending');
-            return;
-        });
-    }*/
 }
 const getUserRole = async () => {
   await fetch("{{url_for('getUserRole')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
