@@ -387,12 +387,14 @@ def is_canceled_change(ord):
     # треба перевірити скільки бронь вже висить
     today_date = date.today()
     order_date = ord.booking_date
-    booking_days = number_of_days(order_date, today_date)
-    if allowed_booking_days < booking_days:
-        # is_canceled is True
-        ord.is_canceled_update(new_status=True)
-        return 1
-    return 0
+    return_date = ord.return_date
+    if return_date is None:
+        booking_days = number_of_days(order_date, today_date)
+        if allowed_booking_days < booking_days:
+            # is_canceled is True
+            ord.is_canceled_update(new_status=True)
+            return 1
+        return 0
 
 
 def ordered_books_check(books):
@@ -409,11 +411,10 @@ def ordered_books_check(books):
 
 def available_books_now(edition_id):
     # список всіх книжок одного видання
-    edition_books = db.session.query(Book.book_id).filter_by(edition_id=edition_id).all()  # можна винести в query
-
+    edition_books = get_all_books_by_edition_id(edition_id)
     # книжки одного видання, яких немає в наявності, тому що заброньовані, або не повернені
-    ordered_books = db.session.query(Book.book_id, Order.booking_date, Order.issue_date).\
-        join(OrderBook, Book.book_id == OrderBook.book_id).\
+    ordered_books = db.session.query(Book.book_id, Order.booking_date, Order.issue_date, OrderBook.return_date). \
+        join(OrderBook, Book.book_id == OrderBook.book_id). \
         join(Order, Order.order_id == OrderBook.order_id). \
         filter(Book.edition_id == edition_id, OrderBook.return_date == None, Order.is_canceled == False).all()
     # перевірка коректності списку книг ordered_books
@@ -421,7 +422,7 @@ def available_books_now(edition_id):
 
     edition_books_list = list()
     for el in edition_books:
-        edition_books_list.append(el[0])
+        edition_books_list.append(el.book_id)
 
     A = set(edition_books_list)
     B = set(checked)
@@ -431,11 +432,11 @@ def available_books_now(edition_id):
 
 def can_add(user_id):
     amount_of_books = {'normal': 10, 'privileged': 10, 'debtor': 0}
-    order_list = db.session.query(Order.order_id).filter_by(user_id=user_id).all()  # можна винести в query
+    order_list = get_all_orders_by_user_id(user_id)
     user_status = get_status_name(get_user_by_id(user_id))
     in_hands = 0
     for order in order_list:
-        return_date = db.session.query(OrderBook.return_date).filter_by(order_id=order.order_id).all()
+        return_date = get_all_books_by_order_id(order.order_id)
         for re_date in return_date:
             if re_date.return_date is None:
                 in_hands += 1
@@ -450,7 +451,7 @@ def order(user_id, chosen_books):
     # створити новий запис в бд в Orders
     order_id = Order.add(user_id=user_id)
     for edition_id in chosen_books:
-        edition_amount = db.session.query(EditionCount).filter_by(edition_id=edition_id).first().number_of_available  # можна винести в query
+        edition_amount = get_edition_count_obj(edition_id).number_of_available
         if edition_amount > 0:
             # edition_amount need to be equal to len(available_books)
             available_books = available_books_now(edition_id)
@@ -458,17 +459,14 @@ def order(user_id, chosen_books):
             # створити новий запис в бд в Order_book
             OrderBook.add(book_id=b_order_id, order_id=order_id.order_id)
             # після бронювання книги зменшуємо кількість однакових книг
-            book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()  # можна винести в query
+            book = get_edition_count_obj(edition_id)
             book.count_decreasing()
         else:
-            book_name = db.session.query(EditionInf).filter_by(edition_id=edition_id).first().book_title
-            return  "книги " +  book_name + " немає в наявності"
-    return "замовлення пройшло успішно"
+            book_name = get_edition_info_obj(edition_id).book_title
+            return "Книги " + book_name + " немає в наявності"
+    return "Замовлення пройшло успішно"
 
 
-# Після натиснення на кнопку addBook, зберігає edition_id в сесію,
-# якщо обрали більше чим 1 книгу, буде список з edition_id
-# треба цей edition_book_user_dict для наступної функції
 @app.route("/books/catalogue/addBook", methods=['POST'])
 def add_book_to_basket():
     session.modified = True  # для того, щоб сесія оновлювалась
@@ -477,7 +475,7 @@ def add_book_to_basket():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].append(edition_id)
-    return make_response(jsonify({'response':'книга додана до кошика'}))
+    return make_response(jsonify({'response':'Книга додана до кошика'}))
 
 
 @app.route("/books/basket/data", methods=['GET'])
@@ -486,7 +484,7 @@ def basket_data():
     chosen_books = session['basket']
     main_json = {'user_id': user_id, 'basket': []}
     for book_edition_id in chosen_books:
-        book_info = db.session.query(EditionInf).filter_by(edition_id=book_edition_id).first()  # можна винести в query
+        book_info = get_edition_info_obj(book_edition_id)
         book_title = book_info.book_title
         edition_year = book_info.edition_year
         basket_json = {'edition_id': book_edition_id,
@@ -504,7 +502,7 @@ def book_ordering_amount():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].remove(edition_id)
-    return make_response(jsonify({'response':'книга видалена з кошика'}))
+    return make_response(jsonify({'response':'Книга видалена з кошика'}))
 
 
 @app.route("/books/basket/submit", methods=['GET'])
@@ -516,11 +514,11 @@ def order_submit():
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
     if books_can_add == 0:
-        return make_response(jsonify({'response':"Користувач не може забронювати книги, оскільки він або боржник, або вже замовив 10 книжок"}))
+        return make_response(jsonify(
+            {'response': "Користувач не може забронювати книги, оскільки він або боржник, або вже замовив 10 книжок"}))
     elif need_to_delete > 0:
-        # зробити з цього один ретурн - повідомлення
-        print("Кількість книг, які треба видалити ", need_to_delete)
-        return 1
+        response = "Треба видалити " + str(need_to_delete) + " книг зі списку кошика"
+        return make_response(jsonify({'response': response}))
     response = order(user_id, chosen_books)
     session['basket'].clear()
     return make_response(jsonify({'response': response}))
