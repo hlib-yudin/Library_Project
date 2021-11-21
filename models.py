@@ -50,7 +50,7 @@ class EditionCount(EditionInf):
                         primary_key=True)
     number_of_available = Column(BigInteger, nullable=False)
 
-    def count_update(self):
+    def count_decreasing(self):
         self.number_of_available -= 1
         db.session.commit()
 
