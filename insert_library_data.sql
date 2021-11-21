@@ -284,9 +284,9 @@ INSERT INTO User_status (user_id, status_id)
            (6, 3);
 
 ------------------------------------------------------------
---Create Orders
+--Create Orders - Needn't to run this because of incorrect amount of books in future
 ------------------------------------------------------------
-
+/*
 insert into orders (user_id, booking_date, issue_date, is_canceled)
 values (3, to_date('20-08-2020', 'DD-MM-YYYY'), 
 		to_date('22-08-2020', 'DD-MM-YYYY'), false);
@@ -334,6 +334,7 @@ values ('70000001', 4, to_date('11-09-2020', 'DD-MM-YYYY'));
 
 insert into order_book (book_id, order_id)
 values ('80000002', 4);
+*/
 
 
 
