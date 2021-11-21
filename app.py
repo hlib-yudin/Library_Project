@@ -461,8 +461,8 @@ def order(user_id, chosen_books):
             book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()  # можна винести в query
             book.count_decreasing()
         else:
-            book_name = db.session.query(EditionInf.book_title).filter_by(edition_id=edition_id).first()
-            return  "книги " +  str(book_name[0]) + " немає в наявності"
+            book_name = db.session.query(EditionInf).filter_by(edition_id=edition_id).first().book_title
+            return  "книги " +  book_name + " немає в наявності"
     return "замовлення пройшло успішно"
 
 
