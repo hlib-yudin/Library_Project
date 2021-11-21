@@ -1,14 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, flash, session
-from flask_session import Session  # https://pythonhosted.org/Flask-Session
-from config import Config
+from flask_session import Session
+# from config import Config
 from datetime import date
 from dateutil.relativedelta import *
 import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
@@ -21,9 +21,9 @@ Session(app)
 
 db = SQLAlchemy(app)
 db.init_app(app)
+#Author, EditionInf, EditionCount, Genre, Permission, Role, Status
 
-from models import *
-
+from query import *
 """@app.route('/')
 def hello_world():
     return 'Hello World!'"""
@@ -33,7 +33,7 @@ def hello_world():
 def index():
 
     #return redirect(url_for("page_for_returning_books"))
-    return redirect(url_for('signup'))
+    return redirect(url_for('catalogue'))
 
 @app.route('/orders')
 def page_for_orders():
@@ -49,7 +49,7 @@ def page_for_orders():
     # складаємо json з інформацією про замовлення
     json_orders = {"user_id": user.user_id, "orders": []}
     for order in orders:
-        books = OrderBook.query.filter_by(order_id=order.order_id).all()
+        books = OrderBook.query.filter_by(order_id=order.order_id).all()  # можна винести в query
         books = [book.book for book in books if book.return_date == None]
         new_json = {
             "order_id": order.order_id,
@@ -129,10 +129,9 @@ def return_books():
         return 'Читач повернув усі книжки'
     # s = json.dumps(data, indent=4, sort_keys=True)
     user_id = data[0]['user_id']
-    old_user_status = get_user_status(user_id)
+    old_user_status = get_status_name(get_user_by_id(user_id))  # можна винести в query
     res = return_of_book(data)
 
-    is_dep = is_debtor(user_id)
     if old_user_status == 'debtor' and not is_debtor(user_id):
         change_user_status(user_id, 'normal')
     if old_user_status != 'debtor' and all_books_returned(user_id):
@@ -140,7 +139,7 @@ def return_books():
 
     for el in res:
         print(el)
-    # db.session.commit()
+    db.session.commit()
     return make_response(jsonify({'message': "Книги успішно повернено"}))
 
 
@@ -185,7 +184,7 @@ def issue_order():
         return make_response(jsonify({'res_message': 'order was already issued!'}))
 
     # чи є читач боржником?
-    if user.status.status_name == 'debtor':
+    if get_status_name(user) == 'debtor':
         # якщо боржник -- скасувати замовлення
         order.is_canceled = True
         # db.session.commit()
@@ -210,7 +209,7 @@ def issue_order():
 @app.route("/books/return", methods = ('GET', 'POST'))
 def page_for_returning_books():
     # Рендерить сторінку для підтвердження повернення книги.
-    json_orders = {'user_id': '', 'orders':[], 'error_message': ''}
+    json_orders = {}
 
     # якщо в поле вводу ввели логін користувача -- знайти і відобразити всі його замовлення
     if request.args.get("login_query"):  # and request.method == 'GET'
@@ -219,23 +218,19 @@ def page_for_returning_books():
         users = UserInf.query.filter_by(user_login=login_query).all()
         if len(users) != 1:
             # TODO: що повертає при помилці?
-            #return make_response(jsonify({'message': 'Користувача не знайдено!'}))
-            json_orders['error_message'] = 'Користувача не знайдено!'
-            return render_template('returnBooks.html', json=json_orders)
+            return "user not found"
         user = users[0]
         orders = Order.query.filter(Order.user_id==user.user_id, Order.is_canceled==False,
             Order.issue_date != None).all()
         # TODO: що повертає при відсутності замовлень?
         # повернемо json, у якого 'orders' = []
-        if len(orders) == 0:
-            #return make_response(jsonify({'message': 'Замовлення не знайдено!'}))
-            json_orders['error_message'] = 'Для даного користувача замовлень не знайдено!'
-            return render_template('returnBooks.html', json=json_orders)
+        #if len(orders) == 0:
+        #    return "no orders"
 
         # складаємо json з інформацією про замовлення
-        json_orders = {"user_id": user.user_id, "orders": [], 'error_message': ''}
+        json_orders = {"user_id": user.user_id, "orders": []}
         for order in orders:
-            books = OrderBook.query.filter_by(order_id=order.order_id).all()
+            books = OrderBook.query.filter_by(order_id=order.order_id).all()  # можна винести в query
             books = [book.book for book in books if book.return_date == None]
             new_json = {
                 "order_id": order.order_id,
@@ -287,8 +282,7 @@ def page_for_returning_books():
 
 
 def return_of_book(dict_list):
-    # user_status = UserInf.query.filter_by(user_id=user_id).first().status
-    # issue_date = Order.query.filter_by(user_id=user_id).all()[0].issue_date
+
     res_list = []
     for elem in dict_list:
         # elem = json.loads(elem)
@@ -303,7 +297,7 @@ def return_of_book(dict_list):
         num_rows_updated = OrderBook.query.filter_by(order_id=order_id, book_id=book_id).update(
             dict(return_date=date.today()))
 
-        edition = EditionCount.query.filter_by(edition_id=edition_id).first()
+        edition = get_edition_count_obj(edition_id)
         edition.number_of_available += 1
         res_list.append({"order_id": order_id, "edition_id": edition_id, "book_title": edition.book_title,
                          "message": "Книгу успішно повернуто"})
@@ -314,11 +308,10 @@ def return_of_book(dict_list):
         print('Return_date:', OrderBook.query.filter_by(order_id=order_id, book_id=book_id).first().return_date)
         print('-----------------------------------------------------')
         # TODO: додати db.session.commit()
-        #db.session.commit()
+        db.session.commit()
     return res_list
 
-def get_user_status(user_id):
-    return UserInf.query.filter_by(user_id=user_id).first().status.status_name
+
 
 
 def change_user_status(user_id, new_status_name):
@@ -346,7 +339,7 @@ def grant_privileges(user_id):
         print(el.order_id, el.issue_date, el.max_return_date)
 
     term = {'normal': 3, 'privileged': 6}
-    user = UserInf.query.filter_by(user_id=user_id).first().status
+    user = get_user_by_id(user_id).status
     num_of_months = term[user.status_name]
     if all([number_of_months(el.issue_date, el.max_return_date) < num_of_months for el in res2]):
         change_user_status(user_id, 'privileged')
@@ -376,7 +369,7 @@ def number_of_days(date1, date2):
 
 def is_debtor(user_id):
     term = {'normal': 3, 'privileged': 6, 'debtor': 0}
-    user_status = UserInf.query.filter_by(user_id=user_id).first().status.status_name
+    user_status = get_status_name(get_user_by_id(user_id))
     num_of_months = term[user_status]
     is_debtor_flag = False
     verification_date = date.today() - relativedelta(months=num_of_months)
@@ -420,7 +413,7 @@ def ordered_books_check(books):
 
 def available_books_now(edition_id):
     # список всіх книжок одного видання
-    edition_books = db.session.query(Book.book_id).filter_by(edition_id=edition_id).all()
+    edition_books = db.session.query(Book.book_id).filter_by(edition_id=edition_id).all()  # можна винести в query
 
     # книжки одного видання, яких немає в наявності, тому що заброньовані, або не повернені
     ordered_books = db.session.query(Book.book_id, Order.booking_date, Order.issue_date).\
@@ -442,8 +435,8 @@ def available_books_now(edition_id):
 
 def can_add(user_id):
     amount_of_books = {'normal': 10, 'privileged': 10, 'debtor': 0}
-    order_list = db.session.query(Order.order_id).filter_by(user_id=user_id).all()
-    user_status = UserInf.query.filter_by(user_id=user_id).first().status.status_name
+    order_list = db.session.query(Order.order_id).filter_by(user_id=user_id).all()  # можна винести в query
+    user_status = get_status_name(get_user_by_id(user_id))
     in_hands = 0
     for order in order_list:
         return_date = db.session.query(OrderBook.return_date).filter_by(order_id=order.order_id).all()
@@ -461,7 +454,7 @@ def order(user_id, chosen_books):
     # створити новий запис в бд в Orders
     order_id = Order.add(user_id=user_id)
     for edition_id in chosen_books:
-        edition_amount = db.session.query(EditionCount).filter_by(edition_id=edition_id).first().number_of_available
+        edition_amount = db.session.query(EditionCount).filter_by(edition_id=edition_id).first().number_of_available  # можна винести в query
         if edition_amount > 0:
             # edition_amount need to be equal to len(available_books)
             available_books = available_books_now(edition_id)
@@ -469,13 +462,11 @@ def order(user_id, chosen_books):
             # створити новий запис в бд в Order_book
             OrderBook.add(book_id=b_order_id, order_id=order_id.order_id)
             # після бронювання книги зменшуємо кількість однакових книг
-            book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()
-            book.count_decreasing()
+            book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()  # можна винести в query
+            book.count_update()
         else:
-            book_name = db.session.query(EditionInf.book_title).filter_by(edition_id=edition_id).first()
-            return "книги " +  book_name + " немає в наявності"
-    return "всі книги є в наявності"
-
+            return "книги немає в наявності"
+    return "замовлення пройшло успішно"
 
 
 # Після натиснення на кнопку addBook, зберігає edition_id в сесію,
@@ -489,7 +480,7 @@ def add_book_to_basket():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].append(edition_id)
-    return make_response(jsonify({'response':'книга додана до кошика'}))
+    return make_response(jsonify({'response':'book added'}))
 
 
 @app.route("/books/basket/data", methods=['GET'])
@@ -498,7 +489,7 @@ def basket_data():
     chosen_books = session['basket']
     main_json = {'user_id': user_id, 'basket': []}
     for book_edition_id in chosen_books:
-        book_info = db.session.query(EditionInf).filter_by(edition_id=book_edition_id).first()
+        book_info = db.session.query(EditionInf).filter_by(edition_id=book_edition_id).first()  # можна винести в query
         book_title = book_info.book_title
         edition_year = book_info.edition_year
         basket_json = {'edition_id': book_edition_id,
@@ -516,7 +507,7 @@ def book_ordering_amount():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].remove(edition_id)
-    return make_response(jsonify({'response':'книга видалена з кошика'}))
+    return make_response(jsonify({'response':'book deleted'}))
 
 
 @app.route("/books/basket/submit", methods=['GET'])
@@ -528,14 +519,14 @@ def order_submit():
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
     if books_can_add == 0:
-        return make_response(jsonify({'response':"Користувач не може забронювати книги, оскільки він або боржник, або вже замовив 10 книжок"}))
+        return make_response(jsonify({'response':"User can not order because is debtor or already have 10 books"}))
     elif need_to_delete > 0:
         # зробити з цього один ретурн - повідомлення
         print("Кількість книг, які треба видалити ", need_to_delete)
         return 1
-    tempor = order(user_id, chosen_books)
+    order(user_id, chosen_books)
     session['basket'].clear()
-    return make_response(jsonify({'response': "Замовлення оформлено"}))
+    return make_response(jsonify({'response': "Order complete"}))
 # -------------------------------------------------------------------------------------------------------------------
 
 
@@ -552,7 +543,8 @@ def take_books_data():
             edition_authors = ", ".join(
                 " ".join([author.author_name, str(author.author_middle_name or ''), author.author_surname]) for author in
                 edition_authors)
-            num_of_available = EditionCount.query.filter_by(edition_id=edition.edition_id).all()[0]
+            num_of_available = get_edition_count_obj(edition.edition_id)
+
             book_data_output = {
                 "edition_id": edition.edition_id,
                 "book_title": edition.book_title,
@@ -570,7 +562,7 @@ def find_by_title():
     title_json = request.data.decode('utf-8')
     title = json.loads(title_json)['input']
     book_data_list = []
-    editions = EditionInf.query.filter_by(book_title=title).all()
+    editions = EditionInf.query.filter_by(book_title=title).all()  # можна винести в query
     for edition in editions:
         edition_genres = edition.genres
         edition_genres = ", ".join(genre.genre for genre in edition_genres)
@@ -589,14 +581,14 @@ def find_by_title():
         }
         book_data_list.append(book_data_output)
         print(book_data_output)
-    return  make_response(jsonify({'books':book_data_list}))
+    return make_response(jsonify({'books':book_data_list}))
 
 
 def check_availability(editions_id):
     check_list = []
     res_flag = 0
     for edition_id in editions_id:
-        edition = EditionCount.query.filter_by(edition_id=edition_id).all()[0]
+        edition = get_edition_count_obj(edition_id)
         flag = edition.number_of_available > 0
         if flag == False:
             res_flag = 1
@@ -625,7 +617,7 @@ def sign_up():
     middle_name = request.form["middle_name"]
 
     # шукаємо користувачів з даним логіном
-    users = UserInf.query.filter_by(user_login=login).all()
+    users = UserInf.query.filter_by(user_login=login).all()  # можна винести в query
     # якщо вони вже існують -- не проводимо реєстрацію
     if len(users) > 0:
         flash("Даний логін вже існує!")
@@ -641,20 +633,20 @@ def sign_up():
         # додати його в таблицю UserInf
         db.session.add(new_user)
         # додати його роль в таблицю t_user_role 
-        added_user = UserInf.query.filter_by(user_login=login, user_password=password).first()
+        added_user = UserInf.query.filter_by(user_login=login, user_password=password).first()  # можна винести в query
         # поки додаємо лише читачів -- TODO: додавати бібліотекарів теж
         role_name = 'reader'
-        role = Role.query.filter_by(role_name=role_name).first()
+        role = Role.query.filter_by(role_name=role_name).first()  # можна винести в query
         added_user.role = role
 
         # додати його статус в таблицю t_user_status
-        status = Status.query.filter_by(status_name="normal").first()
+        status = Status.query.filter_by(status_name="normal").first()  # можна винести в query
         added_user.status = status
         # зберегти зміни
         print(added_user)
         db.session.commit()
         
-        users = UserInf.query.filter_by(user_login=login, user_password=password).all()
+        users = UserInf.query.filter_by(user_login=login, user_password=password).all()  # можна винести в query
         # зберегти інформацію про користувача в сесію
         user = users[0]
         session['id'] = user.user_id
@@ -694,7 +686,7 @@ def log_in():
     password = request.form["user_password"]
     print(login)
     # Проводить авторизацію користувача з вказаними зашифрованими логіном і паролем.
-    users = UserInf.query.filter_by(user_login=login, user_password=password).all()
+    users = UserInf.query.filter_by(user_login=login, user_password=password).all()  # можна винести в query
     if len(users) == 0:
         flash("Неправильний логін чи пароль!")
         return redirect(url_for('signin'))
@@ -709,10 +701,10 @@ def log_in():
         session['permissions'] = []
         print(session)
 
-        role_permission = db.session.query(t_role_permission).filter_by(role_id = user.role.role_id).all()
+        role_permission = db.session.query(t_role_permission).filter_by(role_id = user.role.role_id).all()  # можна винести в query
         permission_ids = [elem[1] for elem in role_permission]
         for perm_id in permission_ids:
-            perm = Permission.query.filter_by(permission_id=perm_id).first()
+            perm = Permission.query.filter_by(permission_id=perm_id).first()  # можна винести в query
             session['permissions'].append(perm.permission_description)
 
     role = user.role.role_name
@@ -726,3 +718,4 @@ def log_in():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
