@@ -24,7 +24,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-8 offset-lg-1">
-                <div class="cart_container">
+                <div class="cart_container" id = "container">
                     <div class="cart_title" id = title></div>
                     <div class="cart_items">
                         <ul class="cart_list">
@@ -43,7 +43,6 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="cart_buttons"> <button type="button" onclick = "createReservation()" class="button cart_button_checkout">Забронювати</button> </div>
                 </div>
             </div>
         </div>
@@ -71,6 +70,8 @@ const getOrders = async () => {
             bookYearColumn.insertAdjacentHTML('beforeend', `<div class="cart_item_text">${block.edition_year}</div>`);
             buttonColumn.insertAdjacentHTML('beforeend', `<div type="button" onclick = "deleteItem(${index},'${block.edition_id}')" id = "${block.edition_id}" class="cart_item_text btn-dark">Видалити</button>`);
         });
+        const container = document.getElementById('container');
+        container.insertAdjacentHTML("afterend",` <div class="cart_buttons"> <button type="button" id = "order_button" onclick = "createReservation()" class="button cart_button_checkout">Забронювати</button> </div>`);
     /* 
     const title = document.getElementById("title");
     title.insertAdjacentHTML("beforeend", `Basket<small> (${blocks.basket.length} item in your basket) </small>`);
@@ -83,7 +84,7 @@ const createReservation = async () => {
     await fetch("{{url_for('order_submit')}}", {method: 'GET',})
     .then(response => {
     if (response.status !== 200) {
-        alert(`Looks like there was a problem. Status code: ${response.status}`);
+        alert(`Помилка стаус код: ${response.status}`);
         throw(response.status);
         }
     return response.json()})
@@ -96,7 +97,15 @@ const deleteItem = async (index,edition_id) => {
     await fetch("{{url_for('book_ordering_amount')}}", {
 			method: 'post',
 			body: JSON.stringify({edition_id})}
-			);
+			).then(response => {
+    if (response.status !== 200) {
+        alert(`Помилка стаус код: ${response.status}`);
+        throw(response.status);
+        }
+    return response.json()})
+    .then(data => {
+        alert(JSON.parse(JSON.stringify(data)).response);
+    }).catch(error => error);
 
     const {boookNameColumn,  bookYearColumn, buttonColumn} = getColumns();
     const blockLength = boookNameColumn.children.length;
@@ -105,6 +114,11 @@ const deleteItem = async (index,edition_id) => {
     boookNameColumn.children[itemNumber].remove();
     bookYearColumn.children[itemNumber].remove();
     buttonColumn.children[itemNumber].remove();
+    console.log(itemNumber-1);
+    if(itemNumber-1 === 0){
+        const button = document.getElementById("order_button");
+        button.remove();
+    } 
     };
 
 const getColumns = () =>({
