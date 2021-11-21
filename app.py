@@ -8,9 +8,9 @@ import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
@@ -35,7 +35,7 @@ def index():
     #return redirect(url_for("page_for_returning_books"))
     return redirect(url_for('catalogue'))
 
-@app.route('/orders')
+@app.route('/books/orders')
 def page_for_orders():
     # Сторінка для відображення замовлень користувача (її бачить не бібліотекарЮ, а читач)
     if not session.get('id'):
@@ -104,10 +104,6 @@ def addBook():
 @app.route("/books/removeBook")
 def removeBook():
     return render_template('removeBook.html')
-
-@app.route("/books/orders")
-def viewOrders():
-    return render_template('viewOrders.html')
 
 @app.route("/scripts/navbarCreation")
 def navbarCretionScript():

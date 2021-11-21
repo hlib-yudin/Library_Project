@@ -1,7 +1,7 @@
 const defaultNavbar = `
 <li class="nav-item"> <a class="nav-link " href="{{url_for('catalogue')}}">Каталог</a> </li>
 <li class="nav-item"> <a class="nav-link " aria-current="page" href="{{url_for('basket')}}">Корзина</a> </li>
-<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('viewOrders')}}">Замовлення</a> </li>`;
+<li class="nav-item" id = 'orders'> <a class="nav-link " aria-current="page" href="{{url_for('page_for_orders')}}">Замовлення</a> </li>`;
 
 const librarianNavbar = {
     'add books' : `<li class="nav-item"> <a class="nav-link" aria-current="page" href="{{url_for('addBook')}}">Додати книгу</a> </li>`,
