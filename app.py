@@ -10,7 +10,7 @@ app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
@@ -21,12 +21,9 @@ Session(app)
 
 db = SQLAlchemy(app)
 db.init_app(app)
-#Author, EditionInf, EditionCount, Genre, Permission, Role, Status
 
 from query import *
-"""@app.route('/')
-def hello_world():
-    return 'Hello World!'"""
+
 
 # html routing
 @app.route('/')
@@ -35,47 +32,8 @@ def index():
     #return redirect(url_for("page_for_returning_books"))
     return redirect(url_for('catalogue'))
 
-@app.route('/books/orders')
-def page_for_orders():
-    # Сторінка для відображення замовлень користувача (її бачить не бібліотекарЮ, а читач)
-    if not session.get('id'):
-        return "Авторизуйтеся"
-    user_id = session["id"]
-    user = get_user_by_id(user_id)
-    # показуємо лише заброньовані та не повністю повернені замовлення
-    # TODO: не показувати повністю повернені замовлення!!!!!!!!!!!!!!!!!!!!!!!!
-    orders = get_not_cancelled_orders_by_user_id(user_id)
-
-    # складаємо json з інформацією про замовлення
-    json_orders = {"user_id": user.user_id, "orders": [], 'error_message': ''}
-    for order in orders:
-        books = get_all_books_by_order_id(order.order_id) 
-        books = [book.book for book in books if book.return_date == None]
-        new_json = {
-            "order_id": order.order_id,
-            "order_status": "Видане" if order.issue_date else "Заброньоване",
-            #"order_issue_date": order.issue_date,
-            "order_in_time": True,  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
-            "books": []
-        }
-        for book in books:
-            edition = book.edition
-            new_json_2 = {
-                "book_id": book.book_id,
-                "edition_name": edition.book_title,
-                "edition_authors": [author.author_surname + " " + author.author_name + " " +
-                                    (author.author_middle_name if author.author_middle_name else "")
-                                    for author in edition.authors],
-                "edition_year": edition.edition_year
-            }
-            new_json["books"].append(new_json_2)
-
-        if len(new_json['books']) > 0:
-            json_orders["orders"].append(new_json)
-
-    if len(json_orders['orders']) == 0:
-        json_orders['error_message'] = "У Вас немає заброньованих чи неповернених замовлень!"
-    return render_template('viewOrders.html', json = json_orders)
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
 @app.route("/books/catalogue")
 def catalogue():
@@ -109,99 +67,11 @@ def removeBook():
 def navbarCretionScript():
     return render_template('navbarCreation.js')
 
-@app.route("/books/return/submit", methods = ('POST',))
-def return_books():
-    #print(request.form.getlist("book_ids"))
-    arrived_json = request.data.decode('utf-8')
-    # data -- готовий список словників, з яким можна працювати
-    data = json.loads(arrived_json)
-    print(data)
-    print('-------------------------------------------------------------------------------------------------------------')
-    print('-------------------------------------------------------------------------------------------------------------')
 
-    if len(data) == 0:
-        print('Читач повернув усі книжки')
-        return 'Читач повернув усі книжки'
-    # s = json.dumps(data, indent=4, sort_keys=True)
-    user_id = data[0]['user_id']
-    old_user_status = get_status_name(get_user_by_id(user_id))  # можна винести в query
-    res = return_of_book(data)
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
-    if old_user_status == 'debtor' and not is_debtor(user_id):
-        change_user_status(user_id, 'normal')
-    if old_user_status != 'debtor' and all_books_returned(user_id):
-        grant_privileges(user_id)
-
-    for el in res:
-        print(el)
-    db.session.commit()
-    return make_response(jsonify({'message': "Книги успішно повернено"}))
-
-
-
-@app.route("/order/issue", methods=('POST',))
-def issue_order():
-    # Функція для підтвердження видачі замовлення.
-    # Приймає json: {"user_login": ...,    "order_id": ... }
-    # TODO: нормально протестувати цю функцію!!!!!
-
-    arrived_json = json.loads(request.data.decode('utf-8'))
-    # arrived_json = {"user_login": '3', "order_id": 1}
-    print(arrived_json)
-    arrived_login = arrived_json["user_login"]
-    arrived_order_id = arrived_json["order_id"]
-
-    order_u_login = db.session.query(Order.order_id, UserInf.user_login, Order.is_canceled).filter(
-        Order.order_id == arrived_order_id,
-        Order.user_id == UserInf.user_id).first()
-    # 1) валідація
-    # чи є такий логін?
-    users = get_all_users_by_login(arrived_login)
-    if len(users) == 0:
-        return make_response(jsonify({'res_message': 'no users with given login!'}))
-    # чи є таке замовлення?
-    user = users[0]
-    orders = get_all_orders_by_order_id(arrived_order_id)
-    if len(orders) == 0:
-        return make_response(jsonify({'res_message': 'no orders with given id!'}))
-
-    # чи має даний юзер дане замовлення?
-    order = orders[0]
-    if order_u_login.user_login != arrived_login:
-        return make_response(jsonify({'res_message': "given person didn't make given order!"}))
-
-    # чи скасоване замовлення?
-    if order.is_canceled:
-        return make_response(jsonify({'res_message': 'order was canceled!'}))
-
-    # чи замовлення вже видане?
-    if order.issue_date:
-        return make_response(jsonify({'res_message': 'order was already issued!'}))
-
-    # чи є читач боржником?
-    if get_status_name(user) == 'debtor':
-        # якщо боржник -- скасувати замовлення
-        order.is_canceled = True
-        # db.session.commit()
-
-        return make_response(jsonify({'res_message': 'person is debtor -- order was cancelled!'}))
-
-    # якщо читач є боржником, але в базі даних про це ще немає інформації
-    if is_debtor(user.user_id):
-        order.is_canceled = True
-        user.status = get_specified_status('debtor')
-        # db.session.commit()
-        return make_response(jsonify({'res_message': 'person is debtor -- order was cancelled!'}))
-
-    # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
-    order.issue_date = date.today().strftime('%Y-%m-%d')
-    print(order.issue_date)
-    # db.session.commit()
-    return make_response(jsonify({'res_message': 'order was successfully issued!'}))
-
-
-
-@app.route("/books/return", methods = ('GET', 'POST'))
+@app.route("/books/return", methods=('GET', 'POST'))
 def page_for_returning_books():
     # Рендерить сторінку для підтвердження повернення книги.
     json_orders = {}
@@ -218,7 +88,7 @@ def page_for_returning_books():
         orders = get_issued_orders_by_user_id(user.user_id)
         # TODO: що повертає при відсутності замовлень?
         # повернемо json, у якого 'orders' = []
-        #if len(orders) == 0:
+        # if len(orders) == 0:
         #    return "no orders"
 
         # складаємо json з інформацією про замовлення
@@ -266,13 +136,38 @@ def page_for_returning_books():
                     "edition_authors": ["J.K. Rowling"],
                     "edition_year": 2008,
                 }]
-
             }]
         }"""
     return render_template('returnBooks.html', json=json_orders)
-    
-    
 
+
+@app.route("/books/return/submit", methods = ('POST',))
+def return_books():
+    #print(request.form.getlist("book_ids"))
+    arrived_json = request.data.decode('utf-8')
+    # data -- готовий список словників, з яким можна працювати
+    data = json.loads(arrived_json)
+    print(data)
+    print('-------------------------------------------------------------------------------------------------------------')
+    print('-------------------------------------------------------------------------------------------------------------')
+
+    if len(data) == 0:
+        print('Читач повернув усі книжки')
+        return 'Читач повернув усі книжки'
+    # s = json.dumps(data, indent=4, sort_keys=True)
+    user_id = data[0]['user_id']
+    old_user_status = get_status_name(get_user_by_id(user_id))  # можна винести в query
+    res = return_of_book(data)
+
+    if old_user_status == 'debtor' and not is_debtor(user_id):
+        change_user_status(user_id, 'normal')
+    if old_user_status != 'debtor' and all_books_returned(user_id):
+        grant_privileges(user_id)
+
+    for el in res:
+        print(el)
+    db.session.commit()
+    return make_response(jsonify({'message': "Книги успішно повернено"}))
 
 
 def return_of_book(dict_list):
@@ -301,24 +196,119 @@ def return_of_book(dict_list):
         print('Current EditionCount:', edition.number_of_available)
         print('Return_date:', OrderBook.query.filter_by(order_id=order_id, book_id=book_id).first().return_date)
         print('-----------------------------------------------------')
-        # TODO: додати db.session.commit()
         db.session.commit()
     return res_list
 
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
+@app.route("/order/issue", methods=('POST',))
+def issue_order():
+    # Функція для підтвердження видачі замовлення.
+    # Приймає json: {"user_login": ...,    "order_id": ... }
+    # TODO: нормально протестувати цю функцію!!!!!
 
+    arrived_json = json.loads(request.data.decode('utf-8'))
+    # arrived_json = {"user_login": '3', "order_id": 1}
+    print(arrived_json)
+    arrived_login = arrived_json["user_login"]
+    arrived_order_id = arrived_json["order_id"]
 
-def change_user_status(user_id, new_status_name):
-    new_status_id = Status.query.filter_by(status_name=new_status_name).first().status_id
-    if new_status_id == None:
-        return 'Такого статуса немає!'
-    a = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).update(dict(status_id=new_status_id))
-    # TODO: додати db.session.commit()
+    order_u_login = db.session.query(Order.order_id, UserInf.user_login, Order.is_canceled).filter(
+        Order.order_id == arrived_order_id,
+        Order.user_id == UserInf.user_id).first()
+    # 1) валідація
+    # чи є такий логін?
+    users = get_all_users_by_login(arrived_login)
+    if len(users) == 0:
+        return make_response(jsonify({'res_message': 'Немає користувачів із зазначеним логіном!'}))
+    # чи є таке замовлення?
+    user = users[0]
+    orders = get_all_orders_by_order_id(arrived_order_id)
+    if len(orders) == 0:
+        return make_response(jsonify({'res_message': 'Немає замовлень із зазначеним ідентифікатором!'}))
 
-    # TODO: потім видалити наступні рядки
-    b = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).first()
-    print('new_status_id:', b.status_id)
+    # чи має даний юзер дане замовлення?
+    order = orders[0]
+    if order_u_login.user_login != arrived_login:
+        return make_response(jsonify({'res_message': "Дана людини не робила цього замовлення!"}))
 
+    # чи скасоване замовлення?
+    if order.is_canceled:
+        return make_response(jsonify({'res_message': 'Замовлення було скасовано!'}))
+
+    # чи замовлення вже видане?
+    if order.issue_date:
+        return make_response(jsonify({'res_message': 'Замовлення було видано!'}))
+
+    # чи є читач боржником?
+    if get_status_name(user) == 'debtor':
+        # якщо боржник -- скасувати замовлення
+        order.is_canceled = True
+        db.session.commit()
+
+        return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
+
+    # якщо читач є боржником, але в базі даних про це ще немає інформації
+    if is_debtor(user.user_id):
+        order.is_canceled = True
+        user.status = get_specified_status('debtor')
+        db.session.commit()
+        return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
+
+    # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
+    order.issue_date = date.today().strftime('%Y-%m-%d')
+    print(order.issue_date)
+    db.session.commit()
+    return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+
+@app.route('/books/orders')
+def page_for_orders():
+    # Сторінка для відображення замовлень користувача (її бачить не бібліотекарЮ, а читач)
+    if not session.get('id'):
+        return "Авторизуйтеся"
+    user_id = session["id"]
+    user = UserInf.query.filter_by(user_id=user_id).first()
+    # показуємо лише заброньовані та не повністю повернені замовлення
+    # TODO: не показувати повністю повернені замовлення!!!!!!!!!!!!!!!!!!!!!!!!
+    orders = Order.query.filter_by(user_id=user_id, is_canceled=False).all()
+
+    # складаємо json з інформацією про замовлення
+    json_orders = {"user_id": user.user_id, "orders": [], 'error_message': ''}
+    for order in orders:
+        books = OrderBook.query.filter_by(order_id=order.order_id).all()  # можна винести в query
+        books = [book.book for book in books if book.return_date == None]
+        new_json = {
+            "order_id": order.order_id,
+            "order_status": "Видане" if order.issue_date else "Заброньоване",
+            #"order_issue_date": order.issue_date,
+            "order_in_time": True,  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
+            "books": []
+        }
+        for book in books:
+            edition = book.edition
+            new_json_2 = {
+                "book_id": book.book_id,
+                "edition_name": edition.book_title,
+                "edition_authors": [author.author_surname + " " + author.author_name + " " +
+                                    (author.author_middle_name if author.author_middle_name else "")
+                                    for author in edition.authors],
+                "edition_year": edition.edition_year
+            }
+            new_json["books"].append(new_json_2)
+
+        if len(new_json['books']) > 0:
+            json_orders["orders"].append(new_json)
+
+    if len(json_orders['orders']) == 0:
+        json_orders['error_message'] = "У Вас немає заброньованих чи неповернених замовлень!"
+    return render_template('viewOrders.html', json = json_orders)
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
 def grant_privileges(user_id):
 
@@ -338,28 +328,26 @@ def grant_privileges(user_id):
     if all([number_of_months(el.issue_date, el.max_return_date) < num_of_months for el in res2]):
         change_user_status(user_id, 'privileged')
 
-    # TODO: додати db.session.commit()
+    db.session.commit()
     return 'ok'
 
-def all_books_returned(user_id):
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
-    user_books = db.session.query(OrderBook.book_id, OrderBook.return_date,).filter(Order.user_id == user_id,
-                                                                                      Order.order_id == OrderBook.order_id,
-                                                                                    OrderBook.return_date == None).first()
-    print(user_books)
-    if user_books == None:
-        return True
-    else:
-        return False
+def change_user_status(user_id, new_status_name):
+    new_status_id = Status.query.filter_by(status_name=new_status_name).first().status_id
+    if new_status_id == None:
+        return 'Такого статуса немає!'
+    a = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).update(dict(status_id=new_status_id))
+    # TODO: додати db.session.commit()
 
-def number_of_months(date1, date2):
-    # if date2 is None:
-    #     date2 = date.today()
-    months = abs((date1.year - date2.year) * 12 + date1.month - date2.month)
-    return months
+    # TODO: потім видалити наступні рядки
+    b = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).first()
+    print('new_status_id:', b.status_id)
+    db.session.commit()
 
-def number_of_days(date1, date2):
-    return abs((date1 - date2).days)
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
 def is_debtor(user_id):
     term = {'normal': 3, 'privileged': 6, 'debtor': 0}
@@ -375,6 +363,9 @@ def is_debtor(user_id):
     if user_books.count > 0:
         is_debtor_flag = True
     return is_debtor_flag
+
+
+
 
 
 
@@ -520,8 +511,9 @@ def order_submit():
     response = order(user_id, chosen_books)
     session['basket'].clear()
     return make_response(jsonify({'response': response}))
-# -------------------------------------------------------------------------------------------------------------------
 
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
 @app.route("/catalogue/return", methods = ['GET'])
 def take_books_data():
@@ -550,6 +542,8 @@ def take_books_data():
         #print(book_data_output)
         return make_response(jsonify({'books':book_data_list}))
 
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 @app.route("/catalogue/search", methods = ['POST'])
 def find_by_title():
     title_json = request.data.decode('utf-8')
@@ -576,21 +570,8 @@ def find_by_title():
         print(book_data_output)
     return make_response(jsonify({'books':book_data_list}))
 
-
-def check_availability(editions_id):
-    check_list = []
-    res_flag = 0
-    for edition_id in editions_id:
-        edition = get_edition_count_obj(edition_id)
-        flag = edition.number_of_available > 0
-        if flag == False:
-            res_flag = 1
-        check_list.append({"edition_id": edition.edition_id, "flag": flag})
-    if res_flag == 0:
-        return 'ok ok'
-    else:
-        return check_list
-
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 
 @app.route('/signup/user', methods = ['POST'])
 def sign_up():
@@ -657,11 +638,15 @@ def sign_up():
     else:
         return redirect(url_for('catalogue'))
 
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 @app.route("/role/user", methods = ['GET'])
 def getUserRole():
     return make_response(jsonify({'role': session['role'], 'permissions': session['permissions']}))
 
-
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
 @app.route("/login/user", methods = ['POST'])
 def log_in():
     print(request.form)
@@ -709,6 +694,51 @@ def log_in():
         return redirect(url_for('catalogue'))
 
 
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+
+
+
+def all_books_returned(user_id):
+
+    user_books = db.session.query(OrderBook.book_id, OrderBook.return_date,).filter(Order.user_id == user_id,
+                                                                                      Order.order_id == OrderBook.order_id,
+                                                                                    OrderBook.return_date == None).first()
+    print(user_books)
+    if user_books == None:
+        return True
+    else:
+        return False
+
+def number_of_months(date1, date2):
+    # if date2 is None:
+    #     date2 = date.today()
+    months = abs((date1.year - date2.year) * 12 + date1.month - date2.month)
+    return months
+
+def number_of_days(date1, date2):
+    return abs((date1 - date2).days)
+
+def check_availability(editions_id):
+    check_list = []
+    res_flag = 0
+    for edition_id in editions_id:
+        edition = get_edition_count_obj(edition_id)
+        flag = edition.number_of_available > 0
+        if flag == False:
+            res_flag = 1
+        check_list.append({"edition_id": edition.edition_id, "flag": flag})
+    if res_flag == 0:
+        return 'ok'
+    else:
+        return check_list
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+
+
 
