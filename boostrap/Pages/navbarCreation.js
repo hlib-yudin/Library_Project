@@ -6,7 +6,7 @@ const defaultNavbar = `
 const librarianNavbar = {
     'add books' : `<li class="nav-item"> <a class="nav-link" aria-current="page" href="{{url_for('addBook')}}">Додати книгу</a> </li>`,
     'delete books': `<li class="nav-item" id = 'delete books'> <a class="nav-link " href="{{url_for('removeBook')}}">Видалити Книгу</a> </li>`,
-    'issue/accept books' : `<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('issuebooks')}}">Боржники</a> </li>`,
+    'issue/accept books' : `<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('issuebooks')}}">Видати книгу</a> </li>`,
 };
 
 const setNavbar = (type, permissions) => {
