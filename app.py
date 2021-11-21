@@ -47,7 +47,7 @@ def page_for_orders():
     orders = Order.query.filter_by(user_id=user_id, is_canceled=False).all()
 
     # складаємо json з інформацією про замовлення
-    json_orders = {"user_id": user.user_id, "orders": []}
+    json_orders = {"user_id": user.user_id, "orders": [], 'error_message': ''}
     for order in orders:
         books = OrderBook.query.filter_by(order_id=order.order_id).all()  # можна винести в query
         books = [book.book for book in books if book.return_date == None]
@@ -74,7 +74,7 @@ def page_for_orders():
             json_orders["orders"].append(new_json)
 
     if len(json_orders['orders']) == 0:
-        return "Замовлень немає"
+        json_orders['error_message'] = "У Вас немає заброньованих чи неповернених замовлень!"
     return render_template('viewOrders.html', json = json_orders)
 
 @app.route("/books/catalogue")
