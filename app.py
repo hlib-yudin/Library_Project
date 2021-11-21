@@ -210,7 +210,7 @@ def issue_order():
 @app.route("/books/return", methods = ('GET', 'POST'))
 def page_for_returning_books():
     # Рендерить сторінку для підтвердження повернення книги.
-    json_orders = {}
+    json_orders = {'user_id': '', 'orders':[], 'error_message': ''}
 
     # якщо в поле вводу ввели логін користувача -- знайти і відобразити всі його замовлення
     if request.args.get("login_query"):  # and request.method == 'GET'
@@ -219,17 +219,21 @@ def page_for_returning_books():
         users = UserInf.query.filter_by(user_login=login_query).all()
         if len(users) != 1:
             # TODO: що повертає при помилці?
-            return "user not found"
+            #return make_response(jsonify({'message': 'Користувача не знайдено!'}))
+            json_orders['error_message'] = 'Користувача не знайдено!'
+            return render_template('returnBooks.html', json=json_orders)
         user = users[0]
         orders = Order.query.filter(Order.user_id==user.user_id, Order.is_canceled==False,
             Order.issue_date != None).all()
         # TODO: що повертає при відсутності замовлень?
         # повернемо json, у якого 'orders' = []
-        #if len(orders) == 0:
-        #    return "no orders"
+        if len(orders) == 0:
+            #return make_response(jsonify({'message': 'Замовлення не знайдено!'}))
+            json_orders['error_message'] = 'Для даного користувача замовлень не знайдено!'
+            return render_template('returnBooks.html', json=json_orders)
 
         # складаємо json з інформацією про замовлення
-        json_orders = {"user_id": user.user_id, "orders": []}
+        json_orders = {"user_id": user.user_id, "orders": [], 'error_message': ''}
         for order in orders:
             books = OrderBook.query.filter_by(order_id=order.order_id).all()
             books = [book.book for book in books if book.return_date == None]
