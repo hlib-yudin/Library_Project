@@ -53,3 +53,6 @@ def get_specified_status(status_name):
 
 def get_roles_permissions_by_role_id(role_id):
     return db.session.query(t_role_permission).filter_by(role_id=role_id).all()
+
+def get_permission_by_perm_id(perm_id):
+    return Permission.query.filter_by(permission_id=perm_id).first()
