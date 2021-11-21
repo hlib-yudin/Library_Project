@@ -474,7 +474,7 @@ def order(user_id, chosen_books):
         else:
             book_name = db.session.query(EditionInf.book_title).filter_by(edition_id=edition_id).first()
             return "книги " +  book_name + " немає в наявності"
-
+    return "всі книги є в наявності"
 
 
 
@@ -533,7 +533,7 @@ def order_submit():
         # зробити з цього один ретурн - повідомлення
         print("Кількість книг, які треба видалити ", need_to_delete)
         return 1
-    order(user_id, chosen_books)
+    tempor = order(user_id, chosen_books)
     session['basket'].clear()
     return make_response(jsonify({'response': "Замовлення оформлено"}))
 # -------------------------------------------------------------------------------------------------------------------
