@@ -472,6 +472,7 @@ def order(user_id, chosen_books):
             book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()
             book.count_update()
         else:
+            book_name = db.session.query(EditionInf.book_title).filter_by(edition_id=edition_id).first()
             return "книги немає в наявності"
     return "замовлення пройшло успішно"
 
