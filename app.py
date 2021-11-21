@@ -41,15 +41,15 @@ def page_for_orders():
     if not session.get('id'):
         return "Авторизуйтеся"
     user_id = session["id"]
-    user = UserInf.query.filter_by(user_id=user_id).first()
+    user = get_user_by_id(user_id)
     # показуємо лише заброньовані та не повністю повернені замовлення
     # TODO: не показувати повністю повернені замовлення!!!!!!!!!!!!!!!!!!!!!!!!
-    orders = Order.query.filter_by(user_id=user_id, is_canceled=False).all()
+    orders = get_not_cancelled_orders_by_user_id(user_id)
 
     # складаємо json з інформацією про замовлення
     json_orders = {"user_id": user.user_id, "orders": [], 'error_message': ''}
     for order in orders:
-        books = OrderBook.query.filter_by(order_id=order.order_id).all()  # можна винести в query
+        books = get_all_books_by_order_id(order.order_id) 
         books = [book.book for book in books if book.return_date == None]
         new_json = {
             "order_id": order.order_id,
@@ -111,7 +111,6 @@ def navbarCretionScript():
 
 @app.route("/books/return/submit", methods = ('POST',))
 def return_books():
-    # Функція для повернення книг (ще не зроблена)
     #print(request.form.getlist("book_ids"))
     arrived_json = request.data.decode('utf-8')
     # data -- готовий список словників, з яким можна працювати
@@ -157,12 +156,12 @@ def issue_order():
         Order.user_id == UserInf.user_id).first()
     # 1) валідація
     # чи є такий логін?
-    users = UserInf.query.filter_by(user_login=arrived_login).all()
+    users = get_all_users_by_login(arrived_login)
     if len(users) == 0:
         return make_response(jsonify({'res_message': 'no users with given login!'}))
     # чи є таке замовлення?
     user = users[0]
-    orders = Order.query.filter_by(order_id=arrived_order_id).all()
+    orders = get_all_orders_by_order_id(arrived_order_id)
     if len(orders) == 0:
         return make_response(jsonify({'res_message': 'no orders with given id!'}))
 
@@ -190,7 +189,7 @@ def issue_order():
     # якщо читач є боржником, але в базі даних про це ще немає інформації
     if is_debtor(user.user_id):
         order.is_canceled = True
-        user.status = Status.query.filter_by(status_name='debtor').first()
+        user.status = get_specified_status('debtor')
         # db.session.commit()
         return make_response(jsonify({'res_message': 'person is debtor -- order was cancelled!'}))
 
@@ -211,13 +210,12 @@ def page_for_returning_books():
     if request.args.get("login_query"):  # and request.method == 'GET'
         # TODO: exceptions
         login_query = request.args["login_query"]
-        users = UserInf.query.filter_by(user_login=login_query).all()
+        users = get_all_users_by_login(login_query)
         if len(users) != 1:
             # TODO: що повертає при помилці?
             return "user not found"
         user = users[0]
-        orders = Order.query.filter(Order.user_id==user.user_id, Order.is_canceled==False,
-            Order.issue_date != None).all()
+        orders = get_issued_orders_by_user_id(user.user_id)
         # TODO: що повертає при відсутності замовлень?
         # повернемо json, у якого 'orders' = []
         #if len(orders) == 0:
@@ -226,7 +224,7 @@ def page_for_returning_books():
         # складаємо json з інформацією про замовлення
         json_orders = {"user_id": user.user_id, "orders": []}
         for order in orders:
-            books = OrderBook.query.filter_by(order_id=order.order_id).all()  # можна винести в query
+            books = get_all_books_by_order_id(order.order_id)  # можна винести в query
             books = [book.book for book in books if book.return_date == None]
             new_json = {
                 "order_id": order.order_id,
@@ -612,7 +610,7 @@ def sign_up():
     middle_name = request.form["middle_name"]
 
     # шукаємо користувачів з даним логіном
-    users = UserInf.query.filter_by(user_login=login).all()  # можна винести в query
+    users = get_all_users_by_login(login)  
     # якщо вони вже існують -- не проводимо реєстрацію
     if len(users) > 0:
         flash("Даний логін вже існує!")
@@ -628,20 +626,20 @@ def sign_up():
         # додати його в таблицю UserInf
         db.session.add(new_user)
         # додати його роль в таблицю t_user_role 
-        added_user = UserInf.query.filter_by(user_login=login, user_password=password).first()  # можна винести в query
+        added_user = get_user_by_login_and_password(login, password) 
         # поки додаємо лише читачів -- TODO: додавати бібліотекарів теж
         role_name = 'reader'
-        role = Role.query.filter_by(role_name=role_name).first()  # можна винести в query
+        role = get_role_by_name(role_name) 
         added_user.role = role
 
         # додати його статус в таблицю t_user_status
-        status = Status.query.filter_by(status_name="normal").first()  # можна винести в query
+        status = get_specified_status("normal")
         added_user.status = status
         # зберегти зміни
         print(added_user)
         db.session.commit()
         
-        users = UserInf.query.filter_by(user_login=login, user_password=password).all()  # можна винести в query
+        users = get_all_users_by_login_and_password(login, password)  
         # зберегти інформацію про користувача в сесію
         user = users[0]
         session['id'] = user.user_id
@@ -649,10 +647,10 @@ def sign_up():
         session['role'] = user.role.role_name
         session['basket'] = []
         session['permissions'] = []
-        role_permission = db.session.query(t_role_permission).filter_by(role_id=user.role.role_id).all()
+        role_permission = get_roles_permissions_by_role_id(user.role.role_id)
         permission_ids = [elem[1] for elem in role_permission]
         for perm_id in permission_ids:
-            perm = Permission.query.filter_by(permission_id=perm_id).first()
+            perm = get_permission_by_perm_id(perm_id)
             session['permissions'].append(perm.permission_description)
     if user.role.role_name == 'librarian': 
         return redirect("/books/return")
@@ -681,7 +679,7 @@ def log_in():
     password = request.form["user_password"]
     print(login)
     # Проводить авторизацію користувача з вказаними зашифрованими логіном і паролем.
-    users = UserInf.query.filter_by(user_login=login, user_password=password).all()  # можна винести в query
+    users = get_all_users_by_login_and_password(login, password)  # можна винести в query
     if len(users) == 0:
         flash("Неправильний логін чи пароль!")
         return redirect(url_for('signin'))
@@ -696,10 +694,10 @@ def log_in():
         session['permissions'] = []
         print(session)
 
-        role_permission = db.session.query(t_role_permission).filter_by(role_id = user.role.role_id).all()  # можна винести в query
+        role_permission = get_roles_permissions_by_role_id(user.role.role_id)
         permission_ids = [elem[1] for elem in role_permission]
         for perm_id in permission_ids:
-            perm = Permission.query.filter_by(permission_id=perm_id).first()  # можна винести в query
+            perm = get_permission_by_perm_id(perm_id)
             session['permissions'].append(perm.permission_description)
 
     role = user.role.role_name
