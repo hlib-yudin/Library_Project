@@ -473,7 +473,7 @@ def order(user_id, chosen_books):
             book.count_decreasing()
         else:
             book_name = db.session.query(EditionInf.book_title).filter_by(edition_id=edition_id).first()
-            return "книги немає в наявності"
+            return "книги " +  book_name + " немає в наявності"
 
 
 
