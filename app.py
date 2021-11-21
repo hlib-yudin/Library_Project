@@ -470,7 +470,7 @@ def order(user_id, chosen_books):
             OrderBook.add(book_id=b_order_id, order_id=order_id.order_id)
             # після бронювання книги зменшуємо кількість однакових книг
             book = db.session.query(EditionCount).filter_by(edition_id=edition_id).first()
-            book.count_update()
+            book.count_decreasing()
         else:
             book_name = db.session.query(EditionInf.book_title).filter_by(edition_id=edition_id).first()
             return "книги немає в наявності"
