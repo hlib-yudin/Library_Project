@@ -488,7 +488,7 @@ def add_book_to_basket():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].append(edition_id)
-    return make_response(jsonify({'response':'book added'}))
+    return make_response(jsonify({'response':'книга додана до кошика'}))
 
 
 @app.route("/books/basket/data", methods=['GET'])
@@ -515,7 +515,7 @@ def book_ordering_amount():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].remove(edition_id)
-    return make_response(jsonify({'response':'book deleted'}))
+    return make_response(jsonify({'response':'книга видалена з кошика'}))
 
 
 @app.route("/books/basket/submit", methods=['GET'])
@@ -527,14 +527,14 @@ def order_submit():
     books_can_add = can_add(user_id)
     need_to_delete = amount_of_chosen - books_can_add
     if books_can_add == 0:
-        return make_response(jsonify({'response':"User can not order because is debtor or already have 10 books"}))
+        return make_response(jsonify({'response':"Користувач не може забронювати книги, оскільки він або боржник, або вже замовив 10 книжок"}))
     elif need_to_delete > 0:
         # зробити з цього один ретурн - повідомлення
         print("Кількість книг, які треба видалити ", need_to_delete)
         return 1
     order(user_id, chosen_books)
     session['basket'].clear()
-    return make_response(jsonify({'response': "Order complete"}))
+    return make_response(jsonify({'response': "Замовлення оформлено"}))
 # -------------------------------------------------------------------------------------------------------------------
 
 
