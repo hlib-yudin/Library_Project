@@ -91,6 +91,8 @@ const createReservation = async () => {
     .then(data => {
         alert(JSON.parse(JSON.stringify(data)).response);
         removeOrderButton();
+        const buttonColumn = document.getElementById("button");
+        buttonColumn.remove();
     }).catch(error => error);
 };
 
@@ -107,7 +109,6 @@ const deleteItem = async (index,edition_id) => {
     .then(data => {
         alert(JSON.parse(JSON.stringify(data)).response);
     }).catch(error => error);
-
     const {boookNameColumn,  bookYearColumn, buttonColumn} = getColumns();
     const blockLength = boookNameColumn.children.length;
     const itemNumber = (index+1 >= blockLength) ? index : index+1;
@@ -125,7 +126,6 @@ const getColumns = () =>({
     boookNameColumn: document.getElementById("name"),
     bookYearColumn: document.getElementById("year"),
     buttonColumn: document.getElementById("button"),
-
 });
 
 const removeOrderButton = () => {
