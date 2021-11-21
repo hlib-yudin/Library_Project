@@ -474,6 +474,7 @@ def order(user_id, chosen_books):
         else:
             book_name = db.session.query(EditionInf.book_title).filter_by(edition_id=edition_id).first()
             return "книги немає в наявності"
+    return make_response(jsonify({'response': "Замовлення оформлено"}))
 
 
 
@@ -534,7 +535,7 @@ def order_submit():
         return 1
     order(user_id, chosen_books)
     session['basket'].clear()
-    return make_response(jsonify({'response': "Замовлення оформлено"}))
+    # return make_response(jsonify({'response': "Замовлення оформлено"}))
 # -------------------------------------------------------------------------------------------------------------------
 
 
