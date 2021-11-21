@@ -46,8 +46,9 @@
       }
       return response.json()})
       .then(data => {
+
 /*
-    додавання декількох сторінок
+    додавання декількох сторінок не для mvp
     let i = data.pagination;
     while(i > 0){
       pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination(${i})">${i}</a></li>`);
@@ -116,7 +117,7 @@ const getInfo = (event, data) =>{
         row.append(createCard(book,index));
     });
       } else {
-        alert('no books');
+        alert('У базі немає книжок');
       }
     });
 
@@ -130,7 +131,7 @@ const addBook = async (event, book) => {
   })
 	.then(response => {
     if (response.status !== 200) {
-      alert(`Looks like there was a problem. Status code: ${response.status}`);
+      alert(`Виникла помилка статус код: ${response.status}`);
       return;
     }
 
@@ -144,7 +145,7 @@ const getUserRole = async () => {
   await fetch("{{url_for('getUserRole')}}", {method: 'GET'})
 	.then(response => {
     if (response.status !== 200) {
-      alert(`Looks like there was a problem. Status code: ${response.status}`);
+      alert(`Виникла помилка статус код: ${response.status}`);
       return;
     }
 

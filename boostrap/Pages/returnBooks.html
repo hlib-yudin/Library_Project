@@ -198,7 +198,7 @@
                 }
             ).then(response => {
                     if (response.status !== 200) {
-                        alert(`Looks like there was a problem. Status code: ${response.status}`);
+                        alert(`Виникла помилка статус код: ${response.status}`);
                         return;
                     }
                     return response.json()
@@ -219,7 +219,7 @@
         await fetch("{{url_for('getUserRole')}}", {method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
             .then(response => {
                 if (response.status !== 200) {
-                    alert(`Looks like there was a problem. Status code: ${response.status}`);
+                    alert(`Виникла помилка статус код: ${response.status}`);
                     return;
                 }
                 return response.json()

@@ -54,7 +54,7 @@ const getOrders = async () => {
     await fetch("{{url_for('basket_data')}}",{method: 'GET'})//вставте необхідну урлу для перевірки респонсу метод гет
 	.then(response => {
     if (response.status !== 200) {
-        alert(`Looks like there was a problem. Status code: ${response.status}`);
+        alert(`Виникла помилка статус код: ${response.status}`);
           return;
         }
     return response.json()})
@@ -90,6 +90,7 @@ const createReservation = async () => {
     return response.json()})
     .then(data => {
         alert(JSON.parse(JSON.stringify(data)).response);
+        removeOrderButton();
     }).catch(error => error);
 };
 
@@ -114,10 +115,9 @@ const deleteItem = async (index,edition_id) => {
     boookNameColumn.children[itemNumber].remove();
     bookYearColumn.children[itemNumber].remove();
     buttonColumn.children[itemNumber].remove();
-    console.log(itemNumber-1);
-    if(itemNumber-1 === 0){
-        const button = document.getElementById("order_button");
-        button.remove();
+
+    if(blockLength-1 === 1){
+        removeOrderButton();
     } 
     };
 
@@ -127,6 +127,11 @@ const getColumns = () =>({
     buttonColumn: document.getElementById("button"),
 
 });
+
+const removeOrderButton = () => {
+    const button = document.getElementById("order_button");
+    button.remove();
+};
 
 createNavbar();
 getOrders();
