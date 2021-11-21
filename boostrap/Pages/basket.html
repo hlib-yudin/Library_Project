@@ -61,7 +61,7 @@ const getOrders = async () => {
     .then(data => {
       const blocks = JSON.parse(JSON.stringify(data));
       if(blocks.basket.length === 0){
-          alert("кошик пустий зробіть замовлення будь ласка");
+          alert("Кошик пустий, зробіть замовлення будь ласка");
           return;
       }
       const {boookNameColumn,  bookYearColumn, buttonColumn} = getColumns();
