@@ -1,12 +1,12 @@
 const defaultNavbar = `
 <li class="nav-item"> <a class="nav-link " href="{{url_for('catalogue')}}">Каталог</a> </li>
-<li class="nav-item"> <a class="nav-link " aria-current="page" href="{{url_for('basket')}}">Корзина</a> </li>`;
+<li class="nav-item"> <a class="nav-link " aria-current="page" href="{{url_for('basket')}}">Корзина</a> </li>
+<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('viewOrders')}}">Боржники</a> </li>`;
 
 const librarianNavbar = {
     'add books' : `<li class="nav-item"> <a class="nav-link" aria-current="page" href="{{url_for('addBook')}}">Додати книгу</a> </li>`,
     'delete books': `<li class="nav-item" id = 'delete books'> <a class="nav-link " href="{{url_for('removeBook')}}">Видалити Книгу</a> </li>`,
     'issue/accept books' : `<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('issuebooks')}}">Боржники</a> </li>`,
-    'order books':`<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('viewOrders')}}">Боржники</a> </li>`,
 };
 
 const setNavbar = (type, permissions) => {
