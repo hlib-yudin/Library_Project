@@ -195,6 +195,7 @@ class OrderBook(db.Model):
 
 
 db.create_all()
+db.session.commit()
 
 genre_1 = Genre(genre = 'Художня література')
 db.session.add(genre_1)
