@@ -22,8 +22,8 @@ const setNavbar = (type, permissions) => {
 };
 //aria-current="page"
 const createNavbar = () => {
-    const role = sessionStorage.getItem('status');
-    const permissions = sessionStorage.getItem('permissions');
+    let role = sessionStorage.getItem('status');
+    let permissions = sessionStorage.getItem('permissions');
 
     if(!permissions){
         permissions = [];

@@ -8,9 +8,9 @@ import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
 app.config['SECRET_KEY'] = 'Never-Gonna-Give-You-Up__Never-Gonna-Let-You-Down'
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
@@ -643,7 +643,10 @@ def sign_up():
 #---------------------------------------------------------------------------------------------------------------------
 @app.route("/role/user", methods = ['GET'])
 def getUserRole():
-    return make_response(jsonify({'role': session['role'], 'permissions': session['permissions']}))
+    if session:
+        return make_response(jsonify({'role': session['role'], 'permissions': session['permissions']}))
+    else:
+        return make_response(jsonify({'role': 'reader', 'permissions': []}))
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
