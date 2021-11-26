@@ -378,7 +378,7 @@ db.session.add(EditionCount(edition_id = '978-966-14-9349-9', number_of_availabl
 new_author = Author(author_surname = 'Омар', author_name = 'Хайям')
 db.session.add(new_author)
 
-new_edition = Author(author_surname = 'Омар', author_name = 'Хайям')
+new_edition = EditionInf(edition_id = '9-995-09980-1', book_title = 'Рубаї Омара Хайяма', edition_year = 2018)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_21, genre_32])
 db.session.add(new_edition)
