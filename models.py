@@ -250,10 +250,10 @@ db.session.add(new_author)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '5-325-00380-1', book_title = 'Математичний аналіз том 1', edition_year = 1993)
-db.session.commit()
+db.session.add(new_edition)
 new_edition.authors.append(new_author)
 new_edition.genres.extend([genre_28, genre_30])
-db.session.add(new_edition)
+db.session.commit()
 
 
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000001'))
