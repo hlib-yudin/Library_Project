@@ -9,4 +9,4 @@ MarkupSafe
 Werkzeug
 sqlalchemy
 psycopg2
-dateutil
+python-dateutil
