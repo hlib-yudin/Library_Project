@@ -193,7 +193,7 @@ class OrderBook(db.Model):
         return new_order
 
 
-
+db.drop_all()
 db.create_all()
 db.session.commit()
 
