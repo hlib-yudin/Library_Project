@@ -243,7 +243,7 @@ db.session.add(genre_32)
 
 # Add book 1: Математичний аналіз том 1 
 new_author = Author(author_surname = 'Дороговцев', author_name = 'Анатолій', author_middle_name = 'Якович')
-db.session.add(new_author)
+#db.session.add(new_author)
 
 new_edition = EditionInf(edition_id = '5-325-00380-1', book_title = 'Математичний аналіз том 1', edition_year = 1993)
 new_edition.authors.append(new_author)
@@ -504,4 +504,4 @@ new_user.status = status_debtor
 db.session.add(new_user)
 
 
-db.session.commit()
+#db.session.commit()
