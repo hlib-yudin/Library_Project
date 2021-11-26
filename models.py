@@ -133,7 +133,7 @@ t_edition_genre = Table(
 class Order(db.Model):
     __tablename__ = 'orders'
 
-    order_id = Column(Integer, primary_key=True, server_default=text("nextval('orders_order_id_seq'::regclass)"))
+    order_id = Column(Integer, db.Sequence('orders_order_id_seq'), primary_key=True)
     user_id = Column(ForeignKey('user_inf.user_id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
     booking_date = Column(Date, nullable=False)
     issue_date = Column(Date)
