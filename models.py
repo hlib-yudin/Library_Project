@@ -198,7 +198,7 @@ db.session.commit()"""
 db.create_all()
 db.session.commit()
 
-"""genre_1 = Genre(genre = 'Художня література')
+genre_1 = Genre(genre = 'Художня література')
 db.session.add(genre_1)
 db.session.add(Genre(genre = 'Документальна література'))
 db.session.add(Genre(genre = 'Наукова фантастика'))
@@ -545,4 +545,4 @@ new_user.status = status_debtor
 
 
 
-db.session.commit()"""
+db.session.commit()
