@@ -250,13 +250,13 @@ new_edition.authors.append(new_author)
 new_edition.genres.extend([genre_28, genre_30])
 db.session.add(new_edition)
 
-db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000001'))
+"""db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000001'))
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000002'))
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000003'))
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000004'))
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000005'))
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000006'))
-db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000007'))
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000007'))"""
 
 db.session.add(EditionCount(edition_id = '5-325-00380-1', number_of_available = 7))
 
