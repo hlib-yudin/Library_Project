@@ -194,6 +194,7 @@ class OrderBook(db.Model):
 
 
 db.drop_all()
+db.session.commit()
 db.create_all()
 db.session.commit()
 
