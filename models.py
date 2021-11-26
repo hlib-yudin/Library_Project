@@ -191,3 +191,292 @@ class OrderBook(db.Model):
         db.session.add(new_order)
         db.session.commit()
         return new_order
+
+
+"""
+db.create_all()
+
+db.session.add(Genre(genre = 'Художня література'))
+db.session.add(Genre(genre = 'Документальна література'))
+db.session.add(Genre(genre = 'Наукова фантастика'))
+db.session.add(Genre(genre = 'Детектив'))
+db.session.add(Genre(genre = 'Фентезі'))
+db.session.add(Genre(genre = 'Містика'))
+db.session.add(Genre(genre = 'Роман'))
+db.session.add(Genre(genre = 'Трилер'))
+db.session.add(Genre(genre = 'Історія'))
+db.session.add(Genre(genre = 'Сатира'))
+db.session.add(Genre(genre = 'Політика'))
+db.session.add(Genre(genre = 'Хоррор'))
+db.session.add(Genre(genre = 'Медицина'))
+db.session.add(Genre(genre = 'Кулінарні книги'))
+db.session.add(Genre(genre = 'Дитячі книги'))
+db.session.add(Genre(genre = 'Біографія'))
+db.session.add(Genre(genre = 'Автобіографія'))
+db.session.add(Genre(genre = 'Бізнес і фінанси'))
+db.session.add(Genre(genre = 'Словник'))
+db.session.add(Genre(genre = 'Енциклопедія'))
+db.session.add(Genre(genre = 'Антологія'))
+db.session.add(Genre(genre = 'Кіберпанк'))
+db.session.add(Genre(genre = 'Пост-апокаліптика'))
+db.session.add(Genre(genre = 'Класика'))
+db.session.add(Genre(genre = 'Гумор'))
+db.session.add(Genre(genre = 'Подорожі'))
+db.session.add(Genre(genre = 'Мистецтво'))
+db.session.add(Genre(genre = 'Наука'))
+db.session.add(Genre(genre = 'Підручник'))
+db.session.add(Genre(genre = 'Математика'))
+db.session.add(Genre(genre = 'Пригоди'))
+db.session.add(Genre(genre = 'Поезія'))
+# Add book 1: Математичний аналіз том 1 
+db.session.add(Author(author_surname = 'Дороговцев', author_name = 'Анатолій', author_middle_name = 'Якович'))
+
+db.session.add(EditionInf(edition_id = '5-325-00380-1', book_title = 'Математичний аналіз том 1', edition_year = 1993))
+
+db.session.add(t_edition_author(edition_id = '5-325-00380-1', author_id = 1))
+
+db.session.add(t_edition_genre(edition_id = '5-325-00380-1', genre_id = 28))
+db.session.add(t_edition_genre(edition_id = '5-325-00380-1', genre_id = 30))
+
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000001'))
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000002'))
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000003'))
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000004'))
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000005'))
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000006'))
+db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000007'))
+
+db.session.add(EditionCount(edition_id = '5-325-00380-1', number_of_available = 7))
+
+# Add book 2: Математичний аналіз том 2
+db.session.add(Author(author_surname = 'Боярчук', author_name = 'Олексій', author_middle_name = 'Климович'))
+db.session.add(Author(author_surname = 'Головач', author_name = 'Григорій', author_middle_name = 'Петрович'))
+
+db.session.add(EditionInf(edition_id = '5-325-00380-2', book_title = 'Математичний аналіз том 2', edition_year = 1995))
+
+db.session.add(t_edition_author(edition_id = '5-325-00380-2', author_id = 2))
+db.session.add(t_edition_author(edition_id = '5-325-00380-2', author_id = 3))
+
+db.session.add(t_edition_genre(edition_id = '5-325-00380-2', genre_id = 28))
+db.session.add(t_edition_genre(edition_id = '5-325-00380-2', genre_id = 30))
+
+db.session.add(Book(edition_id = '5-325-00380-2', book_id = '20000001'))
+db.session.add(Book(edition_id = '5-325-00380-2', book_id = '20000002'))
+db.session.add(Book(edition_id = '5-325-00380-2', book_id = '20000003'))
+db.session.add(Book(edition_id = '5-325-00380-2', book_id = '20000004'))
+db.session.add(Book(edition_id = '5-325-00380-2', book_id = '20000005'))
+db.session.add(Book(edition_id = '5-325-00380-2', book_id = '20000006'))
+
+db.session.add(EditionCount(edition_id = '5-325-00380-2', number_of_available = 6))
+
+# Add book 3: Гаррі Поттер і філософський камінь
+db.session.add(Author(author_surname = 'Роулінг', author_name = 'Джоан'))
+
+db.session.add(EditionInf(edition_id = '6-325-01280-1', book_title = 'Гаррі Поттер і філософський камінь', edition_year = 1997))
+
+db.session.add(t_edition_author(edition_id = '6-325-01280-1', author_id = 4))
+
+db.session.add(t_edition_genre(edition_id = '6-325-01280-1', genre_id = 5))
+db.session.add(t_edition_genre(edition_id = '6-325-01280-1', genre_id = 1))
+db.session.add(t_edition_genre(edition_id = '6-325-01280-1', genre_id = 31))
+
+db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000001'))
+db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000002'))
+db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000003'))
+db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000004'))
+db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000005'))
+db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000006'))
+db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000007'))
+
+db.session.add(EditionCount(edition_id = '6-325-01280-1', number_of_available = 7))
+
+# Add book 4: Гаррі Поттер і таємна кімната
+db.session.add(EditionInf(edition_id = '6-325-01280-2', book_title = 'Гаррі Поттер і таємна кімната', edition_year = 1998))
+
+db.session.add(t_edition_author(edition_id = '6-325-01280-2', author_id = 4))
+
+db.session.add(t_edition_genre(edition_id = '6-325-01280-2', genre_id = 5))
+db.session.add(t_edition_genre(edition_id = '6-325-01280-2', genre_id = 1))
+db.session.add(t_edition_genre(edition_id = '6-325-01280-2', genre_id = 31))
+
+db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000001'))
+db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000002'))
+db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000003'))
+db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000004'))
+db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000005'))
+db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000006'))
+db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000007'))
+
+db.session.add(EditionCount(edition_id = '6-325-01280-2', number_of_available = 7))
+
+# Add book 5: Володар перснів: Хранителі персня
+db.session.add(Author(author_surname = 'Толкін', author_name = 'Джон'))
+
+db.session.add(EditionInf(edition_id = '7-665-01580-1', book_title = 'Володар перснів: Хранителі персня', edition_year = 1954))
+
+db.session.add(t_edition_author(edition_id = '7-665-01580-1', author_id = 5))
+
+db.session.add(t_edition_genre(edition_id = '7-665-01580-1', genre_id = 7))
+db.session.add(t_edition_genre(edition_id = '7-665-01580-1', genre_id = 5))
+
+db.session.add(Book(edition_id = '7-665-01580-1', book_id = '50000001'))
+db.session.add(Book(edition_id = '7-665-01580-1', book_id = '50000002'))
+db.session.add(Book(edition_id = '7-665-01580-1', book_id = '50000003'))
+db.session.add(Book(edition_id = '7-665-01580-1', book_id = '50000004'))
+db.session.add(Book(edition_id = '7-665-01580-1', book_id = '50000005'))
+
+db.session.add(EditionCount(edition_id = '7-665-01580-1', number_of_available = 5))
+
+# Add book 6: Володар перснів: Дві вежі
+db.session.add(EditionInf(edition_id = '7-665-01580-2', book_title = 'Володар перснів: Дві вежі', edition_year = 1954))
+
+db.session.add(t_edition_author(edition_id = '7-665-01580-2', author_id = 5))
+
+db.session.add(t_edition_genre(edition_id = '7-665-01580-2', genre_id = 7))
+db.session.add(t_edition_genre(edition_id = '7-665-01580-2', genre_id = 5))
+
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000001'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000002'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000003'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000004'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000005'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000006'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000007'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000008'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000009'))
+db.session.add(Book(edition_id = '7-665-01580-2', book_id = '600000010'))
+
+db.session.add(EditionCount(edition_id = '7-665-01580-2', number_of_available = 10))
+
+# Add book 7: Англо-український словник
+db.session.add(Author(author_surname = 'Сидоренко', author_name = 'Олеся'))
+db.session.add(Author(author_surname = 'Сидоренко', author_name = 'Іван'))
+db.session.add(Author(author_surname = 'Тесленко', author_name = 'Володимир'))
+
+db.session.add(EditionInf(edition_id = '978-966-14-9349-9', book_title = 'Англо-український словник', edition_year = 2015))
+
+db.session.add(t_edition_author(edition_id = '978-966-14-9349-9', author_id = 6))
+db.session.add(t_edition_author(edition_id = '978-966-14-9349-9', author_id = 7))
+db.session.add(t_edition_author(edition_id = '978-966-14-9349-9', author_id = 8))
+
+db.session.add(t_edition_genre(edition_id = '978-966-14-9349-9', genre_id = 19))
+
+db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000001'))
+db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000002'))
+db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000003'))
+db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000004'))
+db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000005'))
+db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000006'))
+db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000007'))
+
+db.session.add(EditionCount(edition_id = '978-966-14-9349-9', number_of_available = 7))
+
+# Add book 8:
+db.session.add(Author(author_surname = 'Омар', author_name = 'Хайям'))
+
+db.session.add(EditionInf(edition_id = '9-995-09980-1', book_title = 'Рубаї Омара Хайяма', edition_year = 2018))
+
+db.session.add(t_edition_author(edition_id = '9-995-09980-1', author_id = 9))
+
+db.session.add(t_edition_genre(edition_id = '9-995-09980-1', genre_id = 21))
+db.session.add(t_edition_genre(edition_id = '9-995-09980-1', genre_id = 32))
+
+db.session.add(Book(edition_id = '9-995-09980-1', book_id = '80000001'))
+db.session.add(Book(edition_id = '9-995-09980-1', book_id = '80000002'))
+db.session.add(Book(edition_id = '9-995-09980-1', book_id = '80000003'))
+db.session.add(Book(edition_id = '9-995-09980-1', book_id = '80000004'))
+db.session.add(Book(edition_id = '9-995-09980-1', book_id = '80000005'))
+db.session.add(Book(edition_id = '9-995-09980-1', book_id = '80000006'))
+
+db.session.add(EditionCount(edition_id = '9-995-09980-1', number_of_available = 6))
+
+# Add book 9: Пригоди Тома Сойєра
+db.session.add(Author(author_surname = 'Твен', author_name = 'Марк'))
+
+db.session.add(EditionInf(edition_id = '978-966-10-3883-6', book_title = 'Пригоди Тома Сойєра', edition_year = 1876))
+
+db.session.add(t_edition_author(edition_id = '978-966-10-3883-6', author_id = 10))
+
+db.session.add(t_edition_genre(edition_id = '978-966-10-3883-6', genre_id = 7))
+db.session.add(t_edition_genre(edition_id = '978-966-10-3883-6', genre_id = 4))
+db.session.add(t_edition_genre(edition_id = '978-966-10-3883-6', genre_id = 31))
+db.session.add(t_edition_genre(edition_id = '978-966-10-3883-6', genre_id = 25))
+
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000001'))
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000002'))
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000003'))
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000004'))
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000005'))
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000006'))
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000007'))
+db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000008'))
+
+db.session.add(EditionCount(edition_id = '978-966-10-3883-6', number_of_available = 8))
+
+# Add book 10: Лускунчик
+db.session.add(Author(author_surname = 'Гофман', author_name = 'Амадей'))
+
+db.session.add(EditionInf(edition_id = '118-116-11-3113-1', book_title = 'Лускунчик', edition_year = 1816))
+
+db.session.add(t_edition_author(edition_id = '118-116-11-3113-1', author_id = 11))
+
+db.session.add(t_edition_genre(edition_id = '118-116-11-3113-1', genre_id = 15))
+db.session.add(t_edition_genre(edition_id = '118-116-11-3113-1', genre_id = 5))
+
+db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000001'))
+db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000002'))
+db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000003'))
+db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000004'))
+db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000005'))
+db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000006'))
+db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000007'))
+
+db.session.add(EditionCount(edition_id = '118-116-11-3113-1', number_of_available = 7))
+
+# ========================================================================
+
+db.session.add(Permission(permission_description = 'add books'))
+db.session.add(Permission(permission_description = 'delete books'))
+db.session.add(Permission(permission_description = 'register librarians'))
+db.session.add(Permission(permission_description = 'issue/accept books'))
+db.session.add(Permission(permission_description = 'order books'))
+
+db.session.add(Role(role_name = 'librarian'))
+db.session.add(Role(role_name = 'reader'))
+db.session.add(Role(role_name = 'admin'))
+
+db.session.add(UserInf(user_login = '1', user_password = '1111', user_name='Богдан',
+    surname='Норкін', middle_name='Володимирович'))
+db.session.add(UserInf(user_login = '2', user_password = '2222', user_name='Олена',
+    surname='Темнікова', middle_name='Леонідівна'))
+db.session.add(UserInf(user_login = '3', user_password = '3333', user_name='Володимир',
+    surname='Мальчиков', middle_name='Вікторович'))
+db.session.add(UserInf(user_login = '4', user_password = '4444', user_name='Олег',
+    surname='Чертов', middle_name='Романович'))
+db.session.add(UserInf(user_login = '5', user_password = '5555', user_name='Тетяна',
+    surname='Ладогубець', middle_name='Сергіївна'))
+db.session.add(UserInf(user_login = '6', user_password = '6666', user_name='Сергій',
+    surname='Сирота'))
+
+db.session.add(Status(status_name = 'normal'))
+db.session.add(Status(status_name = 'privileged'))
+db.session.add(Status(status_name = 'debtor'))
+
+db.session.add(t_role_permission(role_id = 1, permission_id = 1))
+db.session.add(t_role_permission(role_id = 1, permission_id = 2))
+db.session.add(t_role_permission(role_id = 1, permission_id = 4))
+db.session.add(t_role_permission(role_id = 2, permission_id = 5))
+db.session.add(t_role_permission(role_id = 3, permission_id = 3))
+
+db.session.add(t_user_role(role_id = 1, user_id = 1))
+db.session.add(t_user_role(role_id = 1, user_id = 2))
+db.session.add(t_user_role(role_id = 2, user_id = 3))
+db.session.add(t_user_role(role_id = 2, user_id = 5))
+db.session.add(t_user_role(role_id = 2, user_id = 6))
+db.session.add(t_user_role(role_id = 3, user_id = 4))
+
+db.session.add(t_user_status(user_id = 3, status_id = 2))
+db.session.add(t_user_status(user_id = 5, status_id = 1))
+db.session.add(t_user_status(user_id = 6, status_id = 3))
+
+db.session.commit()"""
