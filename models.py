@@ -250,10 +250,11 @@ db.session.add(new_author)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '5-325-00380-1', book_title = 'Математичний аналіз том 1', edition_year = 1993)
+db.session.commit()
 new_edition.authors.append(new_author)
 new_edition.genres.extend([genre_28, genre_30])
 db.session.add(new_edition)
-db.session.commit()
+
 
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000001'))
 db.session.add(Book(edition_id = '5-325-00380-1', book_id = '10000002'))
@@ -274,9 +275,9 @@ db.session.add(new_author_2)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '5-325-00380-2', book_title = 'Математичний аналіз том 2', edition_year = 1995)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author_1, new_author_2])
 new_edition.genres.extend([genre_28, genre_30])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '5-325-00380-2', book_id = '20000001'))
@@ -295,9 +296,9 @@ db.session.add(new_author)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '6-325-01280-1', book_title = 'Гаррі Поттер і філософський камінь', edition_year = 1997)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_5, genre_1, genre_31])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '6-325-01280-1', book_id = '30000001'))
@@ -313,9 +314,9 @@ db.session.commit()
 
 # Add book 4: Гаррі Поттер і таємна кімната
 new_edition = EditionInf(edition_id = '6-325-01280-2', book_title = 'Гаррі Поттер і таємна кімната', edition_year = 1998)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_5, genre_1, genre_31])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '6-325-01280-2', book_id = '40000001'))
@@ -335,9 +336,9 @@ db.session.add(new_author)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '7-665-01580-1', book_title = 'Володар перснів: Хранителі персня', edition_year = 1954)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_5, genre_7])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '7-665-01580-1', book_id = '50000001'))
@@ -351,9 +352,9 @@ db.session.commit()
 
 # Add book 6: Володар перснів: Дві вежі
 new_edition = EditionInf(edition_id = '7-665-01580-2', book_title = 'Володар перснів: Дві вежі', edition_year = 1954)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_5, genre_7])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '7-665-01580-2', book_id = '60000001'))
@@ -380,9 +381,9 @@ db.session.add(new_author_3)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '978-966-14-9349-9', book_title = 'Англо-український словник', edition_year = 2015)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author_1, new_author_2, new_author_3])
 new_edition.genres.extend([genre_19])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '978-966-14-9349-9', book_id = '70000001'))
@@ -402,9 +403,9 @@ db.session.add(new_author)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '9-995-09980-1', book_title = 'Рубаї Омара Хайяма', edition_year = 2018)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_21, genre_32])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '9-995-09980-1', book_id = '80000001'))
@@ -423,9 +424,9 @@ db.session.add(new_author)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '978-966-10-3883-6', book_title = 'Пригоди Тома Сойєра', edition_year = 1876)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_7, genre_4, genre_25, genre_31])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '978-966-10-3883-6', book_id = '90000001'))
@@ -446,9 +447,9 @@ db.session.add(new_author)
 db.session.commit()
 
 new_edition = EditionInf(edition_id = '118-116-11-3113-1', book_title = 'Лускунчик', edition_year = 1816)
+db.session.add(new_edition)
 new_edition.authors.extend([new_author])
 new_edition.genres.extend([genre_5, genre_15])
-db.session.add(new_edition)
 db.session.commit()
 
 db.session.add(Book(edition_id = '118-116-11-3113-1', book_id = '100000001'))
@@ -474,24 +475,24 @@ db.session.commit()
 
 
 new_permission = Permission(permission_description = 'add books')
-new_permission.roles.extend([role_librarian])
 db.session.add(new_permission)
+new_permission.roles.extend([role_librarian])
 
 new_permission = Permission(permission_description = 'delete books')
-new_permission.roles.extend([role_librarian])
 db.session.add(new_permission)
+new_permission.roles.extend([role_librarian])
 
 new_permission = Permission(permission_description = 'register librarians')
-new_permission.roles.extend([role_admin])
 db.session.add(new_permission)
+new_permission.roles.extend([role_admin])
 
 new_permission = Permission(permission_description = 'issue/accept books')
-new_permission.roles.extend([role_librarian])
 db.session.add(new_permission)
+new_permission.roles.extend([role_librarian])
 
 new_permission = Permission(permission_description = 'order books')
-new_permission.roles.extend([role_reader])
 db.session.add(new_permission)
+new_permission.roles.extend([role_reader])
 db.session.commit()
 
 
@@ -506,36 +507,42 @@ db.session.commit()
 
 new_user = UserInf(user_login = '1', user_password = '1111', user_name='Богдан',
     surname='Норкін', middle_name='Володимирович')
-new_user.role = role_librarian
 db.session.add(new_user)
+new_user.role = role_librarian
+
 
 new_user = UserInf(user_login = '2', user_password = '2222', user_name='Олена',
     surname='Темнікова', middle_name='Леонідівна')
-new_user.role = role_librarian
 db.session.add(new_user)
+new_user.role = role_librarian
+
 
 new_user = UserInf(user_login = '3', user_password = '3333', user_name='Володимир',
     surname='Мальчиков', middle_name='Вікторович')
+db.session.add(new_user)
 new_user.role = role_reader
 new_user.status = status_privileged
-db.session.add(new_user)
+
 
 new_user = UserInf(user_login = '4', user_password = '4444', user_name='Олег',
     surname='Чертов', middle_name='Романович')
-new_user.role = role_admin
 db.session.add(new_user)
+new_user.role = role_admin
+
 
 new_user = UserInf(user_login = '5', user_password = '5555', user_name='Тетяна',
     surname='Ладогубець', middle_name='Сергіївна')
+db.session.add(new_user)
 new_user.role = role_reader
 new_user.status = status_normal
-db.session.add(new_user)
+
 
 new_user = UserInf(user_login = '6', user_password = '6666', user_name='Сергій',
     surname='Сирота')
+db.session.add(new_user)
 new_user.role = role_reader
 new_user.status = status_debtor
-db.session.add(new_user)
+
 
 
 db.session.commit()
