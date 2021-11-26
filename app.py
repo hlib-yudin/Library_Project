@@ -30,7 +30,7 @@ from query import *
 def index():
 
     #return redirect(url_for("page_for_returning_books"))
-    #insert_everything()
+    insert_everything()
     return redirect(url_for('catalogue'))
 
 #---------------------------------------------------------------------------------------------------------------------
