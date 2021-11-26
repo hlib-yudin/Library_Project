@@ -504,4 +504,4 @@ new_user.status = status_debtor
 db.session.add(new_user)
 
 
-#db.session.commit()
+db.session.commit()
