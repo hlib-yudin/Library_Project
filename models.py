@@ -193,7 +193,7 @@ class OrderBook(db.Model):
         return new_order
 
 
-"""
+
 db.create_all()
 
 db.session.add(Genre(genre = 'Художня література'))
@@ -479,4 +479,4 @@ db.session.add(t_user_status(user_id = 3, status_id = 2))
 db.session.add(t_user_status(user_id = 5, status_id = 1))
 db.session.add(t_user_status(user_id = 6, status_id = 3))
 
-db.session.commit()"""
+db.session.commit()

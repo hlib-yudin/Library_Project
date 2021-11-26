@@ -1,0 +1,11 @@
+Click
+Flask
+Flask-Session
+flask_sqlalchemy
+gunicorn
+itsdangerous
+Jinja2
+MarkupSafe
+Werkzeug
+sqlalchemy
+psycopg2
