@@ -178,7 +178,7 @@ def return_of_book(dict_list):
         # elem = json.loads(elem)
         order_id = elem['order_id']
         book_id = elem['book_id']
-        edition = Book.query.filter_by(book_id=book_id).first().edition
+        edition = get_edition_by_book_id(book_id)
         edition_id = edition.edition_id
         if OrderBook.query.filter_by(order_id=order_id, book_id=book_id).first().return_date != None:
             res_list.append({"order_id": order_id, "edition_id": edition_id, "book_title": edition.book_title,
@@ -187,14 +187,14 @@ def return_of_book(dict_list):
         num_rows_updated = OrderBook.query.filter_by(order_id=order_id, book_id=book_id).update(
             dict(return_date=date.today()))
 
-        edition = get_edition_count_obj(edition_id)
-        edition.number_of_available += 1
+        edition_count = get_edition_count_obj(edition_id)
+        edition_count.number_of_available += 1
         res_list.append({"order_id": order_id, "edition_id": edition_id, "book_title": edition.book_title,
                          "message": "Книгу успішно повернуто"})
 
 
         print('order_id: {},  edition_id: {}, book_id: {} '.format(order_id, edition_id, book_id))
-        print('Current EditionCount:', edition.number_of_available)
+        print('Current EditionCount:', edition_count.number_of_available)
         print('Return_date:', OrderBook.query.filter_by(order_id=order_id, book_id=book_id).first().return_date)
         print('-----------------------------------------------------')
         db.session.commit()
