@@ -13,10 +13,22 @@
           <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid"> <div class="navbar-brand">Book Catalog</div> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav mr-auto mb-3 mb-lg-0">
             </ul>
-            <form class="d-flex" onsubmit="return false;" > <input class="form-control mr-2"  placeholder="Search" type="search" aria-label="Search"> <button class="btn btn-outline-success" onclick="search(event)">Search</button> </form>
-        </div>
+            <div class="d-flex justify-content-end">
+              <div class="col-md-6">
+              <select class="form-select" id = "options" aria-label="Default select example">
+                <option selected>Виберіть умови пошуку</option>
+                <option value="find_by_title">Назва</option>
+                <option value="2">Жанр</option>
+                <option value="3">Автор</option>
+                <option value="4">Рік</option>
+              </select>
+            </div>
+              <form  class="d-flex" onsubmit="return false;" > <input class="form-control mr-2"  placeholder="Search" type="search" aria-label="Search">
+                <button class="btn btn-outline-success" onclick="search(event)">Search</button> </form>
+            </div>
+          </div>
     </div>
     <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
 
@@ -98,6 +110,7 @@ const getInfo = (event, data) =>{
 };
 
   const search = async (form) => {
+    const url = document.getElementById('options').value;
     const input = document.querySelector('input').value;
     const row = document.getElementById('blocks');
 
