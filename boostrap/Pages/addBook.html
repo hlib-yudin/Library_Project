@@ -9,7 +9,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 <link rel="stylesheet" href="{{ url_for('static', filename='sign.css') }}">
-    <title>Remove book</title>
+    <title>Add book</title>
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -22,8 +22,7 @@
     <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
 
 </nav>
-Не для mvp
-<!--
+
  <div class="signup-form">
     <form class="form-horizontal">
       	<div class="row">
@@ -52,15 +51,31 @@
         </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<button type="submit" class="btn btn-primary btn-lg">Add</button>
+				<button type="submit" class="btn btn-primary btn-lg" >Add</button>
 			</div>  
 		</div>		      
     </form>
 </div>
--->
-   
+
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
+    /*
+    const addNewBook = async () => {
+    const form = document.forms.add_current_book;
+        
+    await fetch("{{url_for('')}}", {
+			method: 'post',
+			body: new FormData(form),
+			).then(response => {
+    if (response.status !== 200) {
+        alert(`Помилка стаус код: ${response.status}`);
+        throw(response.status);
+        }
+    return response.json()})
+    .then(data => {
+        alert(JSON.parse(JSON.stringify(data)).response);
+    }).catch(error => error);
+    }*/
     createNavbar();
 </script>
 </body>
