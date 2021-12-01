@@ -63,7 +63,7 @@
     const addNewBook = async () => {
     const form = document.forms.add_current_book;
         
-    await fetch("{{url_for('')}}", {
+    await fetch({# "{{url_for('')}}" #}, {
 			method: 'post',
 			body: new FormData(form),
 			).then(response => {
