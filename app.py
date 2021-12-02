@@ -520,42 +520,8 @@ def order_submit():
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
-
-@app.route("/catalogue/return", methods = ['GET'])
-def take_books_data():
-    if request.method == 'GET':
-        book_data_list = []
-        editions = EditionInf.query.all()
-        for edition in editions:
-            edition_genres = edition.genres
-            edition_genres = ", ".join(genre.genre for genre in edition_genres)
-
-            edition_authors = edition.authors
-            edition_authors = ", ".join(
-                " ".join([author.author_name, str(author.author_middle_name or ''), author.author_surname]) for author in
-                edition_authors)
-            num_of_available = get_edition_count_obj(edition.edition_id)
-
-            book_data_output = {
-                "edition_id": edition.edition_id,
-                "book_title": edition.book_title,
-                "authors": edition_authors,
-                "genres": edition_genres,
-                "year": edition.edition_year,
-                "number_of_available": num_of_available.number_of_available
-            }
-            book_data_list.append(book_data_output)
-        #print(book_data_output)
-        return make_response(jsonify({'books':book_data_list}))
-
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route("/catalogue/search", methods = ['POST'])
-def find_by_title():
-    title_json = request.data.decode('utf-8')
-    title = json.loads(title_json)['input']
+def collect_book_inf(editions):
     book_data_list = []
-    editions = EditionInf.query.filter_by(book_title=title).all()  # можна винести в query
     for edition in editions:
         edition_genres = edition.genres
         edition_genres = ", ".join(genre.genre for genre in edition_genres)
@@ -573,9 +539,59 @@ def find_by_title():
             "year": edition.edition_year
         }
         book_data_list.append(book_data_output)
-        print(book_data_output)
+    return book_data_list
+
+
+@app.route("/catalogue/return", methods = ['GET'])
+def take_books_data():
+    if request.method == 'GET':
+        book_data_list = []
+        editions = EditionInf.query.all()
+        book_data_list = collect_book_inf(editions)
+        return make_response(jsonify({'books':book_data_list}))
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+
+@app.route("/catalogue/search", methods = ['POST'])
+def find_by_title():
+    title_json = request.data.decode('utf-8')
+    title = json.loads(title_json)['input']
+    book_data_list = []
+    editions = EditionInf.query.filter_by(book_title=title).all()  # можна винести в query
+    book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books':book_data_list}))
 
+
+def find_by_author():
+    author_surname_json = request.data.decode('utf-8')
+    author_surname = json.loads(author_surname_json)['input']
+
+    editions = db.session.query(EditionInf). \
+        join(t_edition_author, EditionInf.edition_id == t_edition_author.c.edition_id). \
+        join(Author, t_edition_author.c.author_id == Author.author_id). \
+        filter(Author.author_surname == author_surname).all()
+
+    book_data_list = collect_book_inf(editions)
+    return make_response(jsonify({'books':book_data_list}))
+
+def find_by_genre():
+
+    genre_json = request.data.decode('utf-8')
+    genre = json.loads(genre_json)['input']
+    editions = db.session.query(EditionInf). \
+        join(t_edition_genre, EditionInf.edition_id == t_edition_genre.c.edition_id). \
+        join(Genre, t_edition_genre.c.genre_id == Genre.genre_id). \
+        filter(Genre.genre == genre).all()
+    book_data_list = collect_book_inf(editions)
+    return make_response(jsonify({'books':book_data_list}))
+
+def find_by_year():
+    year_json = request.data.decode('utf-8')
+    year = json.loads(year_json)['input']
+    editions = EditionInf.query.filter_by(edition_year=year)
+    book_data_list = collect_book_inf(editions)
+    return make_response(jsonify({'books':book_data_list}))
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
 
