@@ -9,14 +9,28 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 <link rel="stylesheet" href="{{ url_for('static', filename='sign.css') }}">
-    <title>Sign up</title>
+    <title>Register librarians</title>
 </head>
 <body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid"> <a class="navbar-brand" >Book Catalog</a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+            </ul>
+        </div>
+    </div>
+    <div class="uk-navbar-right"><a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon" href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account"><svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"> <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle> <path fill="none" stroke="#fff" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg></a></div>
 
-	{% with messages = get_flashed_messages() %}
+</nav>
+
+{% with messages = get_flashed_messages() %}
 		{% if messages %}
 			{% for message in messages %}
+                {% if message == 'Успішно!' %}
+                <div class="alert alert-success" role="alert">
+                {% else %}
 				<div class="alert alert-danger" role="alert">
+                {% endif %}
 				{{ message }}
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="float:right"></button>
 				</div>
@@ -25,10 +39,10 @@
 	{% endwith %}
 
     <div class="signup-form">
-    <form name="sign_up" class="form-horizontal" method="POST" action="{{url_for('sign_up', role_name='reader')}}">
+    <form name="sign_up" class="form-horizontal" method="POST" action="{{url_for('sign_up', role_name='librarian')}}">
       	<div class="row">
         	<div class="col-8 offset-4">
-				<h2>Sign Up</h2>
+				<h2>Реєстрація бібліотекарів</h2>
 			</div>	
       	</div>			
         <div class="form-group row">
@@ -63,56 +77,31 @@
         </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<p><label class="form-check-label"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a>.</label></p>
 				<button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
 			</div>  
 		</div>		      
     </form>
-	<div class="text-center">Already have an account? <a href="{{url_for('signin')}}">Login here</a></div>
-</div>
 
-<!--
+<script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
-	const signUp =  async () => {
-		const form = document.forms.sign_up;
-	
-		let json = {};
-		formData = new FormData(form)
-		formData.forEach(function(value, key){
-		json[key] = value; });
-		console.log(json);
-		//нужно добавить проверки
-		//if(json)
-		/*
-		registration
-			{
-			"user_login":"",
-			"user_password":"",
-			"user_name":"",
-			"surname":"",
-			"middle_name":"",
-			"role_name":"", ?
-			}
-			response
-			{
-				"response":"додати причину, якщо вона є",
-			}
-		*/
-		try {
-			{#
-			await fetch( "{{url_for('sign_up')}}", {//вставте необхідну урлу
-				method: 'post',
-				body: JSON.stringify(json),}
-				).then( response => alert(response));
-			#}
-		}
-		catch(error){
-			alert('Failed sending');
-			return;
-		}
-	
-	};
-	</script>
--->
+    /*
+    const addNewBook = async () => {
+    const form = document.forms.add_current_book;
+        
+    await fetch({# "{{url_for('')}}" #}, {
+			method: 'post',
+			body: new FormData(form),
+			).then(response => {
+    if (response.status !== 200) {
+        alert(`Помилка стаус код: ${response.status}`);
+        throw(response.status);
+        }
+    return response.json()})
+    .then(data => {
+        alert(JSON.parse(JSON.stringify(data)).response);
+    }).catch(error => error);
+    }*/
+    createNavbar();
+</script>
 </body>
 </html>

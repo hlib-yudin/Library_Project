@@ -10,7 +10,8 @@ app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tsfeeunxaehhta:e137af5ce5c302668bdbf1582d9dbd54061de27e38beb40e41c6e7bb6a4c0203@ec2-34-254-120-2.eu-west-1.compute.amazonaws.com:5432/df41upj513dcrb"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tsfeeunxaehhta:e137af5ce5c302668bdbf1582d9dbd54061de27e38beb40e41c6e7bb6a4c0203@ec2-34-254-120-2.eu-west-1.compute.amazonaws.com:5432/df41upj513dcrb"
 app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
@@ -55,6 +56,10 @@ def issuebooks():
 @app.route("/books/signup")
 def signup():
     return render_template('signup.html')
+
+@app.route("/signup/librarians")
+def page_for_registering_librarians():
+    return render_template('register_librarians.html')
 
 @app.route("/books/addBook")
 def addBook():
@@ -574,8 +579,8 @@ def find_by_title():
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
 
-@app.route('/signup/user', methods = ['POST'])
-def sign_up():
+@app.route('/signup/<role_name>', methods = ['POST'])
+def sign_up(role_name):
     # Проводить реєстрацію користувача з даними полями.
     # Логін і пароль приходять вже в зашифрованому вигляді (sha-256).
     """print(request.data)
@@ -609,8 +614,6 @@ def sign_up():
         db.session.add(new_user)
         # додати його роль в таблицю t_user_role 
         added_user = get_user_by_login_and_password(login, password) 
-        # поки додаємо лише читачів -- TODO: додавати бібліотекарів теж
-        role_name = 'reader'
         role = get_role_by_name(role_name) 
         added_user.role = role
 
@@ -634,8 +637,10 @@ def sign_up():
         for perm_id in permission_ids:
             perm = get_permission_by_perm_id(perm_id)
             session['permissions'].append(perm.permission_description)
+    # якщо адмін реєстрував бібліотекаря, то повернути його на сторінку адміна
     if user.role.role_name == 'librarian': 
-        return redirect("/books/return")
+        flash("Успішно!")
+        return redirect(url_for('page_for_registering_librarians'))
     else:
         return redirect(url_for('catalogue'))
 
@@ -659,7 +664,7 @@ def log_in():
         'delete books': 'issuebooks',
         'issue/accept books':'issuebooks',
         'order books':'/orders',
-        'register librarians':'',
+        'register librarians':'register_librarians',
     }
     #arrived_json = json.loads(request.data.decode('utf-8'))
     #login = arrived_json["user_login"]
@@ -692,8 +697,11 @@ def log_in():
     role = user.role.role_name
     print(session['permissions'])
     #return "log_in - ok"
+
     if user.role.role_name == 'librarian': 
         return redirect("/books/return")
+    elif user.role.role_name == 'admin':
+        return redirect(url_for("page_for_registering_librarians"))
     else:
         return redirect(url_for('catalogue'))
 

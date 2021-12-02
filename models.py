@@ -195,6 +195,8 @@ class OrderBook(db.Model):
 
 """db.drop_all()
 db.session.commit()"""
+
+"""
 db.create_all()
 db.session.commit()
 
@@ -547,4 +549,4 @@ def insert_everything():
 
 
 
-    db.session.commit()
+    db.session.commit()"""

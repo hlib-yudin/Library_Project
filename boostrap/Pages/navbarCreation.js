@@ -9,21 +9,31 @@ const librarianNavbar = {
     'issue/accept books' : `<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('issuebooks')}}">Видати книгу</a> </li>`,
 };
 
+const adminNavbar = {
+    'register librarians': `<li class="nav-item"> <a class="nav-link" aria-current="page" href="">Реєстрація бібліотекарів</a> </li>`,
+
+}
+
 const setNavbar = (type, permissions) => {
     const navbarNode = document.getElementById('navbarSupportedContent');
     if(type === 'reader'){
         navbarNode.children[0].insertAdjacentHTML('afterbegin', defaultNavbar);
-    } else {
+    } else if (type === 'librarian'){
         permissions.forEach(permission => {
             navbarNode.children[0].insertAdjacentHTML('afterbegin',librarianNavbar[permission]);
         });
         navbarNode.children[0].insertAdjacentHTML('afterbegin',`<li class="nav-item"> <a class="nav-link " aria-current="page" href="{{url_for('page_for_returning_books')}}">Повернути книгу</a> </li>`);
+    } else {
+        permissions.forEach(permission => {
+            navbarNode.children[0].insertAdjacentHTML('afterbegin',adminNavbar[permission]);
+        });
     }
 };
 //aria-current="page"
 const createNavbar = () => {
     let role = sessionStorage.getItem('status');
     let permissions = sessionStorage.getItem('permissions');
+    //alert(role);
 
     if(!permissions){
         permissions = [];
