@@ -2,7 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, flash, session
 from flask_session import Session
 # from config import Config
-from datetime import date
 from dateutil.relativedelta import *
 import json
 
