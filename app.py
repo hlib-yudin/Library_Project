@@ -668,9 +668,9 @@ def sign_up(role_name):
 @app.route("/role/user", methods = ['GET'])
 def getUserRole():
     if session:
-        return make_response(jsonify({'role': session['role'], 'permissions': session['permissions']}))
+        return make_response(jsonify({'role': session['role'], 'permissions': session['permissions'], 'logged': session['name']}))
     else:
-        return make_response(jsonify({'role': 'reader', 'permissions': []}))
+        return make_response(jsonify({'role': 'reader', 'permissions': [], 'logged': 'undefined'}))
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------

@@ -9,10 +9,21 @@ const librarianNavbar = {
     'issue/accept books' : `<li class="nav-item" id = 'issue/accept books'> <a class="nav-link " aria-current="page" href="{{url_for('issuebooks')}}">Видати книгу</a> </li>`,
 };
 
+const loginIcon = `
+    <a class="uk-navbar-item uk-link-muted tm-navbar-button uk-icon"
+                                    href="{{url_for('signup')}}" uk-icon="icon: user; ratio:2" id="account">
+        <svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <circle fill="none" stroke="white" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle>
+            <path fill="none" stroke="#fff" stroke-width="1.1"
+                  d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path>
+        </svg>
+    </a>
+`;
+
 const adminNavbar = {
     'register librarians': `<li class="nav-item"> <a class="nav-link" aria-current="page" href="">Реєстрація бібліотекарів</a> </li>`,
 
-}
+};
 
 const setNavbar = (type, permissions) => {
     const navbarNode = document.getElementById('navbarSupportedContent');
@@ -33,6 +44,7 @@ const setNavbar = (type, permissions) => {
 const createNavbar = () => {
     let role = sessionStorage.getItem('status');
     let permissions = sessionStorage.getItem('permissions');
+    let login = sessionStorage.getItem('logged');
     //alert(role);
 
     if(!permissions){
@@ -48,4 +60,16 @@ const createNavbar = () => {
     } else{
         setNavbar(role,permissions);
     }
+
+    addLoggedIcon(login);
+};
+
+const addLoggedIcon = (login) => {
+    console.log(login, !login);
+    const loginNode = document.getElementById('login_icon');
+    if (!login) {
+        loginNode.insertAdjacentHTML('beforeend', loginIcon);
+    }
+
+    loginNode.insertAdjacentHTML('afterbegin', `<p class="text-white bg-dark">Вітаю ${login}</p> <a href="{{url_for('signup')}}" class="btn btn-dark btn-lg active" role="button" aria-pressed="true">Вийти</a>`);
 };

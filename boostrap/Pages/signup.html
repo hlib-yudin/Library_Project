@@ -71,8 +71,8 @@
 	<div class="text-center">Already have an account? <a href="{{url_for('signin')}}">Login here</a></div>
 </div>
 
-<!--
 <script>
+	/*
 	const signUp =  async () => {
 		const form = document.forms.sign_up;
 	
@@ -97,7 +97,7 @@
 			{
 				"response":"додати причину, якщо вона є",
 			}
-		*/
+		
 		try {
 			{#
 			await fetch( "{{url_for('sign_up')}}", {//вставте необхідну урлу
@@ -110,9 +110,14 @@
 			alert('Failed sending');
 			return;
 		}
-	
 	};
+	*/
+	const clearSession = () => {
+		sessionStorage.clear();
+	};
+
+	clearSession();
 	</script>
--->
+
 </body>
 </html>
