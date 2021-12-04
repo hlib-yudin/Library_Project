@@ -148,6 +148,12 @@ const getInfo = (event, data) =>{
   };
 
 const addBook = async (event, book) => {
+  console.log(book.number_of_available);
+  if(book.number_of_available === 0) {
+    alert('Книги немає у наявності');
+
+    return;
+  }
   await fetch("{{url_for('add_book_to_basket')}}", {
     method: 'POST',
     body: JSON.stringify({edition_id : book.edition_id}),
