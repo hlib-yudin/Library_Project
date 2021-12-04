@@ -84,24 +84,27 @@
 
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
-    /*
-    const addNewBook = async () => {
-    const form = document.forms.add_current_book;
-        
-    await fetch({# "{{url_for('')}}" #}, {
-			method: 'post',
-			body: new FormData(form),
-			).then(response => {
+    const getUserRole = async () => {
+    await fetch("{{url_for('getUserRole')}}", {method: 'GET'})
+	.then(response => {
     if (response.status !== 200) {
-        alert(`Помилка стаус код: ${response.status}`);
-        throw(response.status);
-        }
-    return response.json()})
-    .then(data => {
-        alert(JSON.parse(JSON.stringify(data)).response);
-    }).catch(error => error);
-    }*/
+      alert(`Виникла помилка статус код: ${response.status}`);
+      return;
+    }
+
+    return response.json()
+  }).then(data => {
+    sessionStorage.setItem('permissions', data.permissions);
+    sessionStorage.setItem('status',data.role);
+    sessionStorage.setItem('logged',data.logged);
     createNavbar();
+    });
+  };
+  if(!sessionStorage.getItem('status')){
+    getUserRole();
+  } else {
+    createNavbar();
+  }
 </script>
 </body>
 </html>

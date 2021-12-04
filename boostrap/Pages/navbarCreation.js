@@ -22,7 +22,6 @@ const loginIcon = `
 
 const adminNavbar = {
     'register librarians': `<li class="nav-item"> <a class="nav-link" aria-current="page" href="">Реєстрація бібліотекарів</a> </li>`,
-
 };
 
 const setNavbar = (type, permissions) => {
@@ -45,7 +44,6 @@ const createNavbar = () => {
     let role = sessionStorage.getItem('status');
     let permissions = sessionStorage.getItem('permissions');
     let login = sessionStorage.getItem('logged');
-    //alert(role);
 
     if(!permissions){
         permissions = [];
@@ -65,7 +63,6 @@ const createNavbar = () => {
 };
 
 const addLoggedIcon = (login) => {
-    console.log(login, !login);
     const loginNode = document.getElementById('login_icon');
     if (!login) {
         loginNode.insertAdjacentHTML('beforeend', loginIcon);

@@ -70,7 +70,6 @@
       data.books.forEach((book,index) => {
         row.append(createCard(book,index));
       });
-      console.log(data);
     });
   };
 
@@ -117,7 +116,6 @@ const getInfo = (event, data) =>{
 
   const search = async (form) => {
     const url = document.getElementById('options').value;
-    console.log(url,!url);
     if (url === "Оберіть тип пошуку"){
       alert(url);
 
