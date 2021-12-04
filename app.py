@@ -535,7 +535,8 @@ def collect_book_inf(editions):
             "book_title": edition.book_title,
             "authors": edition_authors,
             "genres": edition_genres,
-            "year": edition.edition_year
+            "year": edition.edition_year,
+            "number_of_available": get_edition_count_obj(edition.edition_id).number_of_available
         }
         book_data_list.append(book_data_output)
     return book_data_list
