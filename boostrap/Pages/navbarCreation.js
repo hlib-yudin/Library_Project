@@ -69,6 +69,8 @@ const addLoggedIcon = (login) => {
     const loginNode = document.getElementById('login_icon');
     if (!login) {
         loginNode.insertAdjacentHTML('beforeend', loginIcon);
+
+        return;
     }
 
     loginNode.insertAdjacentHTML('afterbegin', `<p class="text-white bg-dark">Вітаю ${login}</p> <a href="{{url_for('signup')}}" class="btn btn-dark btn-lg active" role="button" aria-pressed="true">Вийти</a>`);
