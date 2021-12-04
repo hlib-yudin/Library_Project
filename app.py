@@ -552,7 +552,7 @@ def take_books_data():
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
 
-@app.route("/catalogue/search", methods = ['POST'])
+@app.route("/catalogue/search/by_title", methods = ['POST'])
 def find_by_title():
     title_json = request.data.decode('utf-8')
     title = json.loads(title_json)['input']
@@ -561,7 +561,7 @@ def find_by_title():
     book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books':book_data_list}))
 
-
+@app.route("/catalogue/search/by_author", methods = ['POST'])
 def find_by_author():
     author_surname_json = request.data.decode('utf-8')
     author_surname = json.loads(author_surname_json)['input']
@@ -574,6 +574,7 @@ def find_by_author():
     book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books':book_data_list}))
 
+@app.route("/catalogue/search/by_genre", methods = ['POST'])
 def find_by_genre():
 
     genre_json = request.data.decode('utf-8')
@@ -585,6 +586,7 @@ def find_by_genre():
     book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books':book_data_list}))
 
+@app.route("/catalogue/search/by_year", methods = ['POST'])
 def find_by_year():
     year_json = request.data.decode('utf-8')
     year = json.loads(year_json)['input']
