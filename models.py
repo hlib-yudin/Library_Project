@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import BigInteger, Boolean, Column, Date, ForeignKey, Integer, Table, Text, UniqueConstraint, text, func
+from sqlalchemy import BigInteger, Boolean, Column, Date, ForeignKey, Integer, Table, Text, UniqueConstraint, text, func, inspect
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask
@@ -18,6 +18,7 @@ class Author(db.Model):
     __tablename__ = 'author'
     __table_args__ = (
         UniqueConstraint('author_name', 'author_surname', 'author_middle_name'),
+        {'extend_existing': True}
     )
 
     author_id = Column(Integer, db.Sequence('author_author_id_seq'), primary_key=True)
@@ -31,6 +32,7 @@ class Author(db.Model):
 
 class EditionInf(db.Model):
     __tablename__ = 'edition_inf'
+    __table_args__ = {'extend_existing': True}
 
     edition_id = Column(Text, primary_key=True)
     book_title = Column(Text, nullable=False)
@@ -45,6 +47,7 @@ class EditionInf(db.Model):
 
 class EditionCount(db.Model):
     __tablename__ = 'edition_count'
+    __table_args__ = {'extend_existing': True}
 
     edition_id = Column(ForeignKey('edition_inf.edition_id', ondelete='RESTRICT', onupdate='RESTRICT'),
                         primary_key=True)
@@ -57,6 +60,7 @@ class EditionCount(db.Model):
         
 class Genre(db.Model):
     __tablename__ = 'genre'
+    __table_args__ = {'extend_existing': True}
 
     genre_id = Column(Integer, db.Sequence('genre_genre_id_seq'), primary_key=True)
     genre = Column(Text, nullable=False, unique=True)
@@ -64,6 +68,7 @@ class Genre(db.Model):
 
 class Permission(db.Model):
     __tablename__ = 'permissions'
+    __table_args__ = {'extend_existing': True}
 
     permission_id = Column(Integer, db.Sequence('permissions_permission_id_seq'), primary_key=True)
     permission_description = Column(Text, nullable=False)
@@ -73,6 +78,7 @@ class Permission(db.Model):
 
 class Role(db.Model):
     __tablename__ = 'roles'
+    __table_args__ = {'extend_existing': True}
 
     role_id = Column(Integer, db.Sequence('roles_role_id_seq'), primary_key=True)
     role_name = Column(Text, nullable=False, unique=True)
@@ -82,6 +88,7 @@ class Role(db.Model):
 
 class Status(db.Model):
     __tablename__ = 'status'
+    __table_args__ = {'extend_existing': True}
 
     status_id = Column(Integer, db.Sequence('status_status_id_seq'), primary_key=True)
     status_name = Column(Text, nullable=False, unique=True)
@@ -91,6 +98,7 @@ class Status(db.Model):
 
 class UserInf(db.Model):
     __tablename__ = 'user_inf'
+    __table_args__ = {'extend_existing': True}
 
     user_login = Column(Text, nullable=False, unique=True)
     user_password = Column(Text, nullable=False)
@@ -107,6 +115,7 @@ class Book(db.Model):
     __tablename__ = 'book'
     __table_args__ = (
         UniqueConstraint('edition_id', 'book_id'),
+        {'extend_existing': True}
     )
 
     edition_id = Column(ForeignKey('edition_inf.edition_id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
@@ -132,6 +141,7 @@ t_edition_genre = Table(
 
 class Order(db.Model):
     __tablename__ = 'orders'
+    __table_args__ = {'extend_existing': True}
 
     order_id = Column(Integer, db.Sequence('orders_order_id_seq'), primary_key=True)
     user_id = Column(ForeignKey('user_inf.user_id', ondelete='RESTRICT', onupdate='RESTRICT'), nullable=False)
@@ -176,6 +186,7 @@ t_user_status = Table(
 
 class OrderBook(db.Model):
     __tablename__ = 'order_book'
+    __table_args__ = {'extend_existing': True}
 
     book_id = Column(ForeignKey('book.book_id', ondelete='RESTRICT', onupdate='RESTRICT'), primary_key=True, nullable=False)
     order_id = Column(ForeignKey('orders.order_id', ondelete='RESTRICT', onupdate='RESTRICT'), primary_key=True, nullable=False)
@@ -193,15 +204,11 @@ class OrderBook(db.Model):
         return new_order
 
 
-"""db.drop_all()
-db.session.commit()"""
 
-"""
-db.create_all()
-db.session.commit()
 
 
 def insert_everything():
+    
     genre_1 = Genre(genre = 'Художня література')
     db.session.add(genre_1)
     db.session.add(Genre(genre = 'Документальна література'))
@@ -549,4 +556,28 @@ def insert_everything():
 
 
 
-    db.session.commit()"""
+    db.session.commit()
+
+
+
+inspector = inspect(db.engine)
+# якщо база даних ще не створена -- створюємо та заповнюємо її
+if not inspector.has_table('author'):
+    db.create_all()
+    db.session.commit()
+
+    insert_everything()
+
+
+"""db.drop_all()
+db.session.commit()"""
+
+"""
+db.create_all()
+db.session.commit()
+
+"""
+
+
+
+    

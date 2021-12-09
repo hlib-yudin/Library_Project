@@ -4,14 +4,19 @@ from flask_session import Session
 # from config import Config
 from dateutil.relativedelta import *
 import json
+import os
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tsfeeunxaehhta:e137af5ce5c302668bdbf1582d9dbd54061de27e38beb40e41c6e7bb6a4c0203@ec2-34-254-120-2.eu-west-1.compute.amazonaws.com:5432/df41upj513dcrb"
-app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
+#app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
@@ -768,7 +773,7 @@ def check_availability(editions_id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
 
 
