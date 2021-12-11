@@ -57,6 +57,10 @@ class EditionCount(db.Model):
     def count_decreasing(self):
         self.number_of_available -= 1
         db.session.commit()
+                
+    def count_increasing(self):
+        self.number_of_available += 1
+        db.session.commit()
 
         
 class Genre(db.Model):
