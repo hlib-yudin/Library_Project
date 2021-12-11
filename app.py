@@ -7,9 +7,9 @@ import json
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tsfeeunxaehhta:e137af5ce5c302668bdbf1582d9dbd54061de27e38beb40e41c6e7bb6a4c0203@ec2-34-254-120-2.eu-west-1.compute.amazonaws.com:5432/df41upj513dcrb"
 app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
 
@@ -266,6 +266,14 @@ def issue_order():
     print(order.issue_date)
     db.session.commit()
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/delete/logic', methods=('POST', ))
+def delete_book_logic():
+    print(request.form);
+
+    return make_response(jsonify({'response': 'Книгу видалено успішно!'}))
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------

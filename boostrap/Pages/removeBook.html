@@ -59,13 +59,13 @@
 
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
-const deleteCurrentBook = () =>{
+const deleteCurrentBook = async () =>{
     const form = document.forms.remove_book;
-    /*
-    await fetch({# "{{url_for('')}}" #}, {
+
+    await fetch("{{url_for('delete_book_logic')}}", {
 			method: 'post',
-			body: new FormData(form);
-			).then(response => {
+			body: new FormData(form),
+    }).then(response => {
     if (response.status !== 200) {
         alert(`Помилка стаус код: ${response.status}`);
         throw(response.status);
@@ -74,7 +74,6 @@ const deleteCurrentBook = () =>{
     .then(data => {
         alert(JSON.parse(JSON.stringify(data)).response);
     }).catch(error => error);
-    */
 };
    createNavbar();
 </script>
