@@ -24,7 +24,7 @@
 </nav>
 
  <div class="signup-form">
-    <form class="form-horizontal" name ="add_current_book">
+    <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
       	<div class="row">
         	<div class="col-8 offset-4">
 				<h2>Додати книгу</h2>
@@ -40,7 +40,7 @@
         	<div class="form-group row">
 			<label class="col-form-label col-4">Назва книги</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="name" required="required">
+                <input type="text" class="form-control" name="name" >
             </div>        	
         </div>
 		<div class="form-group row">
@@ -68,10 +68,22 @@
 
     const addNewBook = async () => {
     const form = document.forms.add_current_book;
+    formData = new FormData(form);
+    console.log(formData.get('id') || formData.get('author') || formData.get('number'));
+   if(!(formData.get('id') || formData.get('author') || formData.get('number'))){
+       alert('заповніть одне з полів Id книги, Автор, Екземпляр');
+
+       return false;
+   }
        
     await fetch("{{url_for('add_book_logic')}}", {
 			method: 'post',
-			body: new FormData(form),
+			body: JSON.stringify({
+                'id': formData.get('id'),
+                'author': formData.get('author'),
+                'number': formData.get('number'),
+                "name": formData.get('name'),
+            }),
     }
 			).then(response => {
     if (response.status !== 200) {
