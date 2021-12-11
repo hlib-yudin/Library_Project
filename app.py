@@ -388,11 +388,14 @@ def is_canceled_change(ord):
     today_date = date.today()
     order_date = ord.booking_date
     return_date = ord.return_date
+    book_id = ord.book_id
     if return_date is None:
         booking_days = number_of_days(order_date, today_date)
         if allowed_booking_days < booking_days:
             # is_canceled is True
-            ord.is_canceled_update(new_status=True)
+            order_id = OrderBook.query.filter_by(book_id=book_id, return_date=return_date).first()
+            order = get_all_orders_by_order_id(order_id.order_id)[0]
+            order.is_canceled_update(new_status=True)
             return 1
         return 0
 
