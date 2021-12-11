@@ -197,7 +197,7 @@ def return_of_book(dict_list):
             dict(return_date=date.today()))
 
         edition_count = get_edition_count_obj(edition_id)
-        edition_count.number_of_available += 1
+        edition_count.count_increasing()
         res_list.append({"order_id": order_id, "edition_id": edition_id, "book_title": edition.book_title,
                          "message": "Книгу успішно повернуто"})
 
