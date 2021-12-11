@@ -10,13 +10,13 @@ app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tsfeeunxaehhta:e137af5ce5c302668bdbf1582d9dbd54061de27e38beb40e41c6e7bb6a4c0203@ec2-34-254-120-2.eu-west-1.compute.amazonaws.com:5432/df41upj513dcrb"
-#app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
+#app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
@@ -240,8 +240,9 @@ def issue_order():
 
     # чи має даний юзер дане замовлення?
     order = orders[0]
-    if order_u_login.user_login != arrived_login:
-        return make_response(jsonify({'res_message': "Дана людини не робила цього замовлення!"}))
+    encoded_login = hashlib.sha3_512(arrived_login.encode()).hexdigest()
+    if order_u_login.user_login != encoded_login:
+        return make_response(jsonify({'res_message': "Ця людина не робила цього замовлення!"}))
 
     # чи скасоване замовлення?
     if order.is_canceled:
@@ -628,8 +629,10 @@ def sign_up(role_name):
 
     else:
         # створити нового користувача
-        new_user = UserInf(user_login=login,
-                           user_password=password,
+        encoded_login = hashlib.sha3_512(login.encode()).hexdigest()
+        encoded_password = hashlib.sha3_512(password.encode()).hexdigest()
+        new_user = UserInf(user_login=encoded_login,
+                           user_password=encoded_password,
                            user_name=first_name,
                            surname=last_name,
                            middle_name=middle_name)
@@ -773,7 +776,7 @@ def check_availability(editions_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True) # , host='0.0.0.0', port=5000
 
 
 

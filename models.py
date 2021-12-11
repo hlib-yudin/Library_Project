@@ -6,6 +6,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app import db
 from datetime import * 
+import hashlib
 
 metadata = db.Model.metadata
 
@@ -516,39 +517,46 @@ def insert_everything():
     db.session.commit()
 
 
-    new_user = UserInf(user_login = '1', user_password = '1111', user_name='Богдан',
+    login = hashlib.sha3_512('1'.encode()).hexdigest()
+    password = hashlib.sha3_512('1111'.encode()).hexdigest()
+    new_user = UserInf(user_login = login, user_password = password, user_name='Богдан',
         surname='Норкін', middle_name='Володимирович')
     db.session.add(new_user)
     new_user.role = role_librarian
 
-
-    new_user = UserInf(user_login = '2', user_password = '2222', user_name='Олена',
+    login = hashlib.sha3_512('2'.encode()).hexdigest()
+    password = hashlib.sha3_512('2222'.encode()).hexdigest()
+    new_user = UserInf(user_login = login, user_password = password, user_name='Олена',
         surname='Темнікова', middle_name='Леонідівна')
     db.session.add(new_user)
     new_user.role = role_librarian
 
-
-    new_user = UserInf(user_login = '3', user_password = '3333', user_name='Володимир',
+    login = hashlib.sha3_512('3'.encode()).hexdigest()
+    password = hashlib.sha3_512('3333'.encode()).hexdigest()
+    new_user = UserInf(user_login = login, user_password = password, user_name='Володимир',
         surname='Мальчиков', middle_name='Вікторович')
     db.session.add(new_user)
     new_user.role = role_reader
     new_user.status = status_privileged
 
-
-    new_user = UserInf(user_login = '4', user_password = '4444', user_name='Олег',
+    login = hashlib.sha3_512('4'.encode()).hexdigest()
+    password = hashlib.sha3_512('4444'.encode()).hexdigest()
+    new_user = UserInf(user_login = login, user_password = password, user_name='Олег',
         surname='Чертов', middle_name='Романович')
     db.session.add(new_user)
     new_user.role = role_admin
 
-
-    new_user = UserInf(user_login = '5', user_password = '5555', user_name='Тетяна',
+    login = hashlib.sha3_512('5'.encode()).hexdigest()
+    password = hashlib.sha3_512('5555'.encode()).hexdigest()
+    new_user = UserInf(user_login = login, user_password = password, user_name='Тетяна',
         surname='Ладогубець', middle_name='Сергіївна')
     db.session.add(new_user)
     new_user.role = role_reader
     new_user.status = status_normal
 
-
-    new_user = UserInf(user_login = '6', user_password = '6666', user_name='Сергій',
+    login = hashlib.sha3_512('6'.encode()).hexdigest()
+    password = hashlib.sha3_512('6666'.encode()).hexdigest()
+    new_user = UserInf(user_login = login, user_password = password, user_name='Сергій',
         surname='Сирота')
     db.session.add(new_user)
     new_user.role = role_reader

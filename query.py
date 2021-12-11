@@ -1,5 +1,5 @@
 from models import *
-
+import hashlib
 
 def get_edition_by_book_id(book_id):
     return Book.query.filter_by(book_id=book_id).first().edition
@@ -34,12 +34,17 @@ def get_user_by_id(user_id):
     return UserInf.query.filter_by(user_id=user_id).first()
 
 def get_all_users_by_login(user_login):
+    user_login = hashlib.sha3_512(user_login.encode()).hexdigest()
     return UserInf.query.filter_by(user_login=user_login).all()
 
 def get_user_by_login_and_password(login, password):
+    login = hashlib.sha3_512(login.encode()).hexdigest()
+    password = hashlib.sha3_512(password.encode()).hexdigest()
     return UserInf.query.filter_by(user_login=login, user_password=password).first()
 
 def get_all_users_by_login_and_password(login, password):
+    login = hashlib.sha3_512(login.encode()).hexdigest()
+    password = hashlib.sha3_512(password.encode()).hexdigest()
     return UserInf.query.filter_by(user_login=login, user_password=password).all()
 
 def get_status_name(user):
