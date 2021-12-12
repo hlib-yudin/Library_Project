@@ -251,7 +251,7 @@ def issue_order():
 
     # чи замовлення вже видане?
     if order.issue_date:
-        return make_response(jsonify({'res_message': 'Замовлення було видано!'}))
+        return make_response(jsonify({'res_message': 'Замовлення вже було видано раніше!'}))
 
     # чи є читач боржником?
     if get_status_name(user) == 'debtor':

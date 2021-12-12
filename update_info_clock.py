@@ -17,7 +17,7 @@ sched = BlockingScheduler()
 
 
 # кожного дня опівночі спрацьовує ця функція
-@sched.scheduled_job('cron', hour=8, minute=20)
+@sched.scheduled_job('cron', hour=0)
 def update_debtors():
     # Функція для знаходження нових боржників та зміни статусу цих користувачів на "debtor".
 
