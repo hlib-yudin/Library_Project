@@ -17,15 +17,24 @@ def get_not_cancelled_orders_by_user_id(user_id):
     return Order.query.filter_by(user_id=user_id, is_canceled=False).all()
 
 def get_issued_orders_by_user_id(user_id):
-    return Order.query.filter(Order.user_id==user_id, Order.is_canceled==False,
+    # Повертає всі замовлення, в яких хоча б одна книга не повернена
+    orders = Order.query.filter(Order.user_id==user_id, Order.is_canceled==False,
             Order.issue_date != None).all()
+    not_returned_orders = []
+    for order in orders:
+        books = get_all_books_by_order_id(order.order_id)
+        for book in books:
+            # якщо книга не повернена -- додаємо замовлення у список, переходимо до наступного замовлення
+            if book.return_date == None:
+                not_returned_orders.append(order)
+                break
+    return not_returned_orders
 
 def get_all_orders_by_user_id(user_id):
     return Order.query.filter_by(user_id=user_id).all()
 
 def get_all_orders_by_order_id(order_id):
     return Order.query.filter_by(order_id=order_id).all()
-
 
 def get_all_books_by_order_id(order_id):
     return OrderBook.query.filter_by(order_id=order_id).all()

@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
@@ -84,7 +84,7 @@ def navbarCretionScript():
 @app.route("/books/return", methods=('GET', 'POST'))
 def page_for_returning_books():
     # Рендерить сторінку для підтвердження повернення книги.
-    json_orders = {}
+    json_orders = {"user_id": None, "orders": None, 'message': ""}
 
     # якщо в поле вводу ввели логін користувача -- знайти і відобразити всі його замовлення
     if request.args.get("login_query"):  # and request.method == 'GET'
@@ -92,17 +92,19 @@ def page_for_returning_books():
         login_query = request.args["login_query"]
         users = get_all_users_by_login(login_query)
         if len(users) != 1:
-            # TODO: що повертає при помилці?
-            return "user not found"
+            json_orders['message'] = "Користувача не знайдено!"
+            return render_template('returnBooks.html', json=json_orders)
+
         user = users[0]
         orders = get_issued_orders_by_user_id(user.user_id)
-        # TODO: що повертає при відсутності замовлень?
-        # повернемо json, у якого 'orders' = []
-        # if len(orders) == 0:
-        #    return "no orders"
+        print(orders)
+        if len(orders) == 0:
+            print("here")
+            json_orders['message'] = "Актуальних замовлень не знайдено!"
+            return render_template('returnBooks.html', json=json_orders)
 
         # складаємо json з інформацією про замовлення
-        json_orders = {"user_id": user.user_id, "orders": []}
+        json_orders = {"user_id": user.user_id, "orders": [], 'message': ''}
         for order in orders:
             books = get_all_books_by_order_id(order.order_id)  # можна винести в query
             books = [book.book for book in books if book.return_date == None]
@@ -162,8 +164,7 @@ def return_books():
     print('-------------------------------------------------------------------------------------------------------------')
 
     if len(data) == 0:
-        print('Читач повернув усі книжки')
-        return 'Читач повернув усі книжки'
+        return make_response(jsonify({'message': "Не обрано жодної книги для повернення!"}))
     # s = json.dumps(data, indent=4, sort_keys=True)
     user_id = data[0]['user_id']
     old_user_status = get_status_name(get_user_by_id(user_id))  # можна винести в query
