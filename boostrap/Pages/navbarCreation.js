@@ -64,7 +64,7 @@ const createNavbar = () => {
 
 const addLoggedIcon = (login) => {
     const loginNode = document.getElementById('login_icon');
-    if (!login) {
+    if (login === 'undefined') {
         loginNode.insertAdjacentHTML('beforeend', loginIcon);
 
         return;
