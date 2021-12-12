@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
@@ -278,6 +278,39 @@ def issue_order():
     print(order.issue_date)
     db.session.commit()
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/delete/logic', methods=('POST', ))
+def delete_book_logic():
+    print(request.form);
+
+    return make_response(jsonify({'response': 'Книгу видалено успішно!'}))
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/one/logic', methods=('POST', ))
+def add_one_book_logic():
+    print(request.form);
+    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/author/logic', methods=('POST', ))
+def add_author_book_logic():
+    print(request.form);
+    print(request.form['name']);
+    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/edition/logic', methods=('POST', ))
+def add_edition_book_logic():
+    print(request.form);
+    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------

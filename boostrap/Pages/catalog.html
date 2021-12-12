@@ -30,7 +30,7 @@
     <option value="{{url_for('find_by_year')}}">Рік</option>
   </select>
   </div>
-  <form  class="d-flex" onsubmit="return false;" > <input class="form-control mr-3"  placeholder="Search" type="search" aria-label="Search">
+  <form  class="d-flex" onsubmit="return false;" > <input class="form-control mr-3"  placeholder="Search" type="search" minlength = "1" aria-label="Search">
     <button class="btn btn-outline-success" onclick="search(event)">Search</button> </form>
 </div>
     <div class="album py-5 bg-light">
