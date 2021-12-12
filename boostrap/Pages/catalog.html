@@ -58,15 +58,12 @@
       }
       return response.json()})
       .then(data => {
+     let i = data.pagination;
+       while(i > 0){
+          pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination(${i})">${i}</a></li>`);
+        i-=1;
+      }
 
-/*
-    додавання декількох сторінок не для mvp
-    let i = data.pagination;
-    while(i > 0){
-      pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination(${i})">${i}</a></li>`);
-      i-=1;
-    }
-*/
       data.books.forEach((book,index) => {
         row.append(createCard(book,index));
       });
@@ -148,7 +145,6 @@ const getInfo = (event, data) =>{
   };
 
 const addBook = async (event, book) => {
-  console.log(book.number_of_available);
   if(book.number_of_available === 0) {
     alert('Книги немає у наявності');
 

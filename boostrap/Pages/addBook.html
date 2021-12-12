@@ -20,52 +20,184 @@
         </div>
     </div>
     <div class="d-flex flex-row uk-navbar-right" id = "login_icon"></div>
-
 </nav>
 
- <div class="signup-form">
-    <form class="form-horizontal">
+ <div class="signup-form" id="add_book_form">
+    <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
       	<div class="row">
         	<div class="col-8 offset-4">
-				<h2>Add book</h2>
+				<h2>Додати книгу</h2>
 			</div>	
-      	</div>			
-
-		<div class="form-group row">
-			<label class="col-form-label col-4">Id</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="id" required="required">
-            </div>        	
-        </div>
+      	</div> 
+          <div class="form-group row" class="col-md-6">
+            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+                <option value="Виберіть умови додавання" selected>Виберіть умови додавання</option>
+                <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
+                <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_edition_book_logic')}}">видання</option>
+            </select>	
+          </div>			      
+    </form>
+</div>
+<script src = "{{url_for('navbarCretionScript')}}"></script>
+<script>
+    const formAuthor = `
+    <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
+      	<div class="row">
+        	<div class="col-8 offset-4">
+				<h2>Додати книгу</h2>
+			</div>	
+      	</div> 
+          <div class="form-group row" class="col-md-6">
+            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+                <option value="Виберіть умови додавання">Виберіть умови додавання</option>
+                <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
+                <option value="{{url_for('add_author_book_logic')}}" selected>автор</option>
+                <option value="{{url_for('add_edition_book_logic')}}">видання</option>
+            </select>	
+          </div>		
         	<div class="form-group row">
-			<label class="col-form-label col-4">Book Name</label>
+			<label class="col-form-label col-4">Ім'я</label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="name" required="required">
             </div>        	
         </div>
-		<div class="form-group row">
-			<label class="col-form-label col-4">Author</label>
+        <div class="form-group row">
+			<label class="col-form-label col-4">Прізвище</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="author" required="required">
+                <input type="text" class="form-control" name="surname" required="required">
+            </div>        	
+        </div>
+        <div class="form-group row">
+			<label class="col-form-label col-4">По-батькові</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="fatherName" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<button type="submit" class="btn btn-primary btn-lg" >Add</button>
+				<button   type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
 			</div>  
 		</div>		      
     </form>
-</div>
+    `;
 
-<script src = "{{url_for('navbarCretionScript')}}"></script>
-<script>
-    /*
+    const formOneBook = `
+    <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
+      	<div class="row">
+        	<div class="col-8 offset-4">
+				<h2>Додати книгу</h2>
+			</div>	
+      	</div> 
+          <div class="form-group row" class="col-md-6">
+            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+                <option value="Виберіть умови додавання" >Виберіть умови додавання</option>
+                <option value="{{url_for('add_one_book_logic')}}" selected>екземпляр</option>
+                <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_edition_book_logic')}}">видання</option>
+            </select>	
+          </div>	
+        	<div class="form-group row">
+			<label class="col-form-label col-4">ID видання</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="idEdition" required="required">
+            </div>        	
+        </div>
+        <div class="form-group row">
+			<label class="col-form-label col-4">ID книги</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="idBook" required="required">
+            </div>        	
+        </div>
+		<div class="form-group row">
+			<div class="col-8 offset-4">
+				<button   type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
+			</div>  
+		</div>		      
+    </form>
+    `;
+
+    const formEdition = `
+    <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
+      	<div class="row">
+        	<div class="col-8 offset-4">
+				<h2>Додати книгу</h2>
+			</div>	
+      	</div> 
+          <div class="form-group row" class="col-md-6">
+            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+                <option value="Виберіть умови додавання" >Виберіть умови додавання</option>
+                <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
+                <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_edition_book_logic')}} selected">видання</option>
+            </select>	
+          </div>	
+        	<div class="form-group row">
+			<label class="col-form-label col-4">Автори</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="author" required="required">
+            </div>        	
+        </div>
+        <div class="form-group row">
+			<label class="col-form-label col-4">Жанр</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="genre" required="required">
+            </div>        	
+        </div>
+        <div class="form-group row">
+			<label class="col-form-label col-4">Назва</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="name" required="required">
+            </div>        	
+        </div>
+        <div class="form-group row">
+			<label class="col-form-label col-4">Рік</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="year" required="required">
+            </div>        	
+        </div>
+		<div class="form-group row">
+			<div class="col-8 offset-4">
+				<button   type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
+			</div>  
+		</div>		      
+    </form>
+    `;
+
+    const createForm = () => {
+        console.log(1213);
+        const div = document.getElementById('add_book_form');
+        const url = document.getElementById('options').value;
+        console.log(div,url);
+        const form = document.forms.add_current_book;
+        form.remove();
+
+        if(url === "{{url_for('add_one_book_logic')}}") {
+            div.insertAdjacentHTML('beforeend',formOneBook);
+        }
+        else if(url === "{{url_for('add_author_book_logic')}}") {
+            div.insertAdjacentHTML('beforeend',formAuthor);
+        }
+        else if(url === "{{url_for('add_edition_book_logic')}}") {
+            div.insertAdjacentHTML('beforeend',formEdition);
+        }
+    };
+
     const addNewBook = async () => {
+    const url = document.getElementById('options').value;
+    if (url === "Виберіть умови додавання"){
+      alert(url);
+
+      return;
+    }
     const form = document.forms.add_current_book;
-        
-    await fetch({# "{{url_for('')}}" #}, {
+    formData = new FormData(form);
+
+    await fetch(url, {
 			method: 'post',
 			body: new FormData(form),
+			body: formData,
+    }
 			).then(response => {
     if (response.status !== 200) {
         alert(`Помилка стаус код: ${response.status}`);
@@ -75,7 +207,7 @@
     .then(data => {
         alert(JSON.parse(JSON.stringify(data)).response);
     }).catch(error => error);
-    }*/
+    }
     createNavbar();
 </script>
 </body>
