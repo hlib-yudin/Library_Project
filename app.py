@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
@@ -273,6 +273,14 @@ def issue_order():
     print(order.issue_date)
     db.session.commit()
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
+
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/orders', methods=('POST', ))
+def add_book_logic():
+    print(json.loads(request.data));
+    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------

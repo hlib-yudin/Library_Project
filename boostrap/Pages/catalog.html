@@ -148,7 +148,6 @@ const getInfo = (event, data) =>{
   };
 
 const addBook = async (event, book) => {
-  console.log(book.number_of_available);
   if(book.number_of_available === 0) {
     alert('Книги немає у наявності');
 
