@@ -23,8 +23,8 @@
 
 </nav>
 
-    <div class="signup-form">
-    <form  class="form-horizontal" id = "remove_book">
+    <div class="signup-form" id = "delete_book_form">
+    <form  class="form-horizontal" id = "remove_book" onsubmit="return false;">
       	<div class="row">
         	<div class="col-8 offset-4">
 				<h2>Видалити книгу</h2>
@@ -34,19 +34,19 @@
 		<div class="form-group row">
 			<label class="col-form-label col-4">Id книги</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="id" required="required">
+                <input type="text" class="form-control" name="id" pattern="[0-9]\d{7}" required="required">
             </div>        	
         </div>
         	<div class="form-group row">
 			<label class="col-form-label col-4">Назва книги</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="name">
+                <input type="text" class="form-control" name="name" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
 			<label class="col-form-label col-4">Автор</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="author">
+                <input type="text" class="form-control" name="author" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
@@ -59,22 +59,91 @@
 
 <script src = "{{url_for('navbarCretionScript')}}"></script>
 <script>
-const deleteCurrentBook = async () =>{
-    const form = document.forms.remove_book;
+    const formBook = `
+    <form  class="form-horizontal" id = "remove_book" onsubmit="return false;">
+      	<div class="row">
+        	<div class="col-8 offset-4">
+				<h2>Видалити книгу</h2>
+			</div>	
+      	</div>			
 
-    await fetch("{{url_for('delete_book_logic')}}", {
-			method: 'post',
-			body: new FormData(form),
-    }).then(response => {
-    if (response.status !== 200) {
-        alert(`Помилка стаус код: ${response.status}`);
-        throw(response.status);
+		<div class="form-group row">
+			<label class="col-form-label col-4">Id книги</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="id" pattern="[0-9]\d{7}" required="required">
+            </div>        	
+        </div>
+        	<div class="form-group row">
+			<label class="col-form-label col-4">Назва книги</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="name" required="required">
+            </div>        	
+        </div>
+		<div class="form-group row">
+			<label class="col-form-label col-4">Автор</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="author" required="required">
+            </div>        	
+        </div>
+		<div class="form-group row">
+			<div class="col-8 offset-4">
+				<button type="submit" onclick="deleteCurrentBook()" class="btn btn-danger btn-lg">Видалити</button>
+			</div>  
+		</div>		      
+    </form>
+    `;
+
+    const createForm = () => {
+        const div = document.getElementById('delete_book_form');
+
+        const form = document.forms.remove_book;
+        form.remove();
+
+        div.insertAdjacentHTML('beforeend',formBook);
+
+    };
+
+    const deleteCurrentBook = async () =>{
+        const form = document.forms.remove_book;
+        formData = new FormData(form);
+
+        const response = validation(formData);
+        if(response){
+            console.log('Помилка:',response);
+            return;
         }
-    return response.json()})
-    .then(data => {
-        alert(JSON.parse(JSON.stringify(data)).response);
-    }).catch(error => error);
-};
+
+        await fetch("{{url_for('delete_book_logic')}}", {
+			method: 'post',
+			body: formData,
+        }).then(response => {
+        if (response.status !== 200) {
+            alert(`Помилка стаус код: ${response.status}`);
+            throw(response.status);
+        }
+        return response.json()})
+        .then(data => {
+            alert(JSON.parse(JSON.stringify(data)).response);
+        }).catch(error => error);
+        createForm();
+    };
+
+const validation = (data) => {
+        for(const pair of data.entries()) {
+            if(pair[1] === ''){
+                return 'Пусте поле' + pair[0];
+            }
+
+            else if(pair[0] === 'id') {
+                if(!(/[0-9]\d{7}/gmi.test(pair[1]))){
+                    return 'Невірний формат даних';
+                }
+            }
+        }
+
+        return false;
+    };
+
    createNavbar();
 </script>
 </body>
