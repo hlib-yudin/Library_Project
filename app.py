@@ -4,14 +4,19 @@ from flask_session import Session
 # from config import Config
 from dateutil.relativedelta import *
 import json
+import os
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tsfeeunxaehhta:e137af5ce5c302668bdbf1582d9dbd54061de27e38beb40e41c6e7bb6a4c0203@ec2-34-254-120-2.eu-west-1.compute.amazonaws.com:5432/df41upj513dcrb"
-app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+
+#app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
@@ -79,7 +84,7 @@ def navbarCretionScript():
 @app.route("/books/return", methods=('GET', 'POST'))
 def page_for_returning_books():
     # Рендерить сторінку для підтвердження повернення книги.
-    json_orders = {}
+    json_orders = {"user_id": None, "orders": None, 'message': ""}
 
     # якщо в поле вводу ввели логін користувача -- знайти і відобразити всі його замовлення
     if request.args.get("login_query"):  # and request.method == 'GET'
@@ -87,17 +92,19 @@ def page_for_returning_books():
         login_query = request.args["login_query"]
         users = get_all_users_by_login(login_query)
         if len(users) != 1:
-            # TODO: що повертає при помилці?
-            return "user not found"
+            json_orders['message'] = "Користувача не знайдено!"
+            return render_template('returnBooks.html', json=json_orders)
+
         user = users[0]
         orders = get_issued_orders_by_user_id(user.user_id)
-        # TODO: що повертає при відсутності замовлень?
-        # повернемо json, у якого 'orders' = []
-        # if len(orders) == 0:
-        #    return "no orders"
+        print(orders)
+        if len(orders) == 0:
+            print("here")
+            json_orders['message'] = "Актуальних замовлень не знайдено!"
+            return render_template('returnBooks.html', json=json_orders)
 
         # складаємо json з інформацією про замовлення
-        json_orders = {"user_id": user.user_id, "orders": []}
+        json_orders = {"user_id": user.user_id, "orders": [], 'message': ''}
         for order in orders:
             books = get_all_books_by_order_id(order.order_id)  # можна винести в query
             books = [book.book for book in books if book.return_date == None]
@@ -157,8 +164,7 @@ def return_books():
     print('-------------------------------------------------------------------------------------------------------------')
 
     if len(data) == 0:
-        print('Читач повернув усі книжки')
-        return 'Читач повернув усі книжки'
+        return make_response(jsonify({'message': "Не обрано жодної книги для повернення!"}))
     # s = json.dumps(data, indent=4, sort_keys=True)
     user_id = data[0]['user_id']
     old_user_status = get_status_name(get_user_by_id(user_id))  # можна винести в query
@@ -192,7 +198,7 @@ def return_of_book(dict_list):
             dict(return_date=date.today()))
 
         edition_count = get_edition_count_obj(edition_id)
-        edition_count.number_of_available += 1
+        edition_count.count_increasing()
         res_list.append({"order_id": order_id, "edition_id": edition_id, "book_title": edition.book_title,
                          "message": "Книгу успішно повернуто"})
 
@@ -240,8 +246,9 @@ def issue_order():
 
     # чи має даний юзер дане замовлення?
     order = orders[0]
-    if order_u_login.user_login != arrived_login:
-        return make_response(jsonify({'res_message': "Дана людини не робила цього замовлення!"}))
+    encoded_login = hashlib.sha3_512(arrived_login.encode()).hexdigest()
+    if order_u_login.user_login != encoded_login:
+        return make_response(jsonify({'res_message': "Ця людина не робила цього замовлення!"}))
 
     # чи скасоване замовлення?
     if order.is_canceled:
@@ -249,7 +256,7 @@ def issue_order():
 
     # чи замовлення вже видане?
     if order.issue_date:
-        return make_response(jsonify({'res_message': 'Замовлення було видано!'}))
+        return make_response(jsonify({'res_message': 'Замовлення вже було видано раніше!'}))
 
     # чи є читач боржником?
     if get_status_name(user) == 'debtor':
@@ -300,6 +307,40 @@ def add_author_book_logic():
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
 @app.route('/books/add/edition/logic', methods=('POST', ))
+def add_edition_book_logic():
+    print(request.form);
+    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+
+@app.route('/books/delete/logic', methods=('POST', ))
+def delete_book_logic():
+    print(request.form);
+
+    return make_response(jsonify({'response': 'Книгу видалено успішно!'}))
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/one/logic', methods=('POST', ))
+def add_one_book_logic():
+    print(request.form);
+    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/author/logic', methods=('POST', ))
+def add_author_book_logic():
+    print(request.form);
+    print(request.form['name']);
+    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+
+
+#---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/colection/logic', methods=('POST', ))
 def add_edition_book_logic():
     print(request.form);
     return make_response(jsonify({'response': 'Книгу додано успішно!'}))
@@ -420,24 +461,28 @@ def is_canceled_change(ord):
     today_date = date.today()
     order_date = ord.booking_date
     return_date = ord.return_date
-    if return_date is None:
-        booking_days = number_of_days(order_date, today_date)
-        if allowed_booking_days < booking_days:
-            # is_canceled is True
-            ord.is_canceled_update(new_status=True)
-            return 1
+    book_id = ord.book_id
+    booking_days = number_of_days(order_date, today_date)
+    if allowed_booking_days < booking_days:
+        # is_canceled is True
+        order_id = OrderBook.query.filter_by(book_id=book_id, return_date=return_date).first()
+        order = get_all_orders_by_order_id(order_id.order_id)[0]
+        order.is_canceled_update(new_status=True)
+        return 1
+    elif allowed_booking_days >= booking_days:
         return 0
 
 
 def ordered_books_check(books):
     new_book_list = list()
     for inf in books:
-        book_id = inf.book_id
         issue_date = inf.issue_date
-        if issue_date is None and is_canceled_change(inf):
-            continue
-        else:
-            new_book_list.append(book_id)
+        if issue_date is None:
+            book_id = inf.book_id
+            if is_canceled_change(inf):
+                continue
+            else:
+                new_book_list.append(book_id)
     return new_book_list
 
 
@@ -661,8 +706,10 @@ def sign_up(role_name):
 
     else:
         # створити нового користувача
-        new_user = UserInf(user_login=login,
-                           user_password=password,
+        encoded_login = hashlib.sha3_512(login.encode()).hexdigest()
+        encoded_password = hashlib.sha3_512(password.encode()).hexdigest()
+        new_user = UserInf(user_login=encoded_login,
+                           user_password=encoded_password,
                            user_name=first_name,
                            surname=last_name,
                            middle_name=middle_name)
@@ -806,7 +853,7 @@ def check_availability(editions_id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run() # , host='0.0.0.0', port=5000
 
 
 

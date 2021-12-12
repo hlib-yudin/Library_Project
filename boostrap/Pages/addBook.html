@@ -59,7 +59,7 @@
         	<div class="form-group row">
 			<label class="col-form-label col-4">Ім'я</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="name" pattern="^[а-я А-Я]*$" required="required">
+              <input type="text" class="form-control" name="name" pattern="^[а-я А-Я]*$" required="required">
             </div>        	
         </div>
         <div class="form-group row">
@@ -100,15 +100,15 @@
         	<div class="form-group row">
 			<label class="col-form-label col-4">ID видання</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="idEdition" pattern="[0-9]-[0-9]\d{2}-[0-9]\d{4}-[0-9]" required="required">
-            </div>        	
+             <input type="text" class="form-control" name="idEdition" pattern="[0-9]-[0-9]\d{2}-[0-9]\d{4}-[0-9]" required="required">
+           </div>        	
         </div>
         <div class="form-group row">
 			<label class="col-form-label col-4">ID книги</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="idBook" pattern="[0-9]\d{7}" required="required">
-            </div>        	
-        </div>
+          <input type="text" class="form-control" name="idBook" pattern="[0-9]\d{7}" required="required">
+        </div>        	
+      </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
 				<button   type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
@@ -141,7 +141,7 @@
         <div class="form-group row">
 			<label class="col-form-label col-4">Жанр</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї]*$" required="required">
+              <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї]*$" required="required">
             </div>        	
         </div>
         <div class="form-group row">
@@ -153,9 +153,9 @@
         <div class="form-group row">
 			<label class="col-form-label col-4">Рік</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="year" pattern="(0?[1-9]|1[012])\d{4}" required="required">
-            </div>        	
-        </div>
+           <input type="text" class="form-control" name="year" pattern="(0?[1-9]|1[012])\d{4}" required="required">
+        </div>        	
+     </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
 				<button   type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
@@ -167,7 +167,6 @@
     const createForm = () => {
         const div = document.getElementById('add_book_form');
         const url = document.getElementById('options').value;
-
         const form = document.forms.add_current_book;
         form.remove();
 
@@ -191,13 +190,12 @@
     }
     const form = document.forms.add_current_book;
     formData = new FormData(form);
-
+      
     const response = validation(formData);
     if(response){
         console.log('Помилка:',response);
         return;
     }
-
     await fetch(url, {
 			method: 'post',
 			body: new FormData(form),
@@ -246,7 +244,6 @@
 
         return false;
     };
-
     createNavbar();
 </script>
 </body>

@@ -10,3 +10,4 @@ Werkzeug
 sqlalchemy
 psycopg2
 python-dateutil
+APScheduler
