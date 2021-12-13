@@ -286,9 +286,17 @@ def issue_order():
 
 @app.route('/books/delete/logic', methods=('POST', ))
 def delete_book_logic():
-    print(request.form);
-
-    return make_response(jsonify({'response': 'Книгу видалено успішно!'}))
+    book_id = request.form['id']
+    book_row = get_book_row_by_book_id(book_id)
+    book_title = get_edition_info_obj(book_row.edition_id).book_title
+    if book_row.is_delete is True:
+        response = "Екземпляр книги " + book_title + " вже видалений!"
+    else:
+        book_row.is_delete_update(new_status=True)
+        edition_row = get_edition_count_obj(book_row.edition_id)
+        edition_row.count_decreasing()
+        response = "Один екземпляр книги "+book_title+" видалено успішно!"
+    return make_response(jsonify({'response': response}))
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
