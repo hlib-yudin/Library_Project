@@ -469,7 +469,7 @@ def ordered_books_check(books):
 
 def available_books_now(edition_id):
     # список всіх книжок одного видання
-    edition_books = get_all_books_by_edition_id(edition_id)
+    edition_books = get_all_available_books_by_edition_id(edition_id)
     # книжки одного видання, яких немає в наявності, тому що заброньовані, або не повернені
     ordered_books = db.session.query(Book.book_id, Order.booking_date, Order.issue_date, OrderBook.return_date). \
         join(OrderBook, Book.book_id == OrderBook.book_id). \
