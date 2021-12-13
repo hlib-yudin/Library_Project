@@ -1,8 +1,11 @@
 from models import *
 import hashlib
 
+def get_book_row_by_book_id(book_id):
+    return Book.query.filter_by(book_id=book_id).first()
+
 def get_edition_by_book_id(book_id):
-    return Book.query.filter_by(book_id=book_id).first().edition
+    return get_book_row_by_book_id(book_id).edition
 
 def get_all_books_by_edition_id(edition_id):
     return Book.query.filter_by(edition_id=edition_id).all()
