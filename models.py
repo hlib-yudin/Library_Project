@@ -128,7 +128,10 @@ class Book(db.Model):
     is_delete = Column(Boolean, nullable=False, server_default=text("false"))
 
     edition = relationship('EditionInf')
-
+    
+    def is_delete_update(self, new_status):
+        self.is_delete = new_status
+        db.session.commit()
 
 t_edition_author = Table(
     'edition_author', metadata,
