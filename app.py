@@ -337,13 +337,22 @@ def page_for_orders():
     for order in orders:
         books = OrderBook.query.filter_by(order_id=order.order_id).all()  # можна винести в query
         books = [book.book for book in books if book.return_date == None]
+        status_name = get_status_name(user)
         new_json = {
             "order_id": order.order_id,
-            "order_status": "Видане" if order.issue_date else "Заброньоване",
             #"order_issue_date": order.issue_date,
-            "order_in_time": True,  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
+            "order_in_time": status_name != 'debtor',  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
             "books": []
         }
+        if order.issue_date and status_name == 'normal':
+            new_json['order_status'] = "Видане " + str(order.issue_date) + " на 3 місяці" 
+        elif order.issue_date and status_name == 'privileged':
+            new_json['order_status'] = "Видане " + str(order.issue_date) + " на 6 місяців"
+        elif order.issue_date and status_name == 'debtor':
+            new_json['order_status'] = "Строк повернення сплив -- будь ласка, поверніть книги!"
+        else:
+            new_json['order_status'] = "Заброньоване"
+
         for book in books:
             edition = book.edition
             new_json_2 = {
