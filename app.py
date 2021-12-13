@@ -8,14 +8,14 @@ import os
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 # app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
+#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
 #app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 
-#app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
-app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
+app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
+#app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
@@ -279,37 +279,6 @@ def issue_order():
     db.session.commit()
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/delete/logic', methods=('POST', ))
-def delete_book_logic():
-    print(request.form);
-
-    return make_response(jsonify({'response': 'Книгу видалено успішно!'}))
-
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/one/logic', methods=('POST', ))
-def add_one_book_logic():
-    print(request.form);
-    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
-
-
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/author/logic', methods=('POST', ))
-def add_author_book_logic():
-    print(request.form);
-    print(request.form['name']);
-    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
-
-
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/edition/logic', methods=('POST', ))
-def add_edition_book_logic():
-    print(request.form);
-    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
 
 
 #---------------------------------------------------------------------------------------------------------------------
@@ -351,9 +320,12 @@ def add_edition_book_logic():
 
 @app.route('/books/orders')
 def page_for_orders():
-    # Сторінка для відображення замовлень користувача (її бачить не бібліотекарЮ, а читач)
+    # Сторінка для відображення замовлень користувача (її бачить не бібліотекар, а читач)
+    json_orders = {"user_id": None, "orders": [], 'error_message': ''}
     if not session.get('id'):
-        return "Авторизуйтеся"
+        json_orders['error_message'] = "Авторизуйтеся!"
+        return render_template('viewOrders.html', json = json_orders)
+
     user_id = session["id"]
     user = UserInf.query.filter_by(user_id=user_id).first()
     # показуємо лише заброньовані та не повністю повернені замовлення
