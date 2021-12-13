@@ -7,6 +7,9 @@ def get_edition_by_book_id(book_id):
 def get_all_books_by_edition_id(edition_id):
     return Book.query.filter_by(edition_id=edition_id).all()
 
+def get_all_available_books_by_edition_id(edition_id):
+    return Book.query.filter_by(edition_id=edition_id, is_delete=False).all()
+
 def get_edition_count_obj(edition_id):
     return EditionCount.query.filter_by(edition_id=edition_id).first()
 
