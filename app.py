@@ -426,7 +426,7 @@ def grant_privileges(user_id):
     term = {'normal': 3, 'privileged': 6}
     user = get_user_by_id(user_id).status
     num_of_months = term[user.status_name]
-    if all([number_of_months(el.issue_date, el.max_return_date) < num_of_months for el in res2]):
+    if all([months_difference(el.max_return_date, el.issue_date) < num_of_months for el in res2]):
         change_user_status(user_id, 'privileged')
 
     db.session.commit()
@@ -846,10 +846,13 @@ def all_books_returned(user_id):
     else:
         return False
 
-def number_of_months(date1, date2):
-    # if date2 is None:
-    #     date2 = date.today()
+def months_difference(date1, date2):
+    # date1 -- більш пізня дата
+    # date2 -- більш рання дата
+
     months = abs((date1.year - date2.year) * 12 + date1.month - date2.month)
+    if date1.day < date2.day:
+        months -= 1
     return months
 
 def number_of_days(date1, date2):
