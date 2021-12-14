@@ -29,7 +29,12 @@ class Author(db.Model):
 
     #editions = relationship('EditionInf', secondary='edition_author')
 
-
+    @classmethod
+    def add(cls, author_name, author_surname, author_middle_name):
+        new_author = Author(author_name=author_name, author_surname=author_surname, author_middle_name=author_middle_name)
+        db.session.add(new_author)
+        db.session.commit()
+  
 
 class EditionInf(db.Model):
     __tablename__ = 'edition_inf'
@@ -132,6 +137,12 @@ class Book(db.Model):
     def is_delete_update(self, new_status):
         self.is_delete = new_status
         db.session.commit()
+        
+    @classmethod
+    def add(cls, edition_id, book_id):
+        new_book = Book(edition_id=edition_id, book_id=book_id, is_delete=False)
+        db.session.add(new_book)
+        db.session.commit()    
 
 t_edition_author = Table(
     'edition_author', metadata,
