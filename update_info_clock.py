@@ -12,6 +12,9 @@ def months_difference(date1, date2):
     return months
 
 
+def number_of_days(date1, date2):
+    return abs((date1 - date2).days)
+
 
 sched = BlockingScheduler()
 
@@ -43,7 +46,26 @@ def update_debtors():
     if debtor_counter == 0:
         print(f"{datetime.now()}: нових боржників не знайдено")
 
-    
+        
+# кожного дня опівночі спрацьовує ця функція
+@sched.scheduled_job('cron', hour=0)
+def is_canceled_change():
+    allowed_booking_days = 14
+    today_date = date.today()
+    # треба перевірити скільки бронь вже висить
+    not_issued_orders = Order.query.filter(Order.issue_date == None).all()
+    canceled_orders_amount = 0
+    for order in not_issued_orders:
+        order_date = order.booking_date
+        booking_days = number_of_days(order_date, today_date)
+        if allowed_booking_days < booking_days:
+            # is_canceled is True
+            order.is_canceled_update(new_status=True)
+            print(f"{datetime.now()}: замовлення {order.order_id} скасовано")
+            canceled_orders_amount += 1
+
+    if canceled_orders_amount == 0:
+        print(f"{datetime.now()}: жодного замовлення не скасовано")   
 
 
 sched.start()
