@@ -33,7 +33,10 @@ const setNavbar = (type, permissions) => {
             navbarNode.children[0].insertAdjacentHTML('afterbegin',librarianNavbar[permission]);
         });
         navbarNode.children[0].insertAdjacentHTML('afterbegin',`<li class="nav-item"> <a class="nav-link " aria-current="page" href="{{url_for('page_for_returning_books')}}">Повернути книгу</a> </li>`);
-    } else {
+    }else if (type === 'unlogged'){
+        navbarNode.children[0].insertAdjacentHTML('afterbegin',`<li class="nav-item"> <a class="nav-link " href="{{url_for('catalogue')}}">Каталог</a> </li>`);
+    } 
+     else {
         permissions.forEach(permission => {
             navbarNode.children[0].insertAdjacentHTML('afterbegin',adminNavbar[permission]);
         });
@@ -50,7 +53,7 @@ const createNavbar = () => {
     }
 
     if(!role){
-        role ='reader';
+        role ='unlogged';
     }
 
     if (typeof permissions === 'string'){

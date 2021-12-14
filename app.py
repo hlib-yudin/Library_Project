@@ -744,7 +744,7 @@ def getUserRole():
     if session:
         return make_response(jsonify({'role': session['role'], 'permissions': session['permissions'], 'logged': session['name']}))
     else:
-        return make_response(jsonify({'role': 'reader', 'permissions': [], 'logged': 'undefined'}))
+        return make_response(jsonify({'role': 'unlogged', 'permissions': [], 'logged': 'undefined'}))
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
