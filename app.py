@@ -480,16 +480,16 @@ def available_books_now(edition_id):
         join(Order, Order.order_id == OrderBook.order_id). \
         filter(Book.edition_id == edition_id, OrderBook.return_date == None, Order.is_canceled == False).all()
     
-    ordered_books = list()
+    checked_books = list()
     for row in ordered_books:
-        ordered_books.append(row.book_id)
+        checked_books.append(row.book_id)
 
     edition_books_list = list()
     for el in edition_books:
         edition_books_list.append(el.book_id)
 
     A = set(edition_books_list)
-    B = set(ordered_books)
+    B = set(checked_books)
     books = list(A.difference(B))
     return books
 
