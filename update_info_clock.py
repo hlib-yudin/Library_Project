@@ -41,13 +41,14 @@ def update_debtors():
     all_users = UserInf.query.all()
     for user in all_users:
         # якщо це читач і боржник
-        if user.role.role_name == "reader" and is_debtor(user.user_id):
-            if user.status.status_name != "debtor":
-                print(f"{datetime.now()}: {user} тепер боржник")
-                user.status = get_specified_status("debtor")
-                debtor_counter += 1
-            elif user.status.status_name == "debtor":
-                already_debtors += 1
+        if user.role.role_name == "reader":
+            if is_debtor(user.user_id):
+                if user.status.status_name != "debtor":
+                    print(f"{datetime.now()}: {user} тепер боржник")
+                    user.status = get_specified_status("debtor")
+                    debtor_counter += 1
+                elif user.status.status_name == "debtor":
+                    already_debtors += 1
 
 
     db.session.commit()
