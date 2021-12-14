@@ -1,7 +1,7 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from models import *
 from query import get_specified_status
-#from app import db
+from app import is_debtor
 
 def months_difference(date1, date2):
     # date1 -- більш пізня дата
@@ -26,6 +26,9 @@ def update_debtors():
     # Функція для знаходження нових боржників та зміни статусу цих користувачів на "debtor".
     already_debtors = 0
     debtor_counter = 0
+
+    """
+    today = date.today()
     # знаходимо всі книги, які не повернули 
     late_books = OrderBook.query.filter(OrderBook.return_date == None)
     today = date.today()
@@ -46,6 +49,19 @@ def update_debtors():
             debtor_counter += 1
         elif user.status.status_name == "debtor":
             already_debtors += 1
+    """
+    
+    all_users = UserInf.query.all()
+    for user in all_users:
+        # якщо це читач і боржник
+        if user.role.role_name == "reader" and is_debtor(user.user_id):
+            if user.status.status_name != "debtor":
+                print(f"{datetime.now()}: {user} тепер боржник")
+                user.status = get_specified_status("debtor")
+                debtor_counter += 1
+            elif user.status.status_name == "debtor":
+                already_debtors += 1
+
 
     db.session.commit()
     DebtorGraphic.add(debtor_quantity=already_debtors+debtor_counter)
