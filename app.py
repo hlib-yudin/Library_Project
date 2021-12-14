@@ -288,12 +288,13 @@ def issue_order():
 def delete_book_logic():
     book_id = request.form['id']
     book_row = get_book_row_by_book_id(book_id)
-    book_title = get_edition_info_obj(book_row.edition_id).book_title
-    if book_row.is_delete is True:
-        response = "Екземпляр книги " + book_title + " вже видалений!"
-    elif book_row is None:
+    if book_row is None:
         response = "Такого екземпляру книги немає в базі даних!"
+    elif book_row.is_delete is True:
+        book_title = get_edition_info_obj(book_row.edition_id).book_title
+        response = "Екземпляр книги " + book_title + " вже видалений!"
     else:
+        book_title = get_edition_info_obj(book_row.edition_id).book_title
         book_row.is_delete_update(new_status=True)
         edition_row = get_edition_count_obj(book_row.edition_id)
         edition_row.count_decreasing()
