@@ -1,6 +1,6 @@
 const defaultNavbar = `
 <li class="nav-item"> <a class="nav-link " href="{{url_for('catalogue')}}">Каталог</a> </li>
-<li class="nav-item"> <a class="nav-link " aria-current="page" href="{{url_for('basket')}}">Корзина</a> </li>
+<li class="nav-item"> <a class="nav-link " aria-current="page" href="{{url_for('basket')}}">Кошик</a> </li>
 <li class="nav-item" id = 'orders'> <a class="nav-link " aria-current="page" href="{{url_for('page_for_orders')}}">Замовлення</a> </li>`;
 
 const librarianNavbar = {
