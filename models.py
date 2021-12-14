@@ -223,7 +223,14 @@ class OrderBook(db.Model):
         return new_order
 
 
+class DebtorGraphic(db.Model):
+    __tablename__ = 'debtor_graphic'
 
+    debtor_quantity = Column(Integer, nullable=False)
+    date_check = Column(Date, nullable=False)
+    __table_args__ = (
+        db.PrimaryKeyConstraint('debtor_quantity', 'date_check', name='tbl_pk'),
+    )
 
 
 def insert_everything():
