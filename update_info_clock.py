@@ -1,5 +1,6 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from models import *
+from query import get_specified_status
 #from app import db
 
 def months_difference(date1, date2):
@@ -39,7 +40,7 @@ def update_debtors():
         # якщо його статус -- не боржник, то робимо його боржником
         if user.status.status_name != "debtor":
             print(f"{datetime.now()}: {user} тепер боржник")
-            user.status.status_name = "debtor"
+            user.status = get_specified_status("debtor")
             debtor_counter += 1
 
     db.session.commit()
