@@ -539,12 +539,14 @@ def order(user_id, chosen_books):
 @app.route("/books/catalogue/addBook", methods=['POST'])
 def add_book_to_basket():
     session.modified = True  # для того, щоб сесія оновлювалась
-    # мені можна посилати лише edition_id, адже user_id привязаний до сесії
-    data = json.loads(request.data);
+    data = json.loads(request.data)
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].append(edition_id)
-    return make_response(jsonify({'response':'Книга додана до кошика'}))
+        response = 'Книга додана до кошика'
+    else:
+        response = 'Користувач не авторизований'
+    return make_response(jsonify({'response': response}))
 
 
 @app.route("/books/basket/data", methods=['GET'])
