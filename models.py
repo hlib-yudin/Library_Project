@@ -225,12 +225,15 @@ class OrderBook(db.Model):
 
 class DebtorGraphic(db.Model):
     __tablename__ = 'debtor_graphic'
-
+    
+    date_check = Column(Date, primary_key=True)
     debtor_quantity = Column(Integer, nullable=False)
-    date_check = Column(Date, nullable=False)
-    __table_args__ = (
-        db.PrimaryKeyConstraint('debtor_quantity', 'date_check', name='tbl_pk'),
-    )
+    
+    @classmethod
+    def add(cls, debtor_quantity):
+        new_row = DebtorGraphic(date_check=date.today(), debtor_quantity=debtor_quantity)
+        db.session.add(new_row)
+        db.session.commit()
 
 
 def insert_everything():
