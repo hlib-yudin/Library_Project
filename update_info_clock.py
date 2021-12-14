@@ -32,8 +32,10 @@ def update_debtors():
     for book in late_books:
         # знаходимо замовлення цієї книги
         order = book.order
+        if order.issue_date is None:
+            continue
         # якщо замовлення скасоване  або ще не пройшло 3 місяці -- пропускаємо
-        if months_difference(today, order.issue_date) < 3 or order.is_canceled:
+        elif months_difference(today, order.issue_date) < 3 or order.is_canceled:
             continue
         # знаходимо користувача, що замовив цю книгу
         user = order.user
