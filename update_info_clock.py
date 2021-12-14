@@ -1,20 +1,7 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from models import *
 from query import get_specified_status
-from app import is_debtor
-
-def months_difference(date1, date2):
-    # date1 -- більш пізня дата
-    # date2 -- більш рання дата
-    
-    months = abs((date1.year - date2.year) * 12 + date1.month - date2.month)
-    if date1.day < date2.day:
-        months -= 1
-    return months
-
-
-def number_of_days(date1, date2):
-    return abs((date1 - date2).days)
+from app import is_debtor, months_difference, number_of_days
 
 
 sched = BlockingScheduler()
