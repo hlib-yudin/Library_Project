@@ -291,6 +291,8 @@ def delete_book_logic():
     book_title = get_edition_info_obj(book_row.edition_id).book_title
     if book_row.is_delete is True:
         response = "Екземпляр книги " + book_title + " вже видалений!"
+    elif book_row is None:
+        response = "Такого екземпляру книги немає в базі даних!"
     else:
         book_row.is_delete_update(new_status=True)
         edition_row = get_edition_count_obj(book_row.edition_id)
