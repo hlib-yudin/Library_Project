@@ -613,7 +613,7 @@ def order_submit():
         return make_response(jsonify(
             {'response': "Користувач не може забронювати книги, оскільки він або боржник, або вже замовив 10 книжок!"}))
     elif need_to_delete > 0:
-        response = "Треба видалити " + str(need_to_delete) + " книг зі списку кошика!"
+        response = "Треба видалити книги зі списку кошика у кількості: " + str(need_to_delete)
         return make_response(jsonify({'response': response}))
     response = order(user_id, chosen_books)
     session['basket'].clear()
