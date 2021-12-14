@@ -24,7 +24,7 @@ sched = BlockingScheduler()
 @sched.scheduled_job('cron', hour=0)
 def update_debtors():
     # Функція для знаходження нових боржників та зміни статусу цих користувачів на "debtor".
-
+    already_debtors = 0
     debtor_counter = 0
     # знаходимо всі книги, які не повернули 
     late_books = OrderBook.query.filter(OrderBook.return_date == None)
@@ -42,8 +42,11 @@ def update_debtors():
             print(f"{datetime.now()}: {user} тепер боржник")
             user.status = get_specified_status("debtor")
             debtor_counter += 1
+        elif user.status.status_name == "debtor":
+            already_debtors += 1
 
     db.session.commit()
+    DebtorGraphic.add(debtor_quantity=already_debtors+debtor_counter)
     if debtor_counter == 0:
         print(f"{datetime.now()}: нових боржників не знайдено")
 
