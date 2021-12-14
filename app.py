@@ -305,17 +305,42 @@ def delete_book_logic():
 #---------------------------------------------------------------------------------------------------------------------
 @app.route('/books/add/one/logic', methods=('POST', ))
 def add_one_book_logic():
-    print(request.form);
-    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+    edition_id = request.form['idEdition']
+    book_id = request.form['idBook']
+    edition_row = get_edition_info_obj(edition_id)
+    if edition_row is not None:
+        book_row = get_book_row_by_book_id(book_id)
+        edition_count_row = get_edition_count_obj(edition_id)
+        if book_row is None:
+            Book.add(edition_id, book_id)
+            edition_count_row.count_increasing()
+            response = 'Книгу додано успішно!'
+        elif book_row.is_delete is True:
+            book_row.is_delete_update(new_status=False)
+            edition_count_row.count_increasing()
+            response = 'Книгу додано успішно!'
+        else:
+            response = 'Цей екземпляр вже є в базі даних!'
+    else:
+        response = 'Неправильно введений edition_id!'
+    return make_response(jsonify({'response': response}))
 
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
 @app.route('/books/add/author/logic', methods=('POST', ))
 def add_author_book_logic():
-    print(request.form);
-    print(request.form['name']);
-    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+    author_name = request.form['name']
+    author_surname = request.form['surname']
+    author_middle_name = request.form['fatherName']  # can be null
+    author_id = Author.query.filter_by(author_name=author_name, author_surname=author_surname,
+                                       author_middle_name=author_middle_name).first()
+    if author_id is not None:
+        response = "Такий автор вже наявний в базі даних"
+    else:
+        response = 'Доданий автор '+author_surname + ' ' + author_name + ' ' + author_middle_name
+        Author.add(author_name, author_surname, author_middle_name)
+    return make_response(jsonify({'response': response}))
 
 
 #---------------------------------------------------------------------------------------------------------------------
@@ -543,9 +568,9 @@ def add_book_to_basket():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].append(edition_id)
-        response = 'Книга додана до кошика'
+        response = 'Книга додана до кошика!'
     else:
-        response = 'Користувач не авторизований'
+        response = 'Користувач не авторизований!'
     return make_response(jsonify({'response': response}))
 
 
@@ -573,7 +598,7 @@ def book_ordering_amount():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].remove(edition_id)
-    return make_response(jsonify({'response':'Книга видалена з кошика'}))
+    return make_response(jsonify({'response':'Книга видалена з кошика!'}))
 
 
 @app.route("/books/basket/submit", methods=['GET'])
@@ -586,9 +611,9 @@ def order_submit():
     need_to_delete = amount_of_chosen - books_can_add
     if books_can_add == 0:
         return make_response(jsonify(
-            {'response': "Користувач не може забронювати книги, оскільки він або боржник, або вже замовив 10 книжок"}))
+            {'response': "Користувач не може забронювати книги, оскільки він або боржник, або вже замовив 10 книжок!"}))
     elif need_to_delete > 0:
-        response = "Треба видалити " + str(need_to_delete) + " книг зі списку кошика"
+        response = "Треба видалити " + str(need_to_delete) + " книг зі списку кошика!"
         return make_response(jsonify({'response': response}))
     response = order(user_id, chosen_books)
     session['basket'].clear()
