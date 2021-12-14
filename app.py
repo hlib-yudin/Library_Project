@@ -471,38 +471,6 @@ def is_debtor(user_id):
 
 
 # --------------------------Герасимчук -- Кошик та оформлення замовлення---------------------------------------------
-# функція працює коректно при умові, що return_date = None
-def is_canceled_change(ord):
-    allowed_booking_days = 14
-    # треба перевірити скільки бронь вже висить
-    today_date = date.today()
-    order_date = ord.booking_date
-    return_date = ord.return_date
-    book_id = ord.book_id
-    booking_days = number_of_days(order_date, today_date)
-    if allowed_booking_days < booking_days:
-        # is_canceled is True
-        order_id = OrderBook.query.filter_by(book_id=book_id, return_date=return_date).first()
-        order = get_all_orders_by_order_id(order_id.order_id)[0]
-        order.is_canceled_update(new_status=True)
-        return 1
-    elif allowed_booking_days >= booking_days:
-        return 0
-
-
-def ordered_books_check(books):
-    new_book_list = list()
-    for inf in books:
-        issue_date = inf.issue_date
-        if issue_date is None:
-            book_id = inf.book_id
-            if is_canceled_change(inf):
-                continue
-            else:
-                new_book_list.append(book_id)
-    return new_book_list
-
-
 def available_books_now(edition_id):
     # список всіх книжок одного видання
     edition_books = get_all_available_books_by_edition_id(edition_id)
@@ -511,15 +479,17 @@ def available_books_now(edition_id):
         join(OrderBook, Book.book_id == OrderBook.book_id). \
         join(Order, Order.order_id == OrderBook.order_id). \
         filter(Book.edition_id == edition_id, OrderBook.return_date == None, Order.is_canceled == False).all()
-    # перевірка коректності списку книг ordered_books
-    checked = ordered_books_check(ordered_books)
+    
+    ordered_books = list()
+    for row in ordered_books:
+        ordered_books.append(row.book_id)
 
     edition_books_list = list()
     for el in edition_books:
         edition_books_list.append(el.book_id)
 
     A = set(edition_books_list)
-    B = set(checked)
+    B = set(ordered_books)
     books = list(A.difference(B))
     return books
 
