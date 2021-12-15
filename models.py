@@ -225,13 +225,14 @@ class OrderBook(db.Model):
 
 class DebtorGraphic(db.Model):
     __tablename__ = 'debtor_graphic'
-    
+
     date_check = Column(Date, primary_key=True)
     debtor_quantity = Column(Integer, nullable=False)
-    
+    books_debt = Column(Integer, nullable=False)
+
     @classmethod
-    def add(cls, debtor_quantity):
-        new_row = DebtorGraphic(date_check=date.today(), debtor_quantity=debtor_quantity)
+    def add(cls, debtor_quantity, books_debt):
+        new_row = DebtorGraphic(date_check=date.today(), debtor_quantity=debtor_quantity, books_debt=books_debt)
         db.session.add(new_row)
         db.session.commit()
 
