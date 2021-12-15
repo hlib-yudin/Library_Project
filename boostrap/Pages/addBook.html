@@ -134,16 +134,20 @@
           </div>	
         	<div class="form-group row">
 			<label class="col-form-label col-4">Автори</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="author" required="required">
-            </div>        	
+			<div class="col-6">
+                <input type="text" class="form-control" name="author">
+                <span id = "add_author"></span>
+            </div>
+            <div class="col-2 cart_buttons"> <button type="button" onclick = "add_text('add_author')" class="button cart_button_checkout">Додати автор</button> </div>
         </div>
         <div class="form-group row">
 			<label class="col-form-label col-4">Жанр</label>
-			<div class="col-8">
-                <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї І Ї]*$" required="required">
-            </div>        	
-        </div>
+			<div class="col-6">
+                <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї І Ї]*$">
+                <span id = "add_genre"></span>
+            </div>
+            <div class="col-2 cart_buttons"> <button type="button" onclick = "add_text('add_genre')" class="button cart_button_checkout">Додати жанр</button> </div>        	
+            </div>
         <div class="form-group row">
 			<label class="col-form-label col-4">Назва</label>
 			<div class="col-8">
@@ -164,11 +168,30 @@
         </div>
 		<div class="form-group row">
 			<div class="col-8 offset-4">
-				<button   type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
+				<button type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
 			</div>  
 		</div>		      
     </form>
     `;
+
+    const add_text = (field) => {
+        const form = document.forms.add_current_book;
+        formData = new FormData(form);
+        let input = '';
+        const span = document.getElementById(field);
+
+        if(field === "add_genre"){
+            input = formData.get('genre');
+            form.children[3].children[1].children[0].value = '';
+            span.innerHTML = span.innerText + input[0].toUpperCase() + input.substring(1) + ',';
+        } else {
+            input = formData.get('author');
+            form.children[2].children[1].children[0].value = '';
+            span.innerHTML = span.innerText +
+            input.split(/\s+/).map(word => word[0].toUpperCase() + word.substring(1)).join(' ') +
+              ',';
+        }
+    };
 
     const createForm = () => {
         const div = document.getElementById('add_book_form');
@@ -204,6 +227,11 @@
         return;
     }
 
+    if(formData.get('year') !== ''){
+        formData.set('genre', document.getElementById('add_genre').innerText);
+        formData.set('author', document.getElementById('add_author').innerText);
+    }
+
     await fetch(url, {
 			method: 'post',
 			body: new FormData(form),
@@ -224,11 +252,11 @@
 
     const validation = (data) => {
         for(const pair of data.entries()) {
-            if(pair[1] === '' && pair[0] !== 'fatherName'){
+            if(pair[1] === '' && pair[0] !== 'fatherName' && pair[0] !== 'genre' && pair[0] !== 'author'){
                 return 'Пусте поле ' + pair[0];
             }
 
-            if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre'){
+            if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName'){
                 if(!(/^[а-я А-Я і ї]*$/igm.test(pair[1]))){
                     return 'Невірний формат даних';
                 }
@@ -240,7 +268,7 @@
             }
             else if(pair[0] === 'idBook') {
                 if(!(/[0-9]\d{7}/gmi.test(pair[1]))){
-                    return 'Невірний формат даних';
+                    return 'Невірний формат даних id книги';
                 }
             }
             else if(pair[0] === 'idEdition') {
