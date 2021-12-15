@@ -1,10 +1,27 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from models import *
-from query import get_specified_status
-from app import is_debtor, months_difference, number_of_days
+from query import *
+from app import number_of_days  # is_debtor
+from dateutil.relativedelta import *
 
 
 sched = BlockingScheduler()
+
+
+def is_debtor(user_id):
+    term = {'normal': 3, 'privileged': 6, 'debtor': 0}
+    user_status = get_status_name(get_user_by_id(user_id))
+    num_of_months = term[user_status]
+    is_debtor_flag = False
+    verification_date = date.today() - relativedelta(months=num_of_months)
+    user_books = db.session.query(func.count(OrderBook.order_id).label("count")).filter(Order.user_id == user_id,
+                                                                                        Order.order_id == OrderBook.order_id,
+                                                                                        OrderBook.return_date == None,
+                                                                                        Order.issue_date != None,
+                                                                                        Order.issue_date < verification_date).first()
+    if user_books.count > 0:
+        is_debtor_flag = True
+    return is_debtor_flag
+
 
 
 # кожного дня опівночі спрацьовує ця функція
