@@ -93,6 +93,7 @@ def is_canceled_change():
         if allowed_booking_days < booking_days:
             # is_canceled is True
             order.is_canceled_update(new_status=True)
+            CenceledOrder.add(order_id, order_date)
             print(f"{datetime.now()}: замовлення {order.order_id} скасовано")
             canceled_orders_amount += 1
 
