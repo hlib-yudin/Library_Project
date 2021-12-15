@@ -50,7 +50,7 @@
     const row = document.getElementById('blocks');
     const pagination = document.getElementById('pages');
 
-    await fetch("{{url_for('take_books_data')}}", {method: 'GET'})
+    const books = await fetch("{{url_for('take_books_data')}}", {method: 'GET'})
 	  .then(response => {
       if (response.status !== 200) {
         alert(`Виникла проблема. Статус код: ${response.status}`);
@@ -60,14 +60,30 @@
       .then(data => {
      let i = data.pagination;
        while(i > 0){
-          pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination(${i})">${i}</a></li>`);
+          pagination.insertAdjacentHTML("afterbegin",`<li class="page-item"><a class="page-link" onclick = "getPagination('${i}')">${i}</a></li>`);
         i-=1;
       }
 
-      data.books.forEach((book,index) => {
+      data.books.slice(0,5).forEach((book,index) => {
+        row.append(createCard(book,index));
+      });
+      return data.books;
+    });
+    return books;
+  };
+
+  const getPagination = (number) => {
+    GLOBAL_books.then(books =>  {
+      const row = document.getElementById('blocks');
+      const books_part = books.slice((number-1)*5,(number-1)+5);
+      while (row.firstChild) {
+        row.removeChild(row.firstChild);
+       }
+       books_part.forEach((book,index) => {
         row.append(createCard(book,index));
       });
     });
+   
   };
 
 const createCard = (book, index) => {
@@ -184,7 +200,7 @@ const getUserRole = async () => {
   };
 
 getUserRole();
-getBooks();
+const GLOBAL_books = getBooks();
 </script>
 
 </body>
