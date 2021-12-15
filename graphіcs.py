@@ -87,15 +87,18 @@ def qr_orders():
         return 0
 
     orders = dict()  # {date:[(is_canceled=false) ,(is_canceled=true)]}
+
     for row in data:
         datum = row.booking_date
         time = str(datum.day)+"д "+str(datum.month)+"м"
         if time not in orders.keys():
             orders[time] = [0, 0]
+
         if row.is_canceled is False:
             orders[time][0] += 1
         elif row.is_canceled is True:
-            orders[time][1] += 1
+            res = db.session.query(func.count(CenceledOrder.order_id).label("count")).filter_by(cancel_date=datum).first()
+            orders[time][1] += res.count
     return orders
 
 
