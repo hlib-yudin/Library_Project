@@ -237,7 +237,7 @@ class DebtorGraphic(db.Model):
         db.session.commit()
 
         
- class CenceledOrder(db.Model):
+class CenceledOrder(db.Model):
     __tablename__ = 'cenceled_order'
 
     order_id = Column(Integer, primary_key=True)
@@ -248,7 +248,7 @@ class DebtorGraphic(db.Model):
     def add(cls, order_id, booking_date):
         new_row = CenceledOrder(order_id=order_id, booking_date=booking_date, cancel_date=date.today())
         db.session.add(new_row)
-        db.session.commit()       
+        db.session.commit()     
 
 
 def insert_everything():
