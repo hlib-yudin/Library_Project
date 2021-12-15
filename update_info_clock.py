@@ -13,14 +13,18 @@ def is_debtor(user_id):
     num_of_months = term[user_status]
     is_debtor_flag = False
     verification_date = date.today() - relativedelta(months=num_of_months)
-    user_books = db.session.query(func.count(OrderBook.order_id).label("count")).filter(Order.user_id == user_id,
-                                                                                        Order.order_id == OrderBook.order_id,
-                                                                                        OrderBook.return_date == None,
-                                                                                        Order.issue_date != None,
-                                                                                        Order.issue_date < verification_date).first()
-    if user_books.count > 0:
+    user_books = db.session.query(func.count(OrderBook.book_id)).filter(Order.user_id == user_id,
+                                                            Order.order_id == OrderBook.order_id,
+                                                            OrderBook.return_date == None,
+                                                            Order.issue_date != None,
+                                                            Order.issue_date < verification_date
+                                                            ).group_by(OrderBook.order_id).all()
+    book_quan = 0
+    if len(user_books) > 0:
         is_debtor_flag = True
-    return is_debtor_flag
+        for book_num in user_books:
+            book_quan += book_num[0]
+    return is_debtor_flag, book_quan
 
 
 
@@ -30,7 +34,7 @@ def update_debtors():
     # Функція для знаходження нових боржників та зміни статусу цих користувачів на "debtor".
     already_debtors = 0
     debtor_counter = 0
-
+    books_debt = 0
     """
     today = date.today()
     # знаходимо всі книги, які не повернули 
@@ -59,7 +63,9 @@ def update_debtors():
     for user in all_users:
         # якщо це читач і боржник
         if user.role.role_name == "reader":
-            if is_debtor(user.user_id):
+            is_debtor_flag, book_quantity = is_debtor(user.user_id)
+            if is_debtor_flag:
+                books_debt += book_quantity
                 if user.status.status_name != "debtor":
                     print(f"{datetime.now()}: {user} тепер боржник")
                     user.status = get_specified_status("debtor")
@@ -67,9 +73,8 @@ def update_debtors():
                 elif user.status.status_name == "debtor":
                     already_debtors += 1
 
-
     db.session.commit()
-    DebtorGraphic.add(debtor_quantity=already_debtors+debtor_counter)
+    DebtorGraphic.add(debtor_quantity=already_debtors + debtor_counter, books_debt=books_debt)
     if debtor_counter == 0:
         print(f"{datetime.now()}: нових боржників не знайдено")
 
