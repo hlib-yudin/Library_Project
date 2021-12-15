@@ -5,23 +5,16 @@ from flask_session import Session
 from dateutil.relativedelta import *
 import json
 import os
+from config import configurate
 
 app = Flask(__name__, template_folder='boostrap/Pages')
+configurate(app)
 # app.config.from_object(Config)
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:1111@localhost:5432/postgres"
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:040801@localhost:5432/library_db"
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/library_db"
-#app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@db:5432/library_db"
-#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
-
-app.config['SECRET_KEY'] = 'kfgvTKF_GgvgvfCFmg6yu6-VGHVgfvgGGhH_Szz245m_kkPh9qk'
-#app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 
 
 # SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
 
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"  # So the token cache will be stored in a server-side session
+
 Session(app)
 
 db = SQLAlchemy(app)
