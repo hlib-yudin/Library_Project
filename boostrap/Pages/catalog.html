@@ -64,18 +64,20 @@
         i-=1;
       }
 
-      data.books.slice(0,5).forEach((book,index) => {
+      data.books.slice(0,6).forEach((book,index) => {
         row.append(createCard(book,index));
       });
       return data.books;
     });
+
     return books;
   };
 
   const getPagination = (number) => {
     GLOBAL_books.then(books =>  {
       const row = document.getElementById('blocks');
-      const books_part = books.slice((number-1)*5,(number-1)+5);
+
+      const books_part = books.slice((number-1)*6,(number-1)*6+6);
       while (row.firstChild) {
         row.removeChild(row.firstChild);
        }
