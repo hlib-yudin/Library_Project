@@ -129,15 +129,33 @@ const getInfo = (event, data) =>{
   }
 };
 
+const clearCatalogue = (row) => {
+  while (row.firstChild) {
+        row.removeChild(row.firstChild);
+  }
+  console.log(row.children);
+};
+
   const search = async (form) => {
     const url = document.getElementById('options').value;
+    const input = document.querySelector('input').value;
+    const row = document.getElementById('blocks');
+    const pagination = document.getElementById('pages');
     if (url === "Оберіть тип пошуку"){
       alert(url);
 
       return;
     }
-    const input = document.querySelector('input').value;
-    const row = document.getElementById('blocks');
+    
+    if(input === '') {
+      console.log(input);
+      clearCatalogue(row);
+      clearCatalogue(pagination);
+      getBooks();
+      
+      return;
+    }
+
 
     await fetch(url, {method: 'POST', body: JSON.stringify({input})})
 	  .then(response => {
@@ -148,9 +166,7 @@ const getInfo = (event, data) =>{
     return response.json()})
     .then(data => {
       if (data.books.length !== 0){
-        while (row.firstChild) {
-        row.removeChild(row.firstChild);
-       }
+        clearCatalogue(row);
         data.books.forEach((book,index) => {
         row.append(createCard(book,index));
     });
@@ -159,6 +175,7 @@ const getInfo = (event, data) =>{
       }
     });
 
+    clearCatalogue(pagination);
     return false;
   };
 
