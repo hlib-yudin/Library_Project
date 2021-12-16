@@ -338,10 +338,89 @@ def add_author_book_logic():
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/colection/logic', methods=('POST', ))
+def check_authors(author_name):
+    if len(author_name) == 0:
+        return 'Заповніть, будь ласка, поле вводу для автора і підтвердіть додавання'
+
+    ids = list()
+    for author in author_name:
+        author_name = author.split(' ')
+        if len(author_name) == 2:
+            name = author_name[0]
+            surname = author_name[1]
+            author_id = Author.query.filter_by(author_name=name, author_surname=surname,
+                                               author_middle_name=None).first()
+            if author_id is not None:
+                ids += [author_id.author_id]
+            else:
+                return "В базі даних автора " + author + " немає"
+        elif len(author_name) == 3:
+            name = author_name[0]
+            surname = author_name[1]
+            middle_name = author_name[2]
+            author_id = Author.query.filter_by(author_name=name, author_surname=surname,
+                                               author_middle_name=middle_name).first()
+            if author_id is not None:
+                ids += [author_id.author_id]
+            else:
+                return "В базі даних автора " + author + " немає"
+        else:
+            return "Неккоректно введене повне ім'я автора!"
+    return ids
+
+
+def check_genres(genre):
+    if len(genre) == 0:
+        return 'Заповніть, будь ласка, поле вводу для жанру і підтвердіть додавання'
+
+    ids = list()
+    for gen in genre:
+        genre_id = Genre.query.filter_by(genre=gen).first()
+        if genre_id is not None:
+            ids += [genre_id.genre_id]
+        else:
+            return "В базі даних жанру " + gen + " немає"
+    return ids
+
+
+@app.route('/books/add/colection/logic', methods=('POST',))
 def add_edition_book_logic():
-    print(request.form);
-    return make_response(jsonify({'response': 'Книгу додано успішно!'}))
+    author_name = request.form['author'].split(',')[:-1]
+    genre = request.form['genre'].split(',')[:-1]
+    answer1 = check_authors(author_name)
+    answer2 = check_genres(genre)
+
+    if isinstance(answer1, str):
+        response = answer1
+    elif isinstance(answer2, str):
+        response = answer2
+    else:
+        book_title = request.form['name']
+        edition_year = request.form['year']
+        edition_id = request.form['idEdition']
+        if EditionInf.query.filter_by(edition_id=edition_id).first() is not None:
+            response = 'Такий edition_id вже існує!'
+        else:
+            new_edition = EditionInf.add(edition_id, book_title, edition_year)
+            EditionCount.add_new_edition(edition_id)
+            # додати в Edition_author
+            author_list = list()
+            for author_id in answer1:
+                new_author = Author.query.filter_by(author_id=author_id).first()
+                author_list.append(new_author)
+
+            # додати в Edition_genre
+            genre_list = list()
+            for genre_id in answer2:
+                new_genre = Genre.query.filter_by(genre_id=genre_id).first()
+                genre_list.append(new_genre)
+
+            new_edition.authors.extend(author_list)
+            new_edition.genres.extend(genre_list)
+            db.session.commit()
+            response = 'Книгу додано успішно!'
+
+    return make_response(jsonify({'response': response}))
 
 
 #---------------------------------------------------------------------------------------------------------------------
