@@ -561,6 +561,10 @@ def insert_everything():
     new_permission = Permission(permission_description = 'order books')
     db.session.add(new_permission)
     new_permission.roles.extend([role_reader])
+
+    new_permission = Permission(permission_description = 'analytics')
+    db.session.add(new_permission)
+    new_permission.roles.extend([role_librarian, role_admin])
     db.session.commit()
 
 
