@@ -6,6 +6,7 @@ from dateutil.relativedelta import *
 import json
 import os
 from config import configurate
+from graphіcs import *
 
 app = Flask(__name__, template_folder='boostrap/Pages')
 configurate(app)
