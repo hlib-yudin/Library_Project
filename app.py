@@ -884,6 +884,12 @@ def log_in():
 def check_graphіc_file():
     if not os.path.exists('static/images/analytics_gr1.png'):
         gr_issued_books(qr_issued_books())
+    if not os.path.exists('static/images/analytics_gr2.png'):
+        gr_debted_books()
+    if not os.path.exists('static/images/analytics_gr3.png'):
+        gr_debtors()
+    if not os.path.exists('static/images/analytics_gr4.png'):
+        gr_orders(qr_orders())
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
