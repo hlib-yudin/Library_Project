@@ -32,9 +32,10 @@
           <div class="form-group row" class="col-md-6">
             <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
                 <option value="Виберіть умови додавання" selected>Виберіть умови додавання</option>
-                <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
                 <option value="{{url_for('add_edition_book_logic')}}">видання</option>
+                <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
             </select>	
           </div>			      
     </form>
@@ -52,6 +53,7 @@
             <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
                 <option value="Виберіть умови додавання">Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}" selected>автор</option>
+                <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
                 <option value="{{url_for('add_edition_book_logic')}}">видання</option>
                 <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
             </select>	
@@ -82,6 +84,36 @@
     </form>
     `;
 
+    const formGenre = `
+    <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
+      	<div class="row">
+        	<div class="col-8 offset-4">
+				<h2>Додати книгу</h2>
+			</div>	
+      	</div> 
+          <div class="form-group row" class="col-md-6">
+            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+                <option value="Виберіть умови додавання">Виберіть умови додавання</option>
+                <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_genre_book_logic')}}" selected>жанр</option>
+                <option value="{{url_for('add_edition_book_logic')}}">видання</option>
+                <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
+            </select>	
+          </div>		
+        <div class="form-group row">
+			<label class="col-form-label col-4">Жанр</label>
+			<div class="col-8">
+                <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї І Ї]*$">
+            </div>        	
+        </div>
+		<div class="form-group row">
+			<div class="col-8 offset-4">
+				<button   type="submit" onclick="addNewBook()" class="btn btn-primary btn-lg" >Додати</button>
+			</div>  
+		</div>		      
+    </form>
+    `;
+
     const formOneBook = `
     <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
       	<div class="row">
@@ -93,6 +125,7 @@
             <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
                 <option value="Виберіть умови додавання" >Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
                 <option value="{{url_for('add_edition_book_logic')}}">видання</option>
                 <option value="{{url_for('add_one_book_logic')}}" selected>екземпляр</option>
             </select>	
@@ -128,6 +161,7 @@
             <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
                 <option value="Виберіть умови додавання" >Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
                 <option value="{{url_for('add_edition_book_logic')}}" selected>видання</option>
                 <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
             </select>	
@@ -214,6 +248,8 @@
         }
         else if(url === "{{url_for('add_edition_book_logic')}}") {
             div.insertAdjacentHTML('beforeend',formEdition);
+        } else if (url === "{{url_for('add_genre_book_logic')}}") {
+            div.insertAdjacentHTML('beforeend',formGenre);
         }
     };
 
