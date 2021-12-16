@@ -102,5 +102,25 @@ def is_canceled_change():
         print(f"{datetime.now()}: жодного замовлення не скасовано")
 
 
+
+
+@sched.scheduled_job('cron', hour=0)
+def save_info_about_launch():
+    # Зберігає дату запуску годинника в таблицю в БД.
+    ClockLaunchCheck.add(date.today())
+    print(f"{datetime.now()}: інформацію про запуск годинника збережено")
+
+
+# перевіряємо при розгортанні застосунку, чи запускався сьогодні годинник, чи ні
+launch_info = ClockLaunchCheck.query.filter_by(launch_date = date.today()).all()
+# якщо не запускався...
+if len(launch_info) == 0:
+    # ...то викликаємо всі scheduled функції
+    update_debtors()
+    is_canceled_change()
+    save_info_about_launch()
+
+
+
 sched.start()
 #update_debtors()
