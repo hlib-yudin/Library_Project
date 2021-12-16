@@ -208,6 +208,25 @@
     </form>
     `;
 
+    const formEmpty = `
+    <form class="form-horizontal" name ="add_current_book" onsubmit="return false;">
+      	<div class="row">
+        	<div class="col-8 offset-4">
+				<h2>Додати книгу</h2>
+			</div>	
+      	</div> 
+          <div class="form-group row" class="col-md-6">
+            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+                <option value="Виберіть умови додавання" selected>Виберіть умови додавання</option>
+                <option value="{{url_for('add_author_book_logic')}}">автор</option>
+                <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
+                <option value="{{url_for('add_edition_book_logic')}}">видання</option>
+                <option value="{{url_for('add_one_book_logic')}}">екземпляр</option>
+            </select>	
+          </div>			      
+    </form>
+    `;
+
     const add_text = (field) => {
         const form = document.forms.add_current_book;
         formData = new FormData(form);
@@ -236,12 +255,12 @@
     const createForm = () => {
         const div = document.getElementById('add_book_form');
         const url = document.getElementById('options').value;
-
         const form = document.forms.add_current_book;
+        
         form.remove();
 
         if(url === "{{url_for('add_one_book_logic')}}") {
-            div.insertAdjacentHTML('beforeend',formOneBook);
+           div.insertAdjacentHTML('beforeend',formOneBook);
         }
         else if(url === "{{url_for('add_author_book_logic')}}") {
             div.insertAdjacentHTML('beforeend',formAuthor);
@@ -251,6 +270,8 @@
         } 
         else if (url === "{{url_for('add_genre_book_logic')}}") {
             div.insertAdjacentHTML('beforeend',formGenre);
+        } else {
+            div.insertAdjacentHTML('beforeend',formEmpty);
         }
     };
 
