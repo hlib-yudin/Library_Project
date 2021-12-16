@@ -20,7 +20,6 @@ Session(app)
 db = SQLAlchemy(app)
 db.init_app(app)
 
-from query import *
 
 
 # html routing
