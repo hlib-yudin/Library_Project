@@ -88,6 +88,12 @@ class Genre(db.Model):
     genre_id = Column(Integer, db.Sequence('genre_genre_id_seq'), primary_key=True)
     genre = Column(Text, nullable=False, unique=True)
 
+    @classmethod
+    def add(cls, genre):
+        new_genre = Genre(genre=genre)
+        db.session.add(new_genre)
+        db.session.commit()
+
 
 class Permission(db.Model):
     __tablename__ = 'permissions'
