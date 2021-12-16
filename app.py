@@ -68,6 +68,7 @@ def removeBook():
 
 @app.route("/librarian/analytics")
 def analytics():
+    check_graphіc_file()
     return render_template('analytics.html')
 
 @app.route("/scripts/navbarCreation")
