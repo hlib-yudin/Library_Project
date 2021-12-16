@@ -53,6 +53,7 @@ def gr_debted_books():
     plt.plot(x, y)
     plt.xlabel('Час')
     plt.ylabel('Кількість заборгованих книжок')
+    plt.savefig('project/image/analytics_gr2.png')
     plt.show()
     return 'ok'
 
@@ -71,6 +72,7 @@ def gr_debtors():
     plt.plot(x, y)
     plt.xlabel('Час')
     plt.ylabel('Кількість боржників')
+    plt.savefig('project/image/analytics_gr3.png')
     plt.show()
     return 'ok'
 
@@ -130,6 +132,7 @@ def gr_orders(orders):
     plt.xticks([r + barWidth/2 for r in range(len(canceled_false))], times)
 
     plt.legend()
+    plt.savefig('project/image/analytics_gr4.png')
     plt.show()
     return 'ok'
 
