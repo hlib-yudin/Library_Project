@@ -66,6 +66,10 @@ def addBook():
 def removeBook():
     return render_template('removeBook.html')
 
+@app.route("/librarian/analytics")
+def analytics():
+    return render_template('analitycs.html')
+
 @app.route("/scripts/navbarCreation")
 def navbarCretionScript():
     return render_template('navbarCreation.js')
@@ -827,13 +831,6 @@ def getUserRole():
 @app.route("/login/user", methods = ['POST'])
 def log_in():
     print(request.form)
-    permission_for_page = {
-        'add books':'addBook',
-        'delete books': 'issuebooks',
-        'issue/accept books':'issuebooks',
-        'order books':'/orders',
-        'register librarians':'register_librarians',
-    }
     #arrived_json = json.loads(request.data.decode('utf-8'))
     #login = arrived_json["user_login"]
     #password = arrived_json["user_password"]

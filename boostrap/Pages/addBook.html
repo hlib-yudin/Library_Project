@@ -248,7 +248,8 @@
         }
         else if(url === "{{url_for('add_edition_book_logic')}}") {
             div.insertAdjacentHTML('beforeend',formEdition);
-        } else if (url === "{{url_for('add_genre_book_logic')}}") {
+        } 
+        else if (url === "{{url_for('add_genre_book_logic')}}") {
             div.insertAdjacentHTML('beforeend',formGenre);
         }
     };
@@ -283,7 +284,7 @@
     if (response.status !== 200) {
         alert(`Помилка стаус код: ${response.status}`);
         throw(response.status);
-        }
+    }
     return response.json()})
     .then(data => {
         alert(JSON.parse(JSON.stringify(data)).response);
