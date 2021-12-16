@@ -59,21 +59,21 @@
             </select>	
           </div>		
         	<div class="form-group row">
-			<label class="col-form-label col-4">Ім'я <small style="color:red;">(Формат: кирилиця)</small></label>
+			<label class="col-form-label col-4">Ім'я </label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="name" pattern="^[а-я А-Я і ї І Ї]*$" required="required">
+                <input type="text" class="form-control" name="name" required="required">
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">Прізвище <small style="color:red;">(Формат: кирилиця)</small></label>
+			<label class="col-form-label col-4">Прізвище</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="surname" pattern="^[а-я А-Я і ї І Ї]*$" required="required">
+                <input type="text" class="form-control" name="surname" required="required">
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">По-батькові <small style="color:red;">(Формат: кирилиця)</small></label>
+			<label class="col-form-label col-4">По-батькові</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="fatherName" pattern="^[а-я А-Я і ї І Ї]*$">
+                <input type="text" class="form-control" name="fatherName" >
             </div>        	
         </div>
 		<div class="form-group row">
@@ -101,9 +101,9 @@
             </select>	
           </div>		
         <div class="form-group row">
-			<label class="col-form-label col-4">Жанр <small style="color:red;">(Формат: кирилиця)</small></label>
+			<label class="col-form-label col-4">Жанр</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї І Ї]*$">
+                <input type="text" class="form-control" name="genre">
             </div>        	
         </div>
 		<div class="form-group row">
@@ -131,15 +131,15 @@
             </select>	
           </div>	
         	<div class="form-group row">
-			<label class="col-form-label col-4">ID видання <small style="color:red;">(Формат: цифри через дефіс)</small></label>
+			<label class="col-form-label col-4">ID видання</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="idEdition" pattern="^[0-9 -]*$" required="required">
+                <input type="text" class="form-control" name="idEdition" required="required">
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">ID книги <small style="color:red;">(Формат: 8 цифр)</small></label>
+			<label class="col-form-label col-4">ID книги</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="idBook" pattern="[0-9]\d{7}" required="required">
+                <input type="text" class="form-control" name="idBook" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
@@ -175,9 +175,9 @@
             <div class="col-2 cart_buttons"> <button type="button" onclick = "add_text('add_author')" class="button cart_button_checkout">Додати автора</button> </div>
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">Жанр <small style="color:red;">(Формат: кирилиця)</small></label>
+			<label class="col-form-label col-4">Жанр</label>
 			<div class="col-6">
-                <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї І Ї]*$">
+                <input type="text" class="form-control" name="genre">
                 <span id = "add_genre"></span>
             </div>
             <div class="col-2 cart_buttons"> <button type="button" onclick = "add_text('add_genre')" class="button cart_button_checkout">Додати жанр</button> </div>        	
@@ -191,13 +191,13 @@
         <div class="form-group row">
 			<label class="col-form-label col-4">Рік</label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="year" pattern="[0-9]{4}" required="required">
+                <input type="text" class="form-control" name="year" required="required">
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">ID видання <small style="color:red;">(Формат: цифри через дефіс)</small></label>
+			<label class="col-form-label col-4">ID видання </label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="idEdition" pattern="^[0-9 -]*$" required="required">
+                <input type="text" class="form-control" name="idEdition"  required="required">
             </div>        	
         </div>
 		<div class="form-group row">
@@ -319,7 +319,7 @@
             if(pair[1] === '' && pair[0] !== 'fatherName' && pair[0] !== 'genre' && pair[0] !== 'author'){
                 return 'Пусте поле ' + pair[0];
             }
-
+            /*
             if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre'){
                 if(!(/^[а-я А-Я і ї]*$/igm.test(pair[1]))){
                     return 'Невірний формат даних';
@@ -339,7 +339,7 @@
                 if(!(/^[0-9 -]*$/gmi.test(pair[1]))){
                     return 'Невірний формат даних видання id';
                 }
-            }
+            }*/
         }
 
         return false;
