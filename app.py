@@ -504,21 +504,22 @@ def grant_privileges(user_id):
 
     subq = db.session.query(Order.order_id,
                            func.max(OrderBook.return_date).label('max_return_date')).filter(Order.user_id == user_id,
-                                                                                            Order.is_canceled != False,
+                                                                                            Order.is_canceled == False,
+                                                                                            Order.issue_date != None,
                                                                                             Order.order_id == OrderBook.order_id).group_by(
         Order.order_id).subquery('subq')
     res2 = db.session.query(subq.c.order_id, Order.issue_date, subq.c.max_return_date).filter(subq.c.order_id == Order.order_id).order_by(subq.c.max_return_date.desc()).limit(2).all()
-    for el in res2:
+    if len(res2) == 2:
+        for el in res2:
         # print(el.order_id, el.issue_date, el.book_id, el.max_return_date)
-        print(el.order_id, el.issue_date, el.max_return_date)
+            print(el.order_id, el.issue_date, el.max_return_date)
 
-    term = {'normal': 3, 'privileged': 6}
-    user = get_user_by_id(user_id).status
-    num_of_months = term[user.status_name]
-    if all([months_difference(el.max_return_date, el.issue_date) < num_of_months for el in res2]):
-        change_user_status(user_id, 'privileged')
-
-    db.session.commit()
+        term = {'normal': 3, 'privileged': 6}
+        user = get_user_by_id(user_id).status
+        num_of_months = term[user.status_name]
+        if all([months_difference(el.max_return_date, el.issue_date) < num_of_months for el in res2]):
+            change_user_status(user_id, 'privileged')
+            db.session.commit()
     return 'ok'
 
 #---------------------------------------------------------------------------------------------------------------------
