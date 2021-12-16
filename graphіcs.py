@@ -32,9 +32,7 @@ def gr_issued_books(data):
     plt.xlabel('Місяць')
     plt.ylabel('Кількість книжок')
     plt.title('Кількість виданих книжок за часом')
-    plt.show()
-    # TODO: указать папку для хранения графиков
-    #plt.savefig('static/images/analytics_gr1.png')
+    plt.savefig('static/images/analytics_gr1.png')
     return 0
 
 
@@ -53,7 +51,7 @@ def gr_debted_books():
     plt.xlabel('Час')
     plt.ylabel('Кількість заборгованих книжок')
     plt.savefig('static/images/analytics_gr2.png')
-    plt.show()
+    #plt.show()
     return 'ok'
 
 
@@ -72,7 +70,7 @@ def gr_debtors():
     plt.xlabel('Час')
     plt.ylabel('Кількість боржників')
     plt.savefig('static/images/analytics_gr3.png')
-    plt.show()
+    #plt.show()
     return 'ok'
 
 
@@ -132,7 +130,7 @@ def gr_orders(orders):
 
     plt.legend()
     plt.savefig('static/images/analytics_gr4.png')
-    plt.show()
+    #plt.show()
     return 'ok'
 
 
