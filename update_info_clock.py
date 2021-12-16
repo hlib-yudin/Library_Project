@@ -88,6 +88,7 @@ def is_canceled_change():
     not_issued_orders = Order.query.filter(Order.issue_date == None).all()
     canceled_orders_amount = 0
     for order in not_issued_orders:
+        order_id = order.order_id
         order_date = order.booking_date
         booking_days = number_of_days(order_date, today_date)
         if allowed_booking_days < booking_days:
@@ -98,7 +99,7 @@ def is_canceled_change():
             canceled_orders_amount += 1
 
     if canceled_orders_amount == 0:
-        print(f"{datetime.now()}: жодного замовлення не скасовано")   
+        print(f"{datetime.now()}: жодного замовлення не скасовано")
 
 
 sched.start()
