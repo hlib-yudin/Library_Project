@@ -335,15 +335,23 @@ def add_author_book_logic():
     if author_id is not None:
         response = "Такий автор вже наявний в базі даних"
     else:
-        response = 'Доданий автор '+author_surname + ' ' + author_name + ' ' + author_middle_name
         Author.add(author_name, author_surname, author_middle_name)
+        response = 'Доданий автор '+author_surname + ' ' + author_name + ' ' + author_middle_name
     return make_response(jsonify({'response': response}))
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
 @app.route('/books/add/genre/logic', methods=('POST', ))
 def add_genre_book_logic():
-    return make_response(jsonify({'response': 'жанр додано успішно'}))
+    genre = request.form['genre']
+    if Genre.query.filter_by(genre=genre).first() is not None:
+        response = 'Такий жанр вже наявний в базі даних!'
+    else:
+        Genre.add(genre)
+        response = 'Жанр додано успішно!'
+    return make_response(jsonify({'response': response}))
+
+
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
 def check_authors(author_name):
