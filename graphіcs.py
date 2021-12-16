@@ -134,7 +134,7 @@ def gr_orders(orders):
     return 'ok'
 
 
-gr_orders(qr_orders())
+
 
 
 
