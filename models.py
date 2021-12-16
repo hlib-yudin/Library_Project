@@ -50,6 +50,13 @@ class EditionInf(db.Model):
     # edition_count = relationship('EditionCount', uselist=False)
 
 
+    @classmethod
+    def add(cls, edition_id, book_title, edition_year):
+        new_edition = EditionInf(edition_id=edition_id, book_title=book_title, edition_year=edition_year)
+        db.session.add(new_edition)
+        db.session.commit()
+        return new_edition
+
 
 class EditionCount(db.Model):
     __tablename__ = 'edition_count'
@@ -67,7 +74,13 @@ class EditionCount(db.Model):
         self.number_of_available += 1
         db.session.commit()
 
+    @classmethod
+    def add_new_edition(cls, edition_id):
+        new_edition = EditionCount(edition_id=edition_id, number_of_available=0)
+        db.session.add(new_edition)
+        db.session.commit()
         
+
 class Genre(db.Model):
     __tablename__ = 'genre'
     __table_args__ = {'extend_existing': True}
