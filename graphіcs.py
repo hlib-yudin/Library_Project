@@ -21,6 +21,10 @@ def gr_issued_books(data):
     x = []
     y = []
     labels = []
+    if len(data) == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr1.png')
+        return 'no info, try next day'
     for el in data:
         x.append(datetime.strptime(str(el[1])[:-2] + '/' + str(el[0])[:-2], '%m/%Y').date())
         y.append(el[2])
@@ -41,6 +45,8 @@ def gr_issued_books(data):
 def gr_debted_books():
     debtors_info = DebtorGraphic.query.all()
     if len(debtors_info) == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr2.png')
         return 'no info, try next day'
     x = list()
     y = list()
@@ -51,7 +57,7 @@ def gr_debted_books():
     plt.xlabel('Час')
     plt.ylabel('Кількість заборгованих книжок')
     plt.savefig('static/images/analytics_gr2.png')
-    #plt.show()
+    plt.show()
     return 'ok'
 
 
@@ -60,6 +66,8 @@ def gr_debted_books():
 def gr_debtors():
     debtors_info = DebtorGraphic.query.all()
     if len(debtors_info) == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr3.png')
         return 'no info, try next day'
     x = list()
     y = list()
@@ -103,6 +111,8 @@ def qr_orders():
 
 def gr_orders(orders):
     if orders == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr4.png')
         return 'no data'
 
     # set width of bar
@@ -132,6 +142,11 @@ def gr_orders(orders):
     plt.savefig('static/images/analytics_gr4.png')
     #plt.show()
     return 'ok'
+
+
+
+
+
 
 
 
