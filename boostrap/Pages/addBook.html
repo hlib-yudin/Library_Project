@@ -30,7 +30,7 @@
 			</div>	
       	</div> 
           <div class="form-group row" class="col-md-6">
-            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+            <select class="form-select" id = "options" onchange="createForm()">
                 <option value="Виберіть умови додавання" selected>Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
                 <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
@@ -50,7 +50,7 @@
 			</div>	
       	</div> 
           <div class="form-group row" class="col-md-6">
-            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+            <select class="form-select" id = "options" onchange="createForm()">
                 <option value="Виберіть умови додавання">Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}" selected>автор</option>
                 <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
@@ -59,19 +59,19 @@
             </select>	
           </div>		
         	<div class="form-group row">
-			<label class="col-form-label col-4">Ім'я</label>
+			<label class="col-form-label col-4">Ім'я <small style="color:red;">(Формат: кирилиця)</small></label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="name" pattern="^[а-я А-Я і ї І Ї]*$" required="required">
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">Прізвище</label>
+			<label class="col-form-label col-4">Прізвище <small style="color:red;">(Формат: кирилиця)</small></label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="surname" pattern="^[а-я А-Я і ї І Ї]*$" required="required">
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">По-батькові</label>
+			<label class="col-form-label col-4">По-батькові <small style="color:red;">(Формат: кирилиця)</small></label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="fatherName" pattern="^[а-я А-Я і ї І Ї]*$">
             </div>        	
@@ -92,7 +92,7 @@
 			</div>	
       	</div> 
           <div class="form-group row" class="col-md-6">
-            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+            <select class="form-select" id = "options"  onchange="createForm()">
                 <option value="Виберіть умови додавання">Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
                 <option value="{{url_for('add_genre_book_logic')}}" selected>жанр</option>
@@ -101,7 +101,7 @@
             </select>	
           </div>		
         <div class="form-group row">
-			<label class="col-form-label col-4">Жанр</label>
+			<label class="col-form-label col-4">Жанр <small style="color:red;">(Формат: кирилиця)</small></label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї І Ї]*$">
             </div>        	
@@ -122,7 +122,7 @@
 			</div>	
       	</div> 
           <div class="form-group row" class="col-md-6">
-            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+            <select class="form-select" id = "options" onchange="createForm()">
                 <option value="Виберіть умови додавання" >Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
                 <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
@@ -131,13 +131,13 @@
             </select>	
           </div>	
         	<div class="form-group row">
-			<label class="col-form-label col-4">ID видання</label>
+			<label class="col-form-label col-4">ID видання <small style="color:red;">(Формат: цифри через дефіс)</small></label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="idEdition" pattern="^[0-9 -]*$" required="required">
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">ID книги</label>
+			<label class="col-form-label col-4">ID книги <small style="color:red;">(Формат: 8 цифр)</small></label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="idBook" pattern="[0-9]\d{7}" required="required">
             </div>        	
@@ -158,7 +158,7 @@
 			</div>	
       	</div> 
           <div class="form-group row" class="col-md-6">
-            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+            <select class="form-select" id = "options" onchange="createForm()">
                 <option value="Виберіть умови додавання" >Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
                 <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
@@ -175,7 +175,7 @@
             <div class="col-2 cart_buttons"> <button type="button" onclick = "add_text('add_author')" class="button cart_button_checkout">Додати автора</button> </div>
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">Жанр</label>
+			<label class="col-form-label col-4">Жанр <small style="color:red;">(Формат: кирилиця)</small></label>
 			<div class="col-6">
                 <input type="text" class="form-control" name="genre" pattern="^[а-я А-Я і ї І Ї]*$">
                 <span id = "add_genre"></span>
@@ -195,7 +195,7 @@
             </div>        	
         </div>
         <div class="form-group row">
-			<label class="col-form-label col-4">ID видання</label>
+			<label class="col-form-label col-4">ID видання <small style="color:red;">(Формат: цифри через дефіс)</small></label>
 			<div class="col-8">
                 <input type="text" class="form-control" name="idEdition" pattern="^[0-9 -]*$" required="required">
             </div>        	
@@ -216,7 +216,7 @@
 			</div>	
       	</div> 
           <div class="form-group row" class="col-md-6">
-            <select class="form-select" id = "options" aria-label="Default select example" onchange="createForm()">
+            <select class="form-select" id = "options" onchange="createForm()">
                 <option value="Виберіть умови додавання" selected>Виберіть умови додавання</option>
                 <option value="{{url_for('add_author_book_logic')}}">автор</option>
                 <option value="{{url_for('add_genre_book_logic')}}">жанр</option>
@@ -291,7 +291,7 @@
         return;
     }
 
-    if(formData.get('year') !== ''){
+    if(formData.get('year')){
         formData.set('genre', document.getElementById('add_genre').innerText);
         formData.set('author', document.getElementById('add_author').innerText);
     }
@@ -320,7 +320,7 @@
                 return 'Пусте поле ' + pair[0];
             }
 
-            if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName'){
+            if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre'){
                 if(!(/^[а-я А-Я і ї]*$/igm.test(pair[1]))){
                     return 'Невірний формат даних';
                 }
