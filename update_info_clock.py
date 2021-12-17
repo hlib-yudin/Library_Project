@@ -1,6 +1,6 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from query import *
-from app import number_of_days  # is_debtor
+from app import number_of_days, qr_issued_books, gr_issued_books, gr_debted_books, gr_debtors, qr_orders, gr_orders
 from dateutil.relativedelta import *
 
 
