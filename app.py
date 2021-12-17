@@ -695,7 +695,7 @@ def find_by_title():
     title_json = request.data.decode('utf-8')
     title = json.loads(title_json)['input']
     book_data_list = []
-    editions = EditionInf.query.filter_by(book_title=title).all()  # можна винести в query
+    editions = EditionInf.query.filter(func.lower(EditionInf.book_title) == title.lower()).all()  # можна винести в query
     book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books': book_data_list}))
 
@@ -708,7 +708,7 @@ def find_by_author():
     editions = db.session.query(EditionInf). \
         join(t_edition_author, EditionInf.edition_id == t_edition_author.c.edition_id). \
         join(Author, t_edition_author.c.author_id == Author.author_id). \
-        filter(Author.author_surname == author_surname).all()
+        filter(func.lower(Author.author_surname) == author_surname.lower()).all()
 
     book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books': book_data_list}))
@@ -721,7 +721,7 @@ def find_by_genre():
     editions = db.session.query(EditionInf). \
         join(t_edition_genre, EditionInf.edition_id == t_edition_genre.c.edition_id). \
         join(Genre, t_edition_genre.c.genre_id == Genre.genre_id). \
-        filter(Genre.genre == genre).all()
+        filter(func.lower(Genre.genre) == genre.lower()).all()
     book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books': book_data_list}))
 
