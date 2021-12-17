@@ -67,26 +67,15 @@ class EditionCount(db.Model):
     number_of_available = Column(BigInteger, nullable=False)
 
     def count_decreasing(self):
-        error = True
-        while error:
-            try:
-                self.number_of_available -= 1
-                db.session.commit()
-                error = False
-            except (Exception, psycopg2.ProgrammingError):
-                db.session.rollback()
-                error = True
+        try:
+            self.number_of_available -= 1
+            db.session.commit()
+        except (Exception, psycopg2.ProgrammingError):
+            db.session.rollback()
                 
     def count_increasing(self):
-        error = True
-        while error:
-            try:
-                self.number_of_available += 1
-                db.session.commit()
-                error = False
-            except (Exception, psycopg2.ProgrammingError):
-                db.session.rollback()
-                error = True
+        self.number_of_available += 1
+        db.session.commit()
 
     @classmethod
     def add_new_edition(cls, edition_id):
