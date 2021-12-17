@@ -28,7 +28,7 @@ def gr_issued_books(data):
     #print(data)
     for el in data:
         #print(el)
-        x.append(datetime.strptime(str(el[1]) + '/' + str(el[0])[:-2], '%m/%y').date())
+        x.append(datetime.strptime(str(int(el[1])) + '/' + str(el[0])[2:-2], '%m/%y').date())
         y.append(el[2])
         labels.append(str(el[0])[:-2] + '-' + str(el[1])[:-2])
 
