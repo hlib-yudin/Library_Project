@@ -186,7 +186,7 @@ const addBook = async (event, book) => {
     return;
   }
   await fetch("{{url_for('add_book_to_basket')}}", {
-    method: 'POST',
+    method: 'PUT',
     body: JSON.stringify({edition_id : book.edition_id}),
   })
 	.then(response => {

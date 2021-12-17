@@ -234,7 +234,7 @@ def issue_order():
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
 
-@app.route('/books/delete/logic', methods=('POST',))
+@app.route('/books/delete/logic', methods=('DELETE',))
 def delete_book_logic():
     book_id = request.form['id']
     book_row = get_book_row_by_book_id(book_id)
@@ -254,7 +254,7 @@ def delete_book_logic():
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/one/logic', methods=('POST',))
+@app.route('/books/addBook/one/logic', methods=('PUT',))
 def add_one_book_logic():
     edition_id = request.form['idEdition']
     book_id = request.form['idBook']
@@ -279,7 +279,7 @@ def add_one_book_logic():
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/logic/author', methods=('POST',))
+@app.route('/books/addBook/logic/author', methods=('PUT',))
 def add_author_book_logic():
     author_name = request.form['name']
     author_surname = request.form['surname']
@@ -296,7 +296,7 @@ def add_author_book_logic():
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/logic/genre', methods=('POST',))
+@app.route('/books/addBook/logic/genre', methods=('PUT',))
 def add_genre_book_logic():
     genre = request.form['genre']
     if Genre.query.filter_by(genre=genre).first() is not None:
@@ -354,7 +354,7 @@ def check_genres(genre):
     return ids
 
 
-@app.route('/books/add/logic/colection', methods=('POST',))
+@app.route('/books/addBook/logic/colection', methods=('PUT',))
 def add_edition_book_logic():
     author_name = request.form['author'].split(',')[:-1]
     genre = request.form['genre'].split(',')[:-1]
@@ -567,7 +567,7 @@ def order(user_id, chosen_books):
     return "Замовлення пройшло успішно"
 
 
-@app.route("/books/catalogue/addBook", methods=['POST'])
+@app.route("/books/catalogue/addBook", methods=['PUT'])
 def add_book_to_basket():
     session.modified = True  # для того, щоб сесія оновлювалась
     data = json.loads(request.data)
@@ -598,7 +598,7 @@ def basket_data():
 
 
 # приймається список книг(edition_id), які користувач вирішив видалити
-@app.route("/books/basket/delete", methods=['POST'])
+@app.route("/books/basket/delete", methods=['DELETE'])
 def book_ordering_amount():
     data = json.loads(request.data);
     edition_id = data['edition_id']

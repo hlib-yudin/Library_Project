@@ -98,7 +98,7 @@ const createReservation = async () => {
 
 const deleteItem = async (index,edition_id) => {
     await fetch("{{url_for('book_ordering_amount')}}", {
-			method: 'post',
+			method: 'delete',
 			body: JSON.stringify({edition_id})}
 			).then(response => {
     if (response.status !== 200) {

@@ -90,7 +90,7 @@
         }
 
         await fetch("{{url_for('delete_book_logic')}}", {
-			method: 'post',
+			method: 'delete',
 			body: formData,
         }).then(response => {
         if (response.status !== 200) {
