@@ -139,6 +139,14 @@ class UserInf(db.Model):
     role = relationship("Role", secondary='user_role', uselist=False)
     status = relationship("Status", secondary='user_status', uselist=False)
 
+    @classmethod
+    def add(cls, user_login, user_password, user_name, surname, middle_name):
+        new_user = UserInf(user_login=user_login, user_password=user_password, user_name=user_name,
+                           surname=surname, middle_name=middle_name)
+        db.session.add(new_user)
+        db.session.commit()
+        return new_user
+
 
 class Book(db.Model):
     __tablename__ = 'book'
