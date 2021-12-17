@@ -180,7 +180,7 @@ const clearCatalogue = (row) => {
   };
 
 const addBook = async (event, book) => {
-  if(book.number_of_available === 0) {
+  if(book.number_of_available <= 0) {
     alert('Книги немає у наявності');
 
     return;
