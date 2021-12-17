@@ -754,23 +754,15 @@ def sign_up(role_name):
         # створити нового користувача
         encoded_login = hashlib.sha3_512(login.encode()).hexdigest()
         encoded_password = hashlib.sha3_512(password.encode()).hexdigest()
-        new_user = UserInf(user_login=encoded_login,
-                           user_password=encoded_password,
-                           user_name=first_name,
-                           surname=last_name,
-                           middle_name=middle_name)
-        # додати його в таблицю UserInf
-        db.session.add(new_user)
+        new_user = UserInf.add(encoded_login,encoded_password,first_name,last_name,middle_name)
         # додати його роль в таблицю t_user_role 
         added_user = get_user_by_login_and_password(login, password) 
         role = get_role_by_name(role_name) 
         added_user.role = role
-
         # додати його статус в таблицю t_user_status
         status = get_specified_status("normal")
         added_user.status = status
         # зберегти зміни
-        print(added_user)
         db.session.commit()
         
         users = get_all_users_by_login_and_password(login, password)  
