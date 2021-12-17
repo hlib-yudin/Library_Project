@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from app import db
+from app_initialization import *
 from datetime import * 
 import hashlib
 
