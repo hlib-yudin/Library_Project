@@ -109,12 +109,6 @@ const validation = (data) => {
             if(pair[1] === ''){
                 return 'Пусте поле' + pair[0];
             }
-
-            else if(pair[0] === 'id') {
-                if(!(/[0-9]\d{7}/gmi.test(pair[1]))){
-                    return 'Невірний формат даних';
-                }
-            }
         }
 
         return false;

@@ -197,7 +197,7 @@
         <div class="form-group row">
 			<label class="col-form-label col-4">ID видання </label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="idEdition"  required="required">
+               <input type="text" class="form-control" name="idEdition" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
@@ -319,7 +319,7 @@
             if(pair[1] === '' && pair[0] !== 'fatherName' && pair[0] !== 'genre' && pair[0] !== 'author'){
                 return 'Пусте поле ' + pair[0];
             }
-            /*
+          
             if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre'){
                 if(!(/^[а-я А-Я і ї]*$/igm.test(pair[1]))){
                     return 'Невірний формат даних';
@@ -330,16 +330,6 @@
                     return 'Невірний формат даних рік';
                 }
             }
-            else if(pair[0] === 'idBook') {
-                if(!(/[0-9]\d{7}/gmi.test(pair[1]))){
-                    return 'Невірний формат даних id книги';
-                }
-            }
-            else if(pair[0] === 'idEdition') {
-                if(!(/^[0-9 -]*$/gmi.test(pair[1]))){
-                    return 'Невірний формат даних видання id';
-                }
-            }*/
         }
 
         return false;
