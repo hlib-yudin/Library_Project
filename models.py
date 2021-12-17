@@ -67,15 +67,26 @@ class EditionCount(db.Model):
     number_of_available = Column(BigInteger, nullable=False)
 
     def count_decreasing(self):
-        try:
-            self.number_of_available -= 1
-            db.session.commit()
-        except (Exception, psycopg2.ProgrammingError):
-            db.session.rollback()
+        error = True
+        while error:
+            try:
+                self.number_of_available -= 1
+                db.session.commit()
+                error = False
+            except (Exception, psycopg2.ProgrammingError):
+                db.session.rollback()
+                error = True
                 
     def count_increasing(self):
-        self.number_of_available += 1
-        db.session.commit()
+        error = True
+        while error:
+            try:
+                self.number_of_available += 1
+                db.session.commit()
+                error = False
+            except (Exception, psycopg2.ProgrammingError):
+                db.session.rollback()
+                error = True
 
     @classmethod
     def add_new_edition(cls, edition_id):
@@ -656,7 +667,88 @@ def insert_everything():
     new_user.role = role_reader
     new_user.status = status_debtor
 
+    login = hashlib.sha3_512('r1'.encode()).hexdigest()
+    password = hashlib.sha3_512('1111'.encode()).hexdigest()
+    new_user = UserInf(user_login=login, user_password=password, user_name='читач7',
+                       surname='читач7', middle_name='читач7')
+    db.session.add(new_user)
+    new_user.role = role_reader
+    new_user.status = status_normal
 
+    login = hashlib.sha3_512('r2'.encode()).hexdigest()
+    password = hashlib.sha3_512('2222'.encode()).hexdigest()
+    new_user = UserInf(user_login=login, user_password=password, user_name='читач8',
+                       surname='читач8', middle_name='читач8')
+    db.session.add(new_user)
+    new_user.role = role_reader
+    new_user.status = status_normal
+
+    login = hashlib.sha3_512('r3'.encode()).hexdigest()
+    password = hashlib.sha3_512('3333'.encode()).hexdigest()
+    new_user = UserInf(user_login=login, user_password=password, user_name='читач9',
+                       surname='читач9', middle_name='читач9')
+    db.session.add(new_user)
+    new_user.role = role_reader
+    new_user.status = status_normal
+
+    db.session.commit()
+    # ========================================================================
+
+    db.session.add(Order(order_id=1, user_id=5, booking_date=datetime.strptime("2021-07-29", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-07-29", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=2, user_id=9, booking_date=datetime.strptime("2021-07-25", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-07-25", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=3, user_id=5, booking_date=datetime.strptime("2021-8-13", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-8-13", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=4, user_id=9, booking_date=datetime.strptime("2021-8-14", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-8-14", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=5, user_id=9, booking_date=datetime.strptime("2021-8-15", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-8-15", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=6, user_id=7, booking_date=datetime.strptime("2021-09-16", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-09-16", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=7, user_id=7, booking_date=datetime.strptime("2021-09-17", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-09-17", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=8, user_id=7, booking_date=datetime.strptime("2021-10-18", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-10-18", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=9, user_id=8, booking_date=datetime.strptime("2021-11-16", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-11-16", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=10, user_id=9, booking_date=datetime.strptime("2021-11-17", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-11-17", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(order_id=11, user_id=7, booking_date=datetime.strptime("2021-11-18", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-11-18", "%Y-%m-%d"), is_canceled=False))
+
+    db.session.commit()
+
+    db.session.add(OrderBook(book_id='30000001', order_id=1, return_date=datetime.strptime("2021-08-28", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='40000001', order_id=1, return_date=datetime.strptime("2021-08-28", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='30000002', order_id=2, return_date=datetime.strptime("2021-9-30", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='40000002', order_id=3, return_date=datetime.strptime("2021-11-20", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='30000003', order_id=3, return_date=datetime.strptime("2021-11-20", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='80000001', order_id=4, return_date=datetime.strptime("2021-09-25", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='30000004', order_id=5, return_date=datetime.strptime("2021-11-20", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='80000002', order_id=6, return_date=datetime.strptime("2021-10-05", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='30000005', order_id=7, return_date=datetime.strptime("2021-10-15", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='90000001', order_id=7, return_date=datetime.strptime("2021-11-15", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='70000001', order_id=8, return_date=datetime.strptime("2021-10-25", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='90000002', order_id=8, return_date=datetime.strptime("2021-10-25", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='70000002', order_id=9, return_date=datetime.strptime("2021-11-25", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='50000001', order_id=9, return_date=datetime.strptime("2021-11-25", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='90000003', order_id=9, return_date=datetime.strptime("2021-11-25", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='10000001', order_id=10, return_date=datetime.strptime("2021-11-29", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='50000002', order_id=10, return_date=datetime.strptime("2021-11-29", "%Y-%m-%d")))
+
+    db.session.add(OrderBook(book_id='10000002', order_id=11, return_date=datetime.strptime("2021-12-01", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='20000001', order_id=11, return_date=datetime.strptime("2021-12-01", "%Y-%m-%d")))
+    db.session.add(OrderBook(book_id='70000003', order_id=11, return_date=datetime.strptime("2021-12-01", "%Y-%m-%d")))
 
     db.session.commit()
 
@@ -682,4 +774,6 @@ db.session.commit()
 
 
 
-    
+
+
+
