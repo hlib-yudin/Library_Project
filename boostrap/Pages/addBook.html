@@ -322,7 +322,13 @@
           
             if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre'){
                 if(!(/^[а-я А-Я і ї]*$/igm.test(pair[1]))){
-                    return 'Невірний формат даних';
+                    alert('Невірний формат даних тільки кирилецею');
+                    return 'Невірний формат даних тільки кирилецею';
+                }
+                const letter = pair[1][0];
+                if(letter !== letter.toUpperCase()){
+                    alert('Невірний формат даних з малої літери');
+                    return 'Невірний формат даних з малої літери';
                 }
             } 
             else if(pair[0] === 'year') {

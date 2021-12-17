@@ -98,8 +98,8 @@ const createCard = (book, index) => {
           <p class="card-text">${book.book_title}</p>
           <p class="card-text">Автор</p>
           <p class="card-text">${book.authors}</p>
-          <p class="card-text">Рік</p>
-          <p class="card-text">${book.year}</p>
+          <p class="card-text">Кількість доступних книг</p>
+          <p class="card-text">${book.number_of_available}</p>
             <div class="d-flex justify-content-between align-items-center">
               <div class="btn-group">
                 <button type="button" class="btn btn-sm btn-outline-primary" >ADD</button>
@@ -124,8 +124,8 @@ const getInfo = (event, data) =>{
  
     card.insertAdjacentHTML('beforebegin', `<p class="card-text">Жанр</p>
                                             <p class="card-text">${data.genres}</p>
-                                            <p class="card-text">Кількість доступних книг</p>
-                                            <p class="card-text">${data.number_of_available}</p>`);
+                                            <p class="card-text">Рік</p>
+                                            <p class="card-text">${data.year}</p>`);
   }
 };
 
