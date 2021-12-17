@@ -11,3 +11,5 @@ sqlalchemy
 psycopg2
 python-dateutil
 APScheduler
+numpy
+matplotlib
