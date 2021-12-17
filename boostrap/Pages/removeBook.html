@@ -32,9 +32,9 @@
       	</div>			
 
 		<div class="form-group row">
-			<label class="col-form-label col-4">Id книги  <small style="color:red;">(Формат: 8 цифр)</small></label>
+			<label class="col-form-label col-4">Id книги </label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="id" pattern="[0-9]\d{7}" required="required">
+                <input type="text" class="form-control" name="id" required="required">
             </div>        	
         </div>
 		<div class="form-group row">
@@ -56,9 +56,9 @@
       	</div>			
 
 		<div class="form-group row">
-			<label class="col-form-label col-4">Id книги  <small style="color:red;">(Формат: 8 цифр)</small></label>
+			<label class="col-form-label col-4">Id книги  </label>
 			<div class="col-8">
-                <input type="text" class="form-control" name="id" pattern="[0-9]\d{7}" required="required">
+                <input type="text" class="form-control" name="id"  required="required">
             </div>        	
         </div>
 		<div class="form-group row">
@@ -108,12 +108,6 @@ const validation = (data) => {
         for(const pair of data.entries()) {
             if(pair[1] === ''){
                 return 'Пусте поле' + pair[0];
-            }
-
-            else if(pair[0] === 'id') {
-                if(!(/[0-9]\d{7}/gmi.test(pair[1]))){
-                    return 'Невірний формат даних';
-                }
             }
         }
 
