@@ -23,7 +23,7 @@ def basket():
     return render_template('basket.html')
 
 
-@app.route("/books/signin")
+@app.route("/login")
 def signin():
     return render_template('signin.html')
 
@@ -33,7 +33,7 @@ def issuebooks():
     return render_template('issuingBook.html')
 
 
-@app.route("/books/signup")
+@app.route("/signup")
 def signup():
     return render_template('signup.html')
 
@@ -178,12 +178,6 @@ def return_of_book(dict_list):
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
-@app.route("/books/pagination", methods=('POST',))
-def books_pagination():
-    return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
-
-# ---------------------------------------------------------------------------------------------------------------------
-# ---------------------------------------------------------------------------------------------------------------------
 
 @app.route("/order/issue", methods=('POST',))
 def issue_order():
@@ -285,7 +279,7 @@ def add_one_book_logic():
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/author/logic', methods=('POST',))
+@app.route('/books/add/logic/author', methods=('POST',))
 def add_author_book_logic():
     author_name = request.form['name']
     author_surname = request.form['surname']
@@ -302,7 +296,7 @@ def add_author_book_logic():
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/genre/logic', methods=('POST',))
+@app.route('/books/add/logic/genre', methods=('POST',))
 def add_genre_book_logic():
     genre = request.form['genre']
     if Genre.query.filter_by(genre=genre).first() is not None:
@@ -360,7 +354,7 @@ def check_genres(genre):
     return ids
 
 
-@app.route('/books/add/colection/logic', methods=('POST',))
+@app.route('/books/add/logic/colection', methods=('POST',))
 def add_edition_book_logic():
     author_name = request.form['author'].split(',')[:-1]
     genre = request.form['genre'].split(',')[:-1]
@@ -403,7 +397,7 @@ def add_edition_book_logic():
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
 
-@app.route('/books/orders')
+@app.route('/books/catalogue/orders')
 def page_for_orders():
     # Сторінка для відображення замовлень користувача (її бачить не бібліотекар, а читач)
     json_orders = {"user_id": None, "orders": [], 'error_message': ''}
@@ -657,7 +651,7 @@ def collect_book_inf(editions):
     return book_data_list
 
 
-@app.route("/catalogue/return", methods=['GET'])
+@app.route("/books/catalogue/return", methods=['GET'])
 def take_books_data():
     if request.method == 'GET':
         book_data_list = []
@@ -669,7 +663,7 @@ def take_books_data():
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
 
-@app.route("/catalogue/search/by_title", methods=['POST'])
+@app.route("/books/catalogue/search/by_title", methods=['POST'])
 def find_by_title():
     title_json = request.data.decode('utf-8')
     title = json.loads(title_json)['input']
@@ -679,7 +673,7 @@ def find_by_title():
     return make_response(jsonify({'books': book_data_list}))
 
 
-@app.route("/catalogue/search/by_author", methods=['POST'])
+@app.route("/books/catalogue/search/by_author", methods=['POST'])
 def find_by_author():
     author_surname_json = request.data.decode('utf-8')
     author_surname = json.loads(author_surname_json)['input']
@@ -693,7 +687,7 @@ def find_by_author():
     return make_response(jsonify({'books': book_data_list}))
 
 
-@app.route("/catalogue/search/by_genre", methods=['POST'])
+@app.route("/books/catalogue/search/by_genre", methods=['POST'])
 def find_by_genre():
     genre_json = request.data.decode('utf-8')
     genre = json.loads(genre_json)['input']
@@ -705,7 +699,7 @@ def find_by_genre():
     return make_response(jsonify({'books': book_data_list}))
 
 
-@app.route("/catalogue/search/by_year", methods=['POST'])
+@app.route("/books/catalogue/search/by_year", methods=['POST'])
 def find_by_year():
     year_json = request.data.decode('utf-8')
     year = json.loads(year_json)['input']
