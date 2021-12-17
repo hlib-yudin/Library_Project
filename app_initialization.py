@@ -5,6 +5,7 @@ from flask_session import Session
 from dateutil.relativedelta import *
 import json
 import os
+import psycopg2
 from config import configurate
 
 #
