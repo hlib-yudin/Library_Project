@@ -41,7 +41,7 @@ def gr_issued_books(data):
     plt.ylabel('Кількість книжок')
     plt.title('Кількість виданих книжок за часом')
     plt.savefig('static/images/analytics_gr1.png')
-    plt.show()
+#     plt.show()
     return 'ok'
 
 
