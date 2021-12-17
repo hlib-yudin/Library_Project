@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from app import db
+from app_initialization import *
 from datetime import * 
 import hashlib
 
@@ -139,6 +139,14 @@ class UserInf(db.Model):
     role = relationship("Role", secondary='user_role', uselist=False)
     status = relationship("Status", secondary='user_status', uselist=False)
 
+    @classmethod
+    def add(cls, user_login, user_password, user_name, surname, middle_name):
+        new_user = UserInf(user_login=user_login, user_password=user_password, user_name=user_name,
+                           surname=surname, middle_name=middle_name)
+        db.session.add(new_user)
+        db.session.commit()
+        return new_user
+
 
 class Book(db.Model):
     __tablename__ = 'book'
@@ -191,6 +199,10 @@ class Order(db.Model):
     
     def is_canceled_update(self, new_status):
         self.is_canceled = new_status
+        db.session.commit()
+
+    def set_issue_date(self):
+        self.issue_date = date.today()
         db.session.commit()
 
     @classmethod
@@ -275,7 +287,8 @@ class ClockLaunchCheck(db.Model):
 
     launch_date = Column(Date, primary_key=True)
 
-    def add(new_date):
+    @classmethod
+    def add(cls, new_date):
         new_row = ClockLaunchCheck(launch_date = new_date)
         db.session.add(new_row)
         db.session.commit()

@@ -1,6 +1,9 @@
 from query import *
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+
+matplotlib.use('Agg')
 
 
 # 1
@@ -21,19 +24,25 @@ def gr_issued_books(data):
     x = []
     y = []
     labels = []
-    for el in data:
-        x.append(datetime.strptime(str(el[1])[:-2] + '/' + str(el[0])[:-2], '%m/%Y').date())
-        y.append(el[2])
-        labels.append(str(el[0])[:-2] + '-' + str(el[1])[:-2])
+    if len(data) == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr1.png')
+        return 'no info, try next day'
 
-    plt.plot(x, y)
-    plt.xticks(x, labels)
+    for el in data:
+        #print(el)
+        x.append(datetime.strptime(str(int(el[1])) + '/' + str(int(el[0]))[-2:], '%m/%y').date())
+        y.append(el[2])
+        labels.append(str(int(el[0])) + '-' + str(int(el[1])))
+    plt.bar(labels, y)
+    # plt.xticks(x, labels)
     plt.gcf().autofmt_xdate()
     plt.xlabel('Місяць')
     plt.ylabel('Кількість книжок')
     plt.title('Кількість виданих книжок за часом')
     plt.savefig('static/images/analytics_gr1.png')
-    return 0
+#     plt.show()
+    return 'ok'
 
 
 # 2
@@ -41,6 +50,8 @@ def gr_issued_books(data):
 def gr_debted_books():
     debtors_info = DebtorGraphic.query.all()
     if len(debtors_info) == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr2.png')
         return 'no info, try next day'
     x = list()
     y = list()
@@ -60,6 +71,8 @@ def gr_debted_books():
 def gr_debtors():
     debtors_info = DebtorGraphic.query.all()
     if len(debtors_info) == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr3.png')
         return 'no info, try next day'
     x = list()
     y = list()
@@ -103,6 +116,8 @@ def qr_orders():
 
 def gr_orders(orders):
     if orders == 0:
+        plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
+        plt.savefig('static/images/analytics_gr4.png')
         return 'no data'
 
     # set width of bar
@@ -134,7 +149,12 @@ def gr_orders(orders):
     return 'ok'
 
 
-gr_orders(qr_orders())
+
+
+
+
+
+
 
 
 

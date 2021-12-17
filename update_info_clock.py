@@ -1,6 +1,6 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from query import *
-from app import number_of_days  # is_debtor
+from app import number_of_days, qr_issued_books, gr_issued_books, gr_debted_books, gr_debtors, qr_orders, gr_orders
 from dateutil.relativedelta import *
 
 
@@ -105,6 +105,16 @@ def is_canceled_change():
 
 
 @sched.scheduled_job('cron', hour=0)
+def update_graphs():
+    gr_issued_books(qr_issued_books())
+    gr_debted_books()
+    gr_debtors()
+    gr_orders(qr_orders())
+    print(f"{datetime.now()}: графіки оновлено")
+
+
+
+@sched.scheduled_job('cron', hour=0)
 def save_info_about_launch():
     # Зберігає дату запуску годинника в таблицю в БД.
     ClockLaunchCheck.add(date.today())
@@ -118,6 +128,7 @@ if len(launch_info) == 0:
     # ...то викликаємо всі scheduled функції
     update_debtors()
     is_canceled_change()
+    update_graphs()
     save_info_about_launch()
 
 

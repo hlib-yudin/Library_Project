@@ -1,83 +1,70 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, make_response, render_template, url_for, request, redirect, jsonify,json, flash, session
-from flask_session import Session
-# from config import Config
-from dateutil.relativedelta import *
-import json
-import os
-from config import configurate
 from graphіcs import *
-#
-app = Flask(__name__, template_folder='boostrap/Pages')
-configurate(app)
-# app.config.from_object(Config)
-
-
-# SQLALCHEMY_TRACK_MODIFICATIONS = 'False'
-
-
-Session(app)
-
-db = SQLAlchemy(app)
-db.init_app(app)
-
 
 
 # html routing
 @app.route('/')
 def index():
-
-    #return redirect(url_for("page_for_returning_books"))
-    #insert_everything()
+    # return redirect(url_for("page_for_returning_books"))
+    # insert_everything()
     return redirect(url_for('catalogue'))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 @app.route("/books/catalogue")
 def catalogue():
     return render_template('catalog.html')
 
+
 @app.route("/books/basket")
 def basket():
     return render_template('basket.html')
+
 
 @app.route("/books/signin")
 def signin():
     return render_template('signin.html')
 
+
 @app.route("/books/issuingBook")
 def issuebooks():
     return render_template('issuingBook.html')
+
 
 @app.route("/books/signup")
 def signup():
     return render_template('signup.html')
 
+
 @app.route("/signup/librarians")
 def page_for_registering_librarians():
     return render_template('register_librarians.html')
+
 
 @app.route("/books/addBook")
 def addBook():
     return render_template('addBook.html')
 
+
 @app.route("/books/removeBook")
 def removeBook():
     return render_template('removeBook.html')
+
 
 @app.route("/librarian/analytics")
 def analytics():
     check_graphіc_file()
     return render_template('analytics.html')
 
+
 @app.route("/scripts/navbarCreation")
 def navbarCretionScript():
     return render_template('navbarCreation.js')
 
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 @app.route("/books/return", methods=('GET', 'POST'))
 def page_for_returning_books():
@@ -104,7 +91,7 @@ def page_for_returning_books():
         # складаємо json з інформацією про замовлення
         json_orders = {"user_id": user.user_id, "orders": [], 'message': ''}
         for order in orders:
-            books = get_all_books_by_order_id(order.order_id)  # можна винести в query
+            books = get_all_books_by_order_id(order.order_id)
             books = [book.book for book in books if book.return_date == None]
             new_json = {
                 "order_id": order.order_id,
@@ -151,36 +138,37 @@ def page_for_returning_books():
     return render_template('returnBooks.html', json=json_orders)
 
 
-@app.route("/books/return/submit", methods = ('POST',))
+@app.route("/books/return/submit", methods=('POST',))
 def return_books():
-    #print(request.form.getlist("book_ids"))
+    # print(request.form.getlist("book_ids"))
     arrived_json = request.data.decode('utf-8')
     # data -- готовий список словників, з яким можна працювати
     data = json.loads(arrived_json)
     print(data)
-    print('-------------------------------------------------------------------------------------------------------------')
-    print('-------------------------------------------------------------------------------------------------------------')
+    print(
+        '-------------------------------------------------------------------------------------------------------------')
+    print(
+        '-------------------------------------------------------------------------------------------------------------')
 
     if len(data) == 0:
         return make_response(jsonify({'message': "Не обрано жодної книги для повернення!"}))
     # s = json.dumps(data, indent=4, sort_keys=True)
     user_id = data[0]['user_id']
-    old_user_status = get_status_name(get_user_by_id(user_id))  # можна винести в query
+    old_user_status = get_status_name(get_user_by_id(user_id))
     res = return_of_book(data)
 
     if old_user_status == 'debtor' and not is_debtor(user_id):
-        change_user_status(user_id, 'normal')
+        change_user_status(get_user_by_id(user_id), 'normal')
+        
     if old_user_status != 'debtor' and all_books_returned(user_id):
         grant_privileges(user_id)
 
     for el in res:
         print(el)
-    db.session.commit()
     return make_response(jsonify({'message': "Книги успішно повернено"}))
 
 
 def return_of_book(dict_list):
-
     res_list = []
     for elem in dict_list:
         # elem = json.loads(elem)
@@ -194,27 +182,30 @@ def return_of_book(dict_list):
             continue
         num_rows_updated = OrderBook.query.filter_by(order_id=order_id, book_id=book_id).update(
             dict(return_date=date.today()))
+        db.session.commit()
 
         edition_count = get_edition_count_obj(edition_id)
         edition_count.count_increasing()
         res_list.append({"order_id": order_id, "edition_id": edition_id, "book_title": edition.book_title,
                          "message": "Книгу успішно повернуто"})
 
-
         print('order_id: {},  edition_id: {}, book_id: {} '.format(order_id, edition_id, book_id))
         print('Current EditionCount:', edition_count.number_of_available)
         print('Return_date:', OrderBook.query.filter_by(order_id=order_id, book_id=book_id).first().return_date)
         print('-----------------------------------------------------')
-        db.session.commit()
+
     return res_list
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 @app.route("/books/pagination", methods=('POST',))
 def books_pagination():
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 @app.route("/order/issue", methods=('POST',))
 def issue_order():
@@ -259,30 +250,19 @@ def issue_order():
     # чи є читач боржником?
     if get_status_name(user) == 'debtor':
         # якщо боржник -- скасувати замовлення
-        order.is_canceled = True
-        db.session.commit()
-
-        return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
-
-    # якщо читач є боржником, але в базі даних про це ще немає інформації
-    if is_debtor(user.user_id):
-        order.is_canceled = True
-        user.status = get_specified_status('debtor')
-        db.session.commit()
+        order.is_canceled_update(True)
         return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
 
     # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
-    order.issue_date = date.today().strftime('%Y-%m-%d')
+    order.set_issue_date()
     print(order.issue_date)
-    db.session.commit()
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
 
 
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-
-@app.route('/books/delete/logic', methods=('POST', ))
+@app.route('/books/delete/logic', methods=('POST',))
 def delete_book_logic():
     book_id = request.form['id']
     book_row = get_book_row_by_book_id(book_id)
@@ -296,12 +276,13 @@ def delete_book_logic():
         book_row.is_delete_update(new_status=True)
         edition_row = get_edition_count_obj(book_row.edition_id)
         edition_row.count_decreasing()
-        response = "Один екземпляр книги "+book_title+" видалено успішно!"
+        response = "Один екземпляр книги " + book_title + " видалено успішно!"
     return make_response(jsonify({'response': response}))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/one/logic', methods=('POST', ))
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/one/logic', methods=('POST',))
 def add_one_book_logic():
     edition_id = request.form['idEdition']
     book_id = request.form['idBook']
@@ -324,9 +305,9 @@ def add_one_book_logic():
     return make_response(jsonify({'response': response}))
 
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/author/logic', methods=('POST', ))
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/author/logic', methods=('POST',))
 def add_author_book_logic():
     author_name = request.form['name']
     author_surname = request.form['surname']
@@ -337,12 +318,13 @@ def add_author_book_logic():
         response = "Такий автор вже наявний в базі даних"
     else:
         Author.add(author_name, author_surname, author_middle_name)
-        response = 'Доданий автор '+author_surname + ' ' + author_name + ' ' + author_middle_name
+        response = 'Доданий автор ' + author_surname + ' ' + author_name + ' ' + author_middle_name
     return make_response(jsonify({'response': response}))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route('/books/add/genre/logic', methods=('POST', ))
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+@app.route('/books/add/genre/logic', methods=('POST',))
 def add_genre_book_logic():
     genre = request.form['genre']
     if Genre.query.filter_by(genre=genre).first() is not None:
@@ -353,8 +335,8 @@ def add_genre_book_logic():
     return make_response(jsonify({'response': response}))
 
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 def check_authors(author_name):
     if len(author_name) == 0:
         return 'Заповніть, будь ласка, поле вводу для автора і підтвердіть додавання'
@@ -440,8 +422,8 @@ def add_edition_book_logic():
     return make_response(jsonify({'response': response}))
 
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 @app.route('/books/orders')
 def page_for_orders():
@@ -449,7 +431,7 @@ def page_for_orders():
     json_orders = {"user_id": None, "orders": [], 'error_message': ''}
     if not session.get('id'):
         json_orders['error_message'] = "Авторизуйтеся!"
-        return render_template('viewOrders.html', json = json_orders)
+        return render_template('viewOrders.html', json=json_orders)
 
     user_id = session["id"]
     user = UserInf.query.filter_by(user_id=user_id).first()
@@ -465,12 +447,12 @@ def page_for_orders():
         status_name = get_status_name(user)
         new_json = {
             "order_id": order.order_id,
-            #"order_issue_date": order.issue_date,
+            # "order_issue_date": order.issue_date,
             "order_in_time": status_name != 'debtor',  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
             "books": []
         }
         if order.issue_date and status_name == 'normal':
-            new_json['order_status'] = "Видане " + str(order.issue_date) + " на 3 місяці" 
+            new_json['order_status'] = "Видане " + str(order.issue_date) + " на 3 місяці"
         elif order.issue_date and status_name == 'privileged':
             new_json['order_status'] = "Видане " + str(order.issue_date) + " на 6 місяців"
         elif order.issue_date and status_name == 'debtor':
@@ -495,49 +477,45 @@ def page_for_orders():
 
     if len(json_orders['orders']) == 0:
         json_orders['error_message'] = "У Вас немає заброньованих чи неповернених замовлень!"
-    return render_template('viewOrders.html', json = json_orders)
+    return render_template('viewOrders.html', json=json_orders)
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 def grant_privileges(user_id):
-
     subq = db.session.query(Order.order_id,
-                           func.max(OrderBook.return_date).label('max_return_date')).filter(Order.user_id == user_id,
-                                                                                            Order.is_canceled != False,
-                                                                                            Order.order_id == OrderBook.order_id).group_by(
+                            func.max(OrderBook.return_date).label('max_return_date')).filter(Order.user_id == user_id,
+                                                                                             Order.is_canceled == False,
+                                                                                             Order.issue_date != None,
+                                                                                             Order.order_id == OrderBook.order_id).group_by(
         Order.order_id).subquery('subq')
-    res2 = db.session.query(subq.c.order_id, Order.issue_date, subq.c.max_return_date).filter(subq.c.order_id == Order.order_id).order_by(subq.c.max_return_date.desc()).limit(2).all()
-    for el in res2:
-        # print(el.order_id, el.issue_date, el.book_id, el.max_return_date)
-        print(el.order_id, el.issue_date, el.max_return_date)
+    res2 = db.session.query(subq.c.order_id, Order.issue_date, subq.c.max_return_date).filter(
+        subq.c.order_id == Order.order_id).order_by(subq.c.max_return_date.desc()).limit(2).all()
+    if len(res2) == 2:
+        for el in res2:
+            # print(el.order_id, el.issue_date, el.book_id, el.max_return_date)
+            print(el.order_id, el.issue_date, el.max_return_date)
 
-    term = {'normal': 3, 'privileged': 6}
-    user = get_user_by_id(user_id).status
-    num_of_months = term[user.status_name]
-    if all([months_difference(el.max_return_date, el.issue_date) < num_of_months for el in res2]):
-        change_user_status(user_id, 'privileged')
-
-    db.session.commit()
+        term = {'normal': 3, 'privileged': 6}
+        user = get_user_by_id(user_id).status
+        num_of_months = term[user.status_name]
+        if all([months_difference(el.max_return_date, el.issue_date) < num_of_months for el in res2]):
+            change_user_status(user, 'privileged')
     return 'ok'
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
 
-def change_user_status(user_id, new_status_name):
-    new_status_id = Status.query.filter_by(status_name=new_status_name).first().status_id
-    if new_status_id == None:
-        return 'Такого статуса немає!'
-    a = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).update(dict(status_id=new_status_id))
-    # TODO: додати db.session.commit()
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
-    # TODO: потім видалити наступні рядки
-    b = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).first()
-    print('new_status_id:', b.status_id)
+def change_user_status(user, status_name):
+    user.status = get_specified_status(status_name)
     db.session.commit()
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 def is_debtor(user_id):
     term = {'normal': 3, 'privileged': 6, 'debtor': 0}
@@ -546,17 +524,13 @@ def is_debtor(user_id):
     is_debtor_flag = False
     verification_date = date.today() - relativedelta(months=num_of_months)
     user_books = db.session.query(func.count(OrderBook.order_id).label("count")).filter(Order.user_id == user_id,
-                                                                                         Order.order_id == OrderBook.order_id,
-                                                                                         OrderBook.return_date == None,
-                                                                                         Order.issue_date != None,
-                                                                                    Order.issue_date < verification_date).first()
+                                                                                        Order.order_id == OrderBook.order_id,
+                                                                                        OrderBook.return_date == None,
+                                                                                        Order.issue_date != None,
+                                                                                        Order.issue_date < verification_date).first()
     if user_books.count > 0:
         is_debtor_flag = True
     return is_debtor_flag
-
-
-
-
 
 
 # --------------------------Герасимчук -- Кошик та оформлення замовлення---------------------------------------------
@@ -568,7 +542,7 @@ def available_books_now(edition_id):
         join(OrderBook, Book.book_id == OrderBook.book_id). \
         join(Order, Order.order_id == OrderBook.order_id). \
         filter(Book.edition_id == edition_id, OrderBook.return_date == None, Order.is_canceled == False).all()
-    
+
     checked_books = list()
     for row in ordered_books:
         checked_books.append(row.book_id)
@@ -657,7 +631,7 @@ def book_ordering_amount():
     edition_id = data['edition_id']
     if session.get('id'):
         session['basket'].remove(edition_id)
-    return make_response(jsonify({'response':'Книга видалена з кошика!'}))
+    return make_response(jsonify({'response': 'Книга видалена з кошика!'}))
 
 
 @app.route("/books/basket/submit", methods=['GET'])
@@ -678,8 +652,9 @@ def order_submit():
     session['basket'].clear()
     return make_response(jsonify({'response': response}))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 def collect_book_inf(editions):
     book_data_list = []
     for edition in editions:
@@ -703,27 +678,29 @@ def collect_book_inf(editions):
     return book_data_list
 
 
-@app.route("/catalogue/return", methods = ['GET'])
+@app.route("/catalogue/return", methods=['GET'])
 def take_books_data():
     if request.method == 'GET':
         book_data_list = []
         editions = EditionInf.query.all()
         book_data_list = collect_book_inf(editions)
-        return make_response(jsonify({'books':book_data_list, "pagination": len(book_data_list)// 5}))
+        return make_response(jsonify({'books': book_data_list, "pagination": len(book_data_list) // 5}))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
 
-@app.route("/catalogue/search/by_title", methods = ['POST'])
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+
+@app.route("/catalogue/search/by_title", methods=['POST'])
 def find_by_title():
     title_json = request.data.decode('utf-8')
     title = json.loads(title_json)['input']
     book_data_list = []
-    editions = EditionInf.query.filter_by(book_title=title).all()  # можна винести в query
+    editions = EditionInf.query.filter(func.lower(EditionInf.book_title) == title.lower()).all()  # можна винести в query
     book_data_list = collect_book_inf(editions)
-    return make_response(jsonify({'books':book_data_list}))
+    return make_response(jsonify({'books': book_data_list}))
 
-@app.route("/catalogue/search/by_author", methods = ['POST'])
+
+@app.route("/catalogue/search/by_author", methods=['POST'])
 def find_by_author():
     author_surname_json = request.data.decode('utf-8')
     author_surname = json.loads(author_surname_json)['input']
@@ -731,34 +708,37 @@ def find_by_author():
     editions = db.session.query(EditionInf). \
         join(t_edition_author, EditionInf.edition_id == t_edition_author.c.edition_id). \
         join(Author, t_edition_author.c.author_id == Author.author_id). \
-        filter(Author.author_surname == author_surname).all()
+        filter(func.lower(Author.author_surname) == author_surname.lower()).all()
 
     book_data_list = collect_book_inf(editions)
-    return make_response(jsonify({'books':book_data_list}))
+    return make_response(jsonify({'books': book_data_list}))
 
-@app.route("/catalogue/search/by_genre", methods = ['POST'])
+
+@app.route("/catalogue/search/by_genre", methods=['POST'])
 def find_by_genre():
-
     genre_json = request.data.decode('utf-8')
     genre = json.loads(genre_json)['input']
     editions = db.session.query(EditionInf). \
         join(t_edition_genre, EditionInf.edition_id == t_edition_genre.c.edition_id). \
         join(Genre, t_edition_genre.c.genre_id == Genre.genre_id). \
-        filter(Genre.genre == genre).all()
+        filter(func.lower(Genre.genre) == genre.lower()).all()
     book_data_list = collect_book_inf(editions)
-    return make_response(jsonify({'books':book_data_list}))
+    return make_response(jsonify({'books': book_data_list}))
 
-@app.route("/catalogue/search/by_year", methods = ['POST'])
+
+@app.route("/catalogue/search/by_year", methods=['POST'])
 def find_by_year():
     year_json = request.data.decode('utf-8')
     year = json.loads(year_json)['input']
     editions = EditionInf.query.filter_by(edition_year=year)
     book_data_list = collect_book_inf(editions)
-    return make_response(jsonify({'books':book_data_list}))
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+    return make_response(jsonify({'books': book_data_list}))
 
-@app.route('/signup/<role_name>', methods = ['POST'])
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+
+@app.route('/signup/<role_name>', methods=['POST'])
 def sign_up(role_name):
     # Проводить реєстрацію користувача з даними полями.
     # Логін і пароль приходять вже в зашифрованому вигляді (sha-256).
@@ -776,7 +756,7 @@ def sign_up(role_name):
     middle_name = request.form["middle_name"]
 
     # шукаємо користувачів з даним логіном
-    users = get_all_users_by_login(login)  
+    users = get_all_users_by_login(login)
     # якщо вони вже існують -- не проводимо реєстрацію
     if len(users) > 0:
         flash("Даний логін вже існує!")
@@ -786,26 +766,18 @@ def sign_up(role_name):
         # створити нового користувача
         encoded_login = hashlib.sha3_512(login.encode()).hexdigest()
         encoded_password = hashlib.sha3_512(password.encode()).hexdigest()
-        new_user = UserInf(user_login=encoded_login,
-                           user_password=encoded_password,
-                           user_name=first_name,
-                           surname=last_name,
-                           middle_name=middle_name)
-        # додати його в таблицю UserInf
-        db.session.add(new_user)
-        # додати його роль в таблицю t_user_role 
-        added_user = get_user_by_login_and_password(login, password) 
-        role = get_role_by_name(role_name) 
+        new_user = UserInf.add(encoded_login, encoded_password, first_name, last_name, middle_name)
+        # додати його роль в таблицю t_user_role
+        added_user = get_user_by_login_and_password(login, password)
+        role = get_role_by_name(role_name)
         added_user.role = role
-
         # додати його статус в таблицю t_user_status
         status = get_specified_status("normal")
         added_user.status = status
         # зберегти зміни
-        print(added_user)
         db.session.commit()
-        
-        users = get_all_users_by_login_and_password(login, password)  
+
+        users = get_all_users_by_login_and_password(login, password)
         # зберегти інформацію про користувача в сесію
         user = users[0]
         session['id'] = user.user_id
@@ -819,30 +791,32 @@ def sign_up(role_name):
             perm = get_permission_by_perm_id(perm_id)
             session['permissions'].append(perm.permission_description)
     # якщо адмін реєстрував бібліотекаря, то повернути його на сторінку адміна
-    if user.role.role_name == 'librarian': 
+    if user.role.role_name == 'librarian':
         flash("Успішно!")
         return redirect(url_for('page_for_registering_librarians'))
     else:
         return redirect(url_for('catalogue'))
 
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route("/role/user", methods = ['GET'])
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+@app.route("/role/user", methods=['GET'])
 def getUserRole():
     if session:
-        return make_response(jsonify({'role': session['role'], 'permissions': session['permissions'], 'logged': session['name']}))
+        return make_response(
+            jsonify({'role': session['role'], 'permissions': session['permissions'], 'logged': session['name']}))
     else:
         return make_response(jsonify({'role': 'unlogged', 'permissions': [], 'logged': 'undefined'}))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-@app.route("/login/user", methods = ['POST'])
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+@app.route("/login/user", methods=['POST'])
 def log_in():
     print(request.form)
-    #arrived_json = json.loads(request.data.decode('utf-8'))
-    #login = arrived_json["user_login"]
-    #password = arrived_json["user_password"]
+    # arrived_json = json.loads(request.data.decode('utf-8'))
+    # login = arrived_json["user_login"]
+    # password = arrived_json["user_password"]
     login = request.form["user_login"]
     password = request.form["user_password"]
     print(login)
@@ -870,17 +844,18 @@ def log_in():
 
     role = user.role.role_name
     print(session['permissions'])
-    #return "log_in - ok"
+    # return "log_in - ok"
 
-    if user.role.role_name == 'librarian': 
+    if user.role.role_name == 'librarian':
         return redirect("/books/return")
     elif user.role.role_name == 'admin':
         return redirect(url_for("page_for_registering_librarians"))
     else:
         return redirect(url_for('catalogue'))
 
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 def check_graphіc_file():
     if not os.path.exists('static/images/analytics_gr1.png'):
         gr_issued_books(qr_issued_books())
@@ -890,23 +865,24 @@ def check_graphіc_file():
         gr_debtors()
     if not os.path.exists('static/images/analytics_gr4.png'):
         gr_orders(qr_orders())
-# ---------------------------------------------------------------------------------------------------------------------
-# ---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------
 
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------
 
 
 def all_books_returned(user_id):
-
-    user_books = db.session.query(OrderBook.book_id, OrderBook.return_date,).filter(Order.user_id == user_id,
-                                                                                      Order.order_id == OrderBook.order_id,
-                                                                                    OrderBook.return_date == None).first()
+    user_books = db.session.query(OrderBook.book_id, OrderBook.return_date, ).filter(Order.user_id == user_id,
+                                                                                     Order.order_id == OrderBook.order_id,
+                                                                                     OrderBook.return_date == None).first()
     print(user_books)
     if user_books == None:
         return True
     else:
         return False
+
 
 def months_difference(date1, date2):
     # date1 -- більш пізня дата
@@ -917,8 +893,10 @@ def months_difference(date1, date2):
         months -= 1
     return months
 
+
 def number_of_days(date1, date2):
     return abs((date1 - date2).days)
+
 
 def check_availability(editions_id):
     check_list = []
@@ -935,9 +913,9 @@ def check_availability(editions_id):
         return check_list
 
 
-
 if __name__ == '__main__':
-    app.run() # , host='0.0.0.0', port=5000
+    app.run()  # , host='0.0.0.0', port=5000
+
 
 
 
