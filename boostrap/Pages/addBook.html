@@ -319,8 +319,8 @@
             if(pair[1] === '' && pair[0] !== 'fatherName' && pair[0] !== 'genre' && pair[0] !== 'author'){
                 return 'Пусте поле ' + pair[0];
             }
-          
-            if(pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre'){
+            console.log((pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre') && pair[1] !== '');
+            if((pair[0] === 'name' || pair[0] === 'surname' || pair[0] === 'fatherName' || pair[0] === 'genre') && pair[1] !== ''){
                 if(!(/^[а-я А-Я і ї]*$/igm.test(pair[1]))){
                     alert('Невірний формат даних тільки кирилецею');
                     return 'Невірний формат даних тільки кирилецею';
