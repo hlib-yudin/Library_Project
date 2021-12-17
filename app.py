@@ -499,8 +499,9 @@ def grant_privileges(user_id):
             print(el.order_id, el.issue_date, el.max_return_date)
 
         term = {'normal': 3, 'privileged': 6}
-        user = get_user_by_id(user_id).status
-        num_of_months = term[user.status_name]
+        user = get_user_by_id(user_id)
+        user_status = user.status
+        num_of_months = term[user_status.status_name]
         if all([months_difference(el.max_return_date, el.issue_date) < num_of_months for el in res2]):
             change_user_status(user, 'privileged')
     return 'ok'
