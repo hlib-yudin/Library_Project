@@ -241,7 +241,6 @@ def issue_order():
         return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
 
     # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
-    
     order.set_issue_date()
     print(order.issue_date)
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
@@ -488,7 +487,6 @@ def grant_privileges(user_id):
         num_of_months = term[user.status_name]
         if all([months_difference(el.max_return_date, el.issue_date) < num_of_months for el in res2]):
             change_user_status(user_id, 'privileged')
-            db.session.commit()
     return 'ok'
 
 #---------------------------------------------------------------------------------------------------------------------
@@ -499,12 +497,12 @@ def change_user_status(user_id, new_status_name):
     if new_status_id == None:
         return 'Такого статуса немає!'
     a = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).update(dict(status_id=new_status_id))
-    # TODO: додати db.session.commit()
+    db.session.commit()
 
     # TODO: потім видалити наступні рядки
     b = db.session.query(t_user_status).filter(t_user_status.c.user_id == user_id).first()
     print('new_status_id:', b.status_id)
-    db.session.commit()
+    
 
 #---------------------------------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------
