@@ -193,6 +193,10 @@ class Order(db.Model):
         self.is_canceled = new_status
         db.session.commit()
 
+    def set_issue_date(self):
+        self.issue_date = date.today()
+        db.session.commit()
+
     @classmethod
     def add(cls, user_id):
         new_order = Order(user_id=user_id, booking_date=date.today(), issue_date=None, is_canceled=False)
