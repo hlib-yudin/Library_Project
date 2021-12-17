@@ -275,7 +275,8 @@ class ClockLaunchCheck(db.Model):
 
     launch_date = Column(Date, primary_key=True)
 
-    def add(new_date):
+    @classmethod
+    def add(cls, new_date):
         new_row = ClockLaunchCheck(launch_date = new_date)
         db.session.add(new_row)
         db.session.commit()
