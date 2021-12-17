@@ -238,15 +238,7 @@ def issue_order():
     if get_status_name(user) == 'debtor':
         # якщо боржник -- скасувати замовлення
         order.is_canceled_update(True)
-        db.session.commit()
 
-        return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
-
-    # якщо читач є боржником, але в базі даних про це ще немає інформації
-    if is_debtor(user.user_id):
-        order.is_canceled_update(True)
-        user.status = get_specified_status('debtor')
-        db.session.commit()
         return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
 
     # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
