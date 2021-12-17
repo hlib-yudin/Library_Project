@@ -1,6 +1,9 @@
 from query import *
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+
+matplotlib.use('Agg')
 
 
 # 1
