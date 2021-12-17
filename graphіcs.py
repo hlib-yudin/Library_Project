@@ -25,8 +25,10 @@ def gr_issued_books(data):
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr1.png')
         return 'no info, try next day'
+    #print(data)
     for el in data:
-        x.append(datetime.strptime(str(el[1])[:-2] + '/' + str(el[0])[:-2], '%m/%Y').date())
+        #print(el)
+        x.append(datetime.strptime(str(el[1]) + '/' + str(el[0])[:-2], '%m/%y').date())
         y.append(el[2])
         labels.append(str(el[0])[:-2] + '-' + str(el[1])[:-2])
 
@@ -57,7 +59,7 @@ def gr_debted_books():
     plt.xlabel('Час')
     plt.ylabel('Кількість заборгованих книжок')
     plt.savefig('static/images/analytics_gr2.png')
-    plt.show()
+    #plt.show()
     return 'ok'
 
 
