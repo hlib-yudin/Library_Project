@@ -114,28 +114,6 @@ def page_for_returning_books():
 
             if len(new_json['books']) > 0:
                 json_orders["orders"].append(new_json)
-
-        # відобразити html-сторінку
-        """json_orders = {
-            "user_id": "",
-            "orders": [{
-                "order_id": "1",
-                "order_issue_date": "20-08-20",
-                "order_in_time": True,
-                "books": [{
-                    "book_id": "333-888-000",
-                    "edition_name": "Harry Potter",
-                    "edition_authors": ["JK", "Rowling"],
-                    "edition_year": 2007,
-                },
-                {
-                    "book_id": "333-888-001",
-                    "edition_name": "Harry Potter 2",
-                    "edition_authors": ["J.K. Rowling"],
-                    "edition_year": 2008,
-                }]
-            }]
-        }"""
     return render_template('returnBooks.html', json=json_orders)
 
 
@@ -204,7 +182,6 @@ def return_of_book(dict_list):
 def books_pagination():
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
 
-
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
 
@@ -218,7 +195,7 @@ def issue_order():
     # arrived_json = {"user_login": '3', "order_id": 1}
     print(arrived_json)
     arrived_login = arrived_json["user_login"].strip()
-    arrived_order_id = arrived_json["order_id"].strip()
+    arrived_order_id = arrived_json["order_id"]
 
     order_u_login = db.session.query(Order.order_id, UserInf.user_login, Order.is_canceled).filter(
         Order.order_id == arrived_order_id,
