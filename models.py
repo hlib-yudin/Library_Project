@@ -60,7 +60,7 @@ class EditionInf(db.Model):
 
 class EditionCount(db.Model):
     __tablename__ = 'edition_count'
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = (db.CheckConstraint('number_of_available >= 0'), {'extend_existing': True})
 
     edition_id = Column(ForeignKey('edition_inf.edition_id', ondelete='RESTRICT', onupdate='RESTRICT'),
                         primary_key=True)
