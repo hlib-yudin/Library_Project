@@ -238,13 +238,12 @@ def issue_order():
     if get_status_name(user) == 'debtor':
         # якщо боржник -- скасувати замовлення
         order.is_canceled_update(True)
-
         return make_response(jsonify({'res_message': 'Особа є боржником -- замовлення скасовано!'}))
 
     # 2) оновити запис в БД: таблиця Orders -- оновити issue_date
-    order.issue_date = date.today().strftime('%Y-%m-%d')
+    
+    order.set_issue_date()
     print(order.issue_date)
-    db.session.commit()
     return make_response(jsonify({'res_message': 'Замовлення було успішно видано!'}))
 
 
