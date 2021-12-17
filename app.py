@@ -82,7 +82,7 @@ def page_for_returning_books():
         # складаємо json з інформацією про замовлення
         json_orders = {"user_id": user.user_id, "orders": [], 'message': ''}
         for order in orders:
-            books = get_all_books_by_order_id(order.order_id)  # можна винести в query
+            books = get_all_books_by_order_id(order.order_id)
             books = [book.book for book in books if book.return_date == None]
             new_json = {
                 "order_id": order.order_id,
@@ -143,7 +143,7 @@ def return_books():
         return make_response(jsonify({'message': "Не обрано жодної книги для повернення!"}))
     # s = json.dumps(data, indent=4, sort_keys=True)
     user_id = data[0]['user_id']
-    old_user_status = get_status_name(get_user_by_id(user_id))  # можна винести в query
+    old_user_status = get_status_name(get_user_by_id(user_id))
     res = return_of_book(data)
 
     if old_user_status == 'debtor' and not is_debtor(user_id):
