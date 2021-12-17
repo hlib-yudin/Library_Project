@@ -28,21 +28,21 @@ def gr_issued_books(data):
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr1.png')
         return 'no info, try next day'
-    #print(data)
+
     for el in data:
         #print(el)
         x.append(datetime.strptime(str(int(el[1])) + '/' + str(int(el[0]))[-2:], '%m/%y').date())
         y.append(el[2])
         labels.append(str(int(el[0])) + '-' + str(int(el[1])))
-
-    plt.plot(x, y)
-    plt.xticks(x, labels)
+    plt.bar(labels, y)
+    # plt.xticks(x, labels)
     plt.gcf().autofmt_xdate()
     plt.xlabel('Місяць')
     plt.ylabel('Кількість книжок')
     plt.title('Кількість виданих книжок за часом')
     plt.savefig('static/images/analytics_gr1.png')
-    return 0
+    plt.show()
+    return 'ok'
 
 
 # 2
