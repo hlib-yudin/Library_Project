@@ -4,8 +4,6 @@ from graphіcs import *
 # html routing
 @app.route('/')
 def index():
-    # return redirect(url_for("page_for_returning_books"))
-    # insert_everything()
     session.clear()
     return redirect(url_for('catalogue'))
 
@@ -97,7 +95,7 @@ def page_for_returning_books():
             new_json = {
                 "order_id": order.order_id,
                 "order_issue_date": order.issue_date,
-                "order_in_time": True,  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
+                "order_in_time": True,
                 "books": []
             }
             for book in books:
@@ -131,14 +129,13 @@ def return_books():
 
     if len(data) == 0:
         return make_response(jsonify({'message': "Не обрано жодної книги для повернення!"}))
-    # s = json.dumps(data, indent=4, sort_keys=True)
     user_id = data[0]['user_id']
     old_user_status = get_status_name(get_user_by_id(user_id))
     res = return_of_book(data)
 
     if old_user_status == 'debtor' and not is_debtor(user_id):
         change_user_status(get_user_by_id(user_id), 'normal')
-        
+
     if old_user_status != 'debtor' and all_books_returned(user_id):
         grant_privileges(user_id)
 
@@ -150,7 +147,6 @@ def return_books():
 def return_of_book(dict_list):
     res_list = []
     for elem in dict_list:
-        # elem = json.loads(elem)
         order_id = elem['order_id']
         book_id = elem['book_id']
         edition = get_edition_by_book_id(book_id)
@@ -183,7 +179,6 @@ def return_of_book(dict_list):
 def issue_order():
     # Функція для підтвердження видачі замовлення.
     # Приймає json: {"user_login": ...,    "order_id": ... }
-    # TODO: нормально протестувати цю функцію!!!!!
 
     arrived_json = json.loads(request.data.decode('utf-8'))
     # arrived_json = {"user_login": '3', "order_id": 1}
@@ -420,7 +415,7 @@ def page_for_orders():
         new_json = {
             "order_id": order.order_id,
             # "order_issue_date": order.issue_date,
-            "order_in_time": status_name != 'debtor',  # TODO: обчислити, чи минув термін здачі замовлення, чи ні
+            "order_in_time": status_name != 'debtor',
             "books": []
         }
         if order.issue_date and status_name == 'normal':
@@ -466,7 +461,6 @@ def grant_privileges(user_id):
         subq.c.order_id == Order.order_id).order_by(subq.c.max_return_date.desc()).limit(2).all()
     if len(res2) == 2:
         for el in res2:
-            # print(el.order_id, el.issue_date, el.book_id, el.max_return_date)
             print(el.order_id, el.issue_date, el.max_return_date)
 
         term = {'normal': 3, 'privileged': 6}
@@ -484,8 +478,6 @@ def grant_privileges(user_id):
 def change_user_status(user, status_name):
     user.status = get_specified_status(status_name)
     db.session.commit()
-
-
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------------------------------------------------------------------------------
@@ -667,7 +659,6 @@ def take_books_data():
 def find_by_title():
     title_json = request.data.decode('utf-8')
     title = json.loads(title_json)['input']
-    book_data_list = []
     editions = EditionInf.query.filter(func.lower(EditionInf.book_title) == title.lower().strip()).all()  # можна винести в query
     book_data_list = collect_book_inf(editions)
     return make_response(jsonify({'books': book_data_list}))
@@ -715,13 +706,6 @@ def find_by_year():
 def sign_up(role_name):
     # Проводить реєстрацію користувача з даними полями.
     # Логін і пароль приходять вже в зашифрованому вигляді (sha-256).
-    """print(request.data)
-    arrived_json = json.loads(request.data.decode('utf-8'))
-    login = arrived_json["user_login"]
-    password = arrived_json["user_password"]
-    first_name = arrived_json["user_name"]
-    last_name = arrived_json["surname"]
-    middle_name = arrived_json["middle_name"]"""
     login = request.form["user_login"]
     password = request.form["user_password"]
     first_name = request.form["user_name"]
@@ -734,7 +718,6 @@ def sign_up(role_name):
     if len(users) > 0:
         flash("Даний логін вже існує!")
         return redirect(url_for('signup'))
-
     else:
         # створити нового користувача
         encoded_login = hashlib.sha3_512(login.encode()).hexdigest()
@@ -787,9 +770,6 @@ def getUserRole():
 @app.route("/login/user", methods=['POST'])
 def log_in():
     print(request.form)
-    # arrived_json = json.loads(request.data.decode('utf-8'))
-    # login = arrived_json["user_login"]
-    # password = arrived_json["user_password"]
     login = request.form["user_login"]
     password = request.form["user_password"]
     print(login)
@@ -798,7 +778,6 @@ def log_in():
     if len(users) == 0:
         flash("Неправильний логін чи пароль!")
         return redirect(url_for('signin'))
-
     else:
         # зберегти інформацію про користувача в сесію
         user = users[0]
@@ -817,7 +796,6 @@ def log_in():
 
     role = user.role.role_name
     print(session['permissions'])
-    # return "log_in - ok"
 
     if user.role.role_name == 'librarian':
         return redirect("/books/return")
