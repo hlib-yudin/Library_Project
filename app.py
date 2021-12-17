@@ -6,6 +6,7 @@ from graphіcs import *
 def index():
     # return redirect(url_for("page_for_returning_books"))
     # insert_everything()
+    session.clear()
     return redirect(url_for('catalogue'))
 
 
