@@ -75,7 +75,7 @@ def page_for_returning_books():
     # якщо в поле вводу ввели логін користувача -- знайти і відобразити всі його замовлення
     if request.args.get("login_query"):  # and request.method == 'GET'
         # TODO: exceptions
-        login_query = request.args["login_query"]
+        login_query = request.args["login_query"].strip()
         users = get_all_users_by_login(login_query)
         if len(users) != 1:
             json_orders['message'] = "Користувача не знайдено!"
@@ -217,8 +217,8 @@ def issue_order():
     arrived_json = json.loads(request.data.decode('utf-8'))
     # arrived_json = {"user_login": '3', "order_id": 1}
     print(arrived_json)
-    arrived_login = arrived_json["user_login"]
-    arrived_order_id = arrived_json["order_id"]
+    arrived_login = arrived_json["user_login"].strip()
+    arrived_order_id = arrived_json["order_id"].strip()
 
     order_u_login = db.session.query(Order.order_id, UserInf.user_login, Order.is_canceled).filter(
         Order.order_id == arrived_order_id,
