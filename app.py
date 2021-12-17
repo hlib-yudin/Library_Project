@@ -153,7 +153,6 @@ def return_books():
 
     for el in res:
         print(el)
-    db.session.commit()
     return make_response(jsonify({'message': "Книги успішно повернено"}))
 
 
@@ -172,7 +171,8 @@ def return_of_book(dict_list):
             continue
         num_rows_updated = OrderBook.query.filter_by(order_id=order_id, book_id=book_id).update(
             dict(return_date=date.today()))
-
+        db.session.commit()
+        
         edition_count = get_edition_count_obj(edition_id)
         edition_count.count_increasing()
         res_list.append({"order_id": order_id, "edition_id": edition_id, "book_title": edition.book_title,
@@ -183,7 +183,7 @@ def return_of_book(dict_list):
         print('Current EditionCount:', edition_count.number_of_available)
         print('Return_date:', OrderBook.query.filter_by(order_id=order_id, book_id=book_id).first().return_date)
         print('-----------------------------------------------------')
-        db.session.commit()
+        
     return res_list
 
 #---------------------------------------------------------------------------------------------------------------------
