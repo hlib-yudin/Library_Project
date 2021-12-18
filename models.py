@@ -839,22 +839,16 @@ def insert_everything():
     ed1 = EditionCount.query.filter_by(edition_id="118-116-11-3113-1").first()
     ed1.count_decreasing()
     ed1.count_decreasing()
-    ed1.count_decreasing()
-    ed1.count_decreasing()
 
     ed2 = EditionCount.query.filter_by(edition_id="5-325-00380-2").first()
     ed2.count_decreasing()
 
     ed4 = EditionCount.query.filter_by(edition_id="6-325-01280-2").first()
     ed4.count_decreasing()
-    ed4.count_decreasing()
 
     ed5 = EditionCount.query.filter_by(edition_id="7-665-01580-1").first()
     ed5.count_decreasing()
     ed5.count_decreasing()
-
-    ed6 = EditionCount.query.filter_by(edition_id="7-665-01580-2").first()
-    ed6.count_decreasing()
 
     ed8 = EditionCount.query.filter_by(edition_id="9-995-09980-1").first()
     ed8.count_decreasing()
