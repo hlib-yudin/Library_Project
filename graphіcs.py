@@ -115,9 +115,6 @@ def qr_orders():
         time = str(datum)
         if time not in orders.keys():
             orders[time] = [0, 0]
-
-    for row in data:
-        datum = row.booking_date
         orders[str(datum)][0] += 1
         res = db.session.query(func.count(CenceledOrder.order_id).label("count")).filter_by(
                 cancel_date=datum).first()
