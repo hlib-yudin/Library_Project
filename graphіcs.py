@@ -21,6 +21,7 @@ def qr_issued_books():
 
 
 def gr_issued_books(data):
+    plt.figure()
     x = []
     y = []
     labels = []
@@ -41,6 +42,7 @@ def gr_issued_books(data):
     plt.ylabel('Кількість книжок')
     plt.title('Кількість виданих книжок за часом')
     plt.savefig('static/images/analytics_gr1.png')
+    plt.figure().close()
 #     plt.show()
     return 'ok'
 
@@ -48,10 +50,12 @@ def gr_issued_books(data):
 # 2
 # кількість заборгованих книжок за часом
 def gr_debted_books():
+    plt.figure()
     debtors_info = DebtorGraphic.query.all()
     if len(debtors_info) == 0:
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr2.png')
+        plt.figure().close()
         return 'no info, try next day'
     x = list()
     y = list()
@@ -63,6 +67,7 @@ def gr_debted_books():
     plt.ylabel('Кількість заборгованих книжок')
     plt.title('')
     plt.savefig('static/images/analytics_gr2.png')
+    plt.figure().close()
     #plt.show()
     return 'ok'
 
@@ -70,10 +75,12 @@ def gr_debted_books():
 # 3
 # кількість боржників за часом
 def gr_debtors():
+    plt.figure()
     debtors_info = DebtorGraphic.query.all()
     if len(debtors_info) == 0:
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr3.png')
+        plt.figure().close()
         return 'no info, try next day'
     x = list()
     y = list()
@@ -85,6 +92,7 @@ def gr_debtors():
     plt.ylabel('Кількість боржників')
     plt.title('')
     plt.savefig('static/images/analytics_gr3.png')
+    plt.figure().close()
     #plt.show()
     return 'ok'
 
@@ -117,9 +125,11 @@ def qr_orders():
 
 
 def gr_orders(orders):
+    plt.figure()
     if orders == 0:
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr4.png')
+        plt.figure().close()
         return 'no data'
 
     # set width of bar
@@ -148,6 +158,7 @@ def gr_orders(orders):
     plt.legend()
     plt.title('')
     plt.savefig('static/images/analytics_gr4.png')
+    plt.figure().close()
     #plt.show()
     return 'ok'
 
