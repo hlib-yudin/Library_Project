@@ -797,7 +797,7 @@ def insert_everything():
                          issue_date=None, is_canceled=True))
     db.session.commit()
 
-    db.session.add(OrderBook(book_id='100000001', order_id=15, return_date=None))
+    db.session.add(OrderBook(book_id='100000003', order_id=15, return_date=None))
     db.session.add(OrderBook(book_id='40000003', order_id=15, return_date=None))
     db.session.add(OrderBook(book_id='100000002', order_id=16, return_date=None))
     db.session.add(OrderBook(book_id='60000004', order_id=17, return_date=None))
