@@ -824,7 +824,7 @@ def insert_everything():
     db.session.add(Order(user_id=5, booking_date=datetime.strptime("2021-12-3", "%Y-%m-%d"),
                          issue_date=None, is_canceled=False))
     db.session.add(Order(user_id=3, booking_date=datetime.strptime("2021-11-17", "%Y-%m-%d"),
-                         issue_date=None, is_canceled=False))
+                         issue_date=datetime.strptime("2021-11-18", "%Y-%m-%d"), is_canceled=False))
     db.session.commit()
 
     db.session.add(OrderBook(book_id='100000007', order_id=18, return_date=None))
@@ -847,7 +847,6 @@ def insert_everything():
     ed4.count_decreasing()
 
     ed5 = EditionCount.query.filter_by(edition_id="7-665-01580-1").first()
-    ed5.count_decreasing()
     ed5.count_decreasing()
 
     ed8 = EditionCount.query.filter_by(edition_id="9-995-09980-1").first()
