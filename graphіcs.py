@@ -61,7 +61,7 @@ def gr_debted_books():
     x = list()
     y = list()
     for data in debtors_info:
-        x += [str(data.date_check.day)+"д "+str(data.date_check.month)+"м"]
+        x += [str(data.date_check)]
         y += [data.books_debt]
     plt.plot(x, y)
     plt.xlabel('Час')
@@ -86,7 +86,7 @@ def gr_debtors():
     x = list()
     y = list()
     for data in debtors_info:
-        x += [str(data.date_check.day)+"д "+str(data.date_check.month)+"м"]
+        x += [str(data.date_check)]
         y += [data.debtor_quantity]
     plt.plot(x, y)
     plt.xlabel('Час')
@@ -110,18 +110,18 @@ def qr_orders():
         return 0
 
     orders = dict()  # {date:[(is_canceled=false) ,(is_canceled=true)]}
-
     for row in data:
         datum = row.booking_date
-        time = str(datum.day)+"д "+str(datum.month)+"м"
+        time = str(datum)
         if time not in orders.keys():
             orders[time] = [0, 0]
 
-        if row.is_canceled is False:
-            orders[time][0] += 1
-        elif row.is_canceled is True:
-            res = db.session.query(func.count(CenceledOrder.order_id).label("count")).filter_by(cancel_date=datum).first()
-            orders[time][1] += res.count
+    for row in data:
+        datum = row.booking_date
+        orders[str(datum)][0] += 1
+        res = db.session.query(func.count(CenceledOrder.order_id).label("count")).filter_by(
+                cancel_date=datum).first()
+        orders[str(datum)][1] = res.count
     return orders
 
 
