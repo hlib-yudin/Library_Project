@@ -694,27 +694,27 @@ def insert_everything():
     db.session.commit()
     # ========================================================================
 
-    db.session.add(Order(order_id=1, user_id=5, booking_date=datetime.strptime("2021-07-29", "%Y-%m-%d"),
+    db.session.add(Order(user_id=5, booking_date=datetime.strptime("2021-07-29", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-07-29", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=2, user_id=9, booking_date=datetime.strptime("2021-07-25", "%Y-%m-%d"),
+    db.session.add(Order(user_id=9, booking_date=datetime.strptime("2021-07-25", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-07-25", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=3, user_id=5, booking_date=datetime.strptime("2021-8-13", "%Y-%m-%d"),
+    db.session.add(Order(user_id=5, booking_date=datetime.strptime("2021-8-13", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-8-13", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=4, user_id=9, booking_date=datetime.strptime("2021-8-14", "%Y-%m-%d"),
+    db.session.add(Order(user_id=9, booking_date=datetime.strptime("2021-8-14", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-8-14", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=5, user_id=9, booking_date=datetime.strptime("2021-8-15", "%Y-%m-%d"),
+    db.session.add(Order(user_id=9, booking_date=datetime.strptime("2021-8-15", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-8-15", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=6, user_id=7, booking_date=datetime.strptime("2021-09-16", "%Y-%m-%d"),
+    db.session.add(Order(user_id=7, booking_date=datetime.strptime("2021-09-16", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-09-16", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=7, user_id=7, booking_date=datetime.strptime("2021-09-17", "%Y-%m-%d"),
+    db.session.add(Order(user_id=7, booking_date=datetime.strptime("2021-09-17", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-09-17", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=8, user_id=7, booking_date=datetime.strptime("2021-10-18", "%Y-%m-%d"),
+    db.session.add(Order(user_id=7, booking_date=datetime.strptime("2021-10-18", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-10-18", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=9, user_id=8, booking_date=datetime.strptime("2021-11-16", "%Y-%m-%d"),
+    db.session.add(Order(user_id=8, booking_date=datetime.strptime("2021-11-16", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-11-16", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=10, user_id=9, booking_date=datetime.strptime("2021-11-17", "%Y-%m-%d"),
+    db.session.add(Order(user_id=9, booking_date=datetime.strptime("2021-11-17", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-11-17", "%Y-%m-%d"), is_canceled=False))
-    db.session.add(Order(order_id=11, user_id=7, booking_date=datetime.strptime("2021-11-18", "%Y-%m-%d"),
+    db.session.add(Order(user_id=7, booking_date=datetime.strptime("2021-11-18", "%Y-%m-%d"),
                          issue_date=datetime.strptime("2021-11-18", "%Y-%m-%d"), is_canceled=False))
 
     db.session.commit()
