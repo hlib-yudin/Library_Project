@@ -681,6 +681,32 @@ def insert_everything():
     new_user.status = status_normal
 
     db.session.commit()
+    # ------------------------------------------------------------------------
+    login = hashlib.sha3_512('r4'.encode()).hexdigest()
+    password = hashlib.sha3_512('1111'.encode()).hexdigest()
+    new_user = UserInf(user_login=login, user_password=password, user_name='читач10',
+                       surname='читач10', middle_name='читач10')
+    db.session.add(new_user)
+    new_user.role = role_reader
+    new_user.status = status_debtor
+
+    login = hashlib.sha3_512('r5'.encode()).hexdigest()
+    password = hashlib.sha3_512('2222'.encode()).hexdigest()
+    new_user = UserInf(user_login=login, user_password=password, user_name='читач11',
+                       surname='читач11', middle_name='читач11')
+    db.session.add(new_user)
+    new_user.role = role_reader
+    new_user.status = status_debtor
+
+    login = hashlib.sha3_512('r6'.encode()).hexdigest()
+    password = hashlib.sha3_512('3333'.encode()).hexdigest()
+    new_user = UserInf(user_login=login, user_password=password, user_name='читач12',
+                       surname='читач12', middle_name='читач12')
+    db.session.add(new_user)
+    new_user.role = role_reader
+    new_user.status = status_debtor
+
+    db.session.commit()
     # ========================================================================
 
     db.session.add(Order(user_id=5, booking_date=datetime.strptime("2021-07-29", "%Y-%m-%d"),
@@ -741,7 +767,74 @@ def insert_everything():
 
     db.session.commit()
 
+    # --------------Графіки 2, 3. 4------------------------------------------------------------------------------------
+    db.session.add(Order(user_id=10, booking_date=datetime.strptime("2021-9-1", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-9-1", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(user_id=11, booking_date=datetime.strptime("2021-9-2", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-9-3", "%Y-%m-%d"), is_canceled=False))
+    db.session.add(Order(user_id=12, booking_date=datetime.strptime("2021-9-2", "%Y-%m-%d"),
+                         issue_date=datetime.strptime("2021-9-3", "%Y-%m-%d"), is_canceled=False))
+    db.session.commit()
 
+    db.session.add(OrderBook(book_id='90000007', order_id=12, return_date=None))
+    db.session.add(OrderBook(book_id='90000008', order_id=13, return_date=None))
+    db.session.add(OrderBook(book_id='80000004', order_id=14, return_date=None))
+    db.session.add(OrderBook(book_id='60000003', order_id=14, return_date=None))
+    db.session.commit()
+
+    # for 2 graphic and 3 graphic
+    db.session.add(DebtorGraphic(date_check=datetime.strptime("2021-12-1", "%Y-%m-%d"), debtor_quantity=1, books_debt=1))
+    db.session.add(DebtorGraphic(date_check=datetime.strptime("2021-12-3", "%Y-%m-%d"), debtor_quantity=2, books_debt=3))
+    db.session.commit()
+
+    # for 4 graphic
+    # canceled orders
+    db.session.add(Order(user_id=10, booking_date=datetime.strptime("2021-11-17", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=True))
+    db.session.add(Order(user_id=11, booking_date=datetime.strptime("2021-11-19", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=True))
+    db.session.add(Order(user_id=12, booking_date=datetime.strptime("2021-11-19", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=True))
+    db.session.commit()
+
+    db.session.add(OrderBook(book_id='100000001', order_id=15, return_date=None))
+    db.session.add(OrderBook(book_id='40000003', order_id=15, return_date=None))
+    db.session.add(OrderBook(book_id='100000002', order_id=16, return_date=None))
+    db.session.add(OrderBook(book_id='60000004', order_id=17, return_date=None))
+    db.session.commit()
+
+    db.session.add(CenceledOrder(order_id=15, booking_date=datetime.strptime("2021-11-17", "%Y-%m-%d"),
+                                 cancel_date=datetime.strptime("2021-12-1", "%Y-%m-%d")))
+    db.session.add(CenceledOrder(order_id=16, booking_date=datetime.strptime("2021-11-19", "%Y-%m-%d"),
+                                 cancel_date=datetime.strptime("2021-12-3", "%Y-%m-%d")))
+    db.session.add(CenceledOrder(order_id=17, booking_date=datetime.strptime("2021-11-19", "%Y-%m-%d"),
+                                 cancel_date=datetime.strptime("2021-12-3", "%Y-%m-%d")))
+    db.session.commit()
+
+    # new orders
+
+    db.session.add(Order(user_id=8, booking_date=datetime.strptime("2021-12-1", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=False))
+    db.session.add(Order(user_id=3, booking_date=datetime.strptime("2021-12-1", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=False))
+    db.session.add(Order(user_id=8, booking_date=datetime.strptime("2021-12-3", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=False))
+    db.session.add(Order(user_id=3, booking_date=datetime.strptime("2021-12-3", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=False))
+    db.session.add(Order(user_id=5, booking_date=datetime.strptime("2021-12-3", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=False))
+    db.session.add(Order(user_id=3, booking_date=datetime.strptime("2021-11-17", "%Y-%m-%d"),
+                         issue_date=None, is_canceled=False))
+    db.session.commit()
+
+    db.session.add(OrderBook(book_id='100000007', order_id=18, return_date=None))
+    db.session.add(OrderBook(book_id='20000002', order_id=19, return_date=None))
+    db.session.add(OrderBook(book_id='80000001', order_id=20, return_date=None))
+    db.session.add(OrderBook(book_id='40000003', order_id=21, return_date=None))
+    db.session.add(OrderBook(book_id='100000001', order_id=21, return_date=None))
+    db.session.add(OrderBook(book_id='50000003', order_id=22, return_date=None))
+    db.session.add(OrderBook(book_id='50000005', order_id=23, return_date=None))
+    db.session.commit()
 
 inspector = inspect(db.engine)
 # якщо база даних ще не створена -- створюємо та заповнюємо її
