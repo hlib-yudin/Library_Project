@@ -28,6 +28,7 @@ def gr_issued_books(data):
     if len(data) == 0:
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr1.png')
+        plt.close()
         return 'no info, try next day'
 
     for el in data:
@@ -42,7 +43,7 @@ def gr_issued_books(data):
     plt.ylabel('Кількість книжок')
     plt.title('Кількість виданих книжок за часом')
     plt.savefig('static/images/analytics_gr1.png')
-    plt.figure().close()
+    plt.close()
 #     plt.show()
     return 'ok'
 
@@ -55,7 +56,7 @@ def gr_debted_books():
     if len(debtors_info) == 0:
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr2.png')
-        plt.figure().close()
+        plt.close()
         return 'no info, try next day'
     x = list()
     y = list()
@@ -67,7 +68,7 @@ def gr_debted_books():
     plt.ylabel('Кількість заборгованих книжок')
     plt.title('')
     plt.savefig('static/images/analytics_gr2.png')
-    plt.figure().close()
+    plt.close()
     #plt.show()
     return 'ok'
 
@@ -80,7 +81,7 @@ def gr_debtors():
     if len(debtors_info) == 0:
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr3.png')
-        plt.figure().close()
+        plt.close()
         return 'no info, try next day'
     x = list()
     y = list()
@@ -92,7 +93,7 @@ def gr_debtors():
     plt.ylabel('Кількість боржників')
     plt.title('')
     plt.savefig('static/images/analytics_gr3.png')
-    plt.figure().close()
+    plt.close()
     #plt.show()
     return 'ok'
 
@@ -129,7 +130,7 @@ def gr_orders(orders):
     if orders == 0:
         plt.text(x=.3, y=.5, s="Даних немає!", fontdict={'size':25})
         plt.savefig('static/images/analytics_gr4.png')
-        plt.figure().close()
+        plt.close()
         return 'no data'
 
     # set width of bar
@@ -158,7 +159,7 @@ def gr_orders(orders):
     plt.legend()
     plt.title('')
     plt.savefig('static/images/analytics_gr4.png')
-    plt.figure().close()
+    plt.close()
     #plt.show()
     return 'ok'
 
