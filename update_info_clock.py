@@ -85,7 +85,7 @@ def is_canceled_change():
     allowed_booking_days = 14
     today_date = date.today()
     # треба перевірити скільки бронь вже висить
-    not_issued_orders = Order.query.filter(Order.issue_date == None).all()
+    not_issued_orders = Order.query.filter(Order.issue_date == None, Order.is_canceled == False).all()
     canceled_orders_amount = 0
     for order in not_issued_orders:
         order_id = order.order_id
