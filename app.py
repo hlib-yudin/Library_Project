@@ -1,5 +1,5 @@
 from graphіcs import *
-
+from datetime import *
 
 # html routing
 @app.route('/')
@@ -364,7 +364,9 @@ def add_edition_book_logic():
         book_title = request.form['name']
         edition_year = request.form['year']
         edition_id = request.form['idEdition']
-        if EditionInf.query.filter_by(edition_id=edition_id).first() is not None:
+        if int(edition_year) > date.today().year or int(edition_year) < 868:
+            response = 'Введіть коректний рік(з 868)!'
+        elif EditionInf.query.filter_by(edition_id=edition_id).first() is not None:
             response = 'Такий edition_id вже існує!'
         else:
             new_edition = EditionInf.add(edition_id, book_title, edition_year)
