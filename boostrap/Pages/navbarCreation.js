@@ -22,7 +22,7 @@ const loginIcon = `
 `;
 
 const adminNavbar = {
-    'register librarians': `<li class="nav-item"> <a class="nav-link" aria-current="page" href="">Реєстрація бібліотекарів</a> </li>`,
+    'register librarians': `<li class="nav-item"> <a class="nav-link" aria-current="page" href="{{url_for('page_for_registering_librarians')}}">Реєстрація бібліотекарів</a> </li>`,
     'analytics': `<li class="nav-item"> <a class="nav-link" aria-current="page" href="{{url_for('analytics')}}">Аналітика</a> </li>`,
 };
 
